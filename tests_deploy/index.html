@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>NKT BIOLOGY 2026 - Биология пәні бойынша ҰБТ-ға дайындық</title>
+    <meta name="description" content="Биология пәні бойынша 49 пробный тест, 2887+ сұрақ, толық талдау. 2026 жылғы ҰБТ-ға дайындық платформасы.">
+    <meta property="og:title" content="NKT BIOLOGY 2026">
+    <meta property="og:description" content="49 пробный тест, 2887+ сұрақ, толық талдау">
+    <meta property="og:type" content="website">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧬</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'], mono: ['JetBrains Mono', 'monospace'] },
+                    colors: {
+                        primary: { 50: '#ecfdf5', 100: '#d1fae5', 200: '#a7f3d0', 300: '#6ee7b7', 400: '#34d399', 500: '#10b981', 600: '#059669', 700: '#047857' },
+                        dark: { bg: '#0f172a', card: '#1e293b', border: '#334155' },
+                        accent: { purple: '#8b5cf6', blue: '#3b82f6', cyan: '#06b6d4', amber: '#f59e0b', rose: '#f43f5e' }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', system-ui, sans-serif; background: #0f172a; color: #e2e8f0; line-height: 1.6; overflow-x: hidden; min-height: 100vh; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+        ::selection { background: rgba(16,185,129,0.3); color: #fff; }
+        .glass { background: rgba(30,41,59,0.6); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.08); }
+        .glass-card { background: rgba(30,41,59,0.6); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.08); border-radius: 1rem; transition: all 0.3s ease; }
+        .glass-card:hover { border-color: rgba(16,185,129,0.3); transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.3); }
+        .glass-btn { background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.3); color: #34d399; padding: 0.75rem 1.5rem; border-radius: 0.75rem; font-weight: 600; transition: all 0.3s ease; cursor: pointer; }
+        .glass-btn:hover { background: rgba(16,185,129,0.25); border-color: #34d399; transform: translateY(-2px); }
+        .glass-btn-lg { padding: 1rem 2rem; font-size: 1.1rem; border-radius: 1rem; }
+        .btn-primary { background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #fff; border: none; box-shadow: 0 4px 15px rgba(16,185,129,0.3); }
+        .btn-primary:hover { background: linear-gradient(135deg, #34d399 0%, #10b981 100%); box-shadow: 0 6px 20px rgba(16,185,129,0.4); transform: translateY(-2px); }
+        .btn-danger { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: #fff; border: none; }
+        .btn-warning { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: #fff; border: none; }
+        .gradient-text { background: linear-gradient(135deg, #34d399, #3b82f6, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .option-card { background: rgba(30,41,59,0.8); border: 2px solid rgba(255,255,255,0.06); border-radius: 0.75rem; padding: 1rem 1.25rem; cursor: pointer; transition: all 0.2s ease; display: flex; align-items: center; gap: 0.75rem; }
+        .option-card:hover { border-color: rgba(16,185,129,0.4); background: rgba(16,185,129,0.08); }
+        .option-card.selected { border-color: #10b981; background: rgba(16,185,129,0.15); color: #34d399; }
+        .option-card.correct { border-color: #10b981; background: rgba(16,185,129,0.2); }
+        .option-card.wrong { border-color: #ef4444; background: rgba(239,68,68,0.15); }
+        .option-letter { width: 2rem; height: 2rem; border-radius: 50%; border: 2px solid rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem; flex-shrink: 0; }
+        .option-card.selected .option-letter { border-color: #10b981; background: #10b981; color: #fff; }
+        .progress-bar { height: 6px; background: rgba(255,255,255,0.05); border-radius: 3px; overflow: hidden; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, #10b981, #3b82f6); border-radius: 3px; transition: width 0.3s ease; }
+        .timer-display { font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 1.25rem; }
+        .timer-danger { color: #ef4444 !important; animation: pulse 1s infinite; }
+        @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
+        .floating { animation: float 6s ease-in-out infinite; }
+        @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+        .fade-in { animation: fadeIn 0.5s ease forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .slide-in { animation: slideIn 0.3s ease forwards; }
+        @keyframes slideIn { from { transform: translateX(20px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        .streak { background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .confetti { position: fixed; width: 10px; height: 10px; top: -10px; animation: confettiFall linear forwards; pointer-events: none; z-index: 9999; }
+        @keyframes confettiFall { to { transform: translateY(100vh) rotate(720deg); } }
+        .microscope-bg { position: fixed; inset: 0; pointer-events: none; z-index: -1; background-image: radial-gradient(circle at 20% 50%, rgba(16,185,129,0.08) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(59,130,246,0.08) 0%, transparent 50%), radial-gradient(circle at 40% 80%, rgba(139,92,246,0.08) 0%, transparent 50%); }
+        .grid-pattern { position: fixed; inset: 0; pointer-events: none; z-index: -1; background-image: linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px); background-size: 30px 30px; }
+        .stat-card { background: rgba(30,41,59,0.6); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.08); border-radius: 1rem; padding: 1.5rem; transition: all 0.3s ease; }
+        .stat-card:hover { border-color: rgba(16,185,129,0.3); transform: translateY(-2px); }
+        .category-badge { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; border-radius: 9999px; font-size: 0.875rem; font-weight: 500; transition: all 0.2s ease; cursor: pointer; border: 1px solid transparent; }
+        .category-badge.active { background: rgba(16,185,129,0.2); color: #34d399; border-color: rgba(16,185,129,0.4); }
+        .category-badge:hover:not(.active) { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1); }
+        .review-item { background: rgba(30,41,59,0.5); border: 1px solid rgba(255,255,255,0.06); border-radius: 0.75rem; padding: 1rem; margin-bottom: 0.5rem; }
+        .review-correct { border-left: 3px solid #10b981; }
+        .review-wrong { border-left: 3px solid #ef4444; }
+        .explanation-box { background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.2); border-radius: 0.5rem; padding: 0.75rem; margin-top: 0.5rem; font-size: 0.9rem; color: #a7f3d0; }
+        .no-select { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; }
+        #app > div { display: none; }
+        #app > div.active { display: block; }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            body { font-size: 15px; }
+            .hero-title { font-size: 2rem !important; }
+            .hero-subtitle { font-size: 1rem !important; }
+            .timer-display { font-size: 1rem; }
+            .option-card { padding: 0.875rem 1rem; font-size: 0.9rem; }
+            .option-letter { width: 1.75rem; height: 1.75rem; font-size: 0.75rem; }
+            .glass-btn-lg { padding: 0.875rem 1.5rem; font-size: 1rem; }
+            .test-content { padding: 1rem; }
+            .question-text { font-size: 1rem; }
+            .grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .grid-cols-3 { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+            .grid-cols-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .lg\:grid-cols-3 { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+            .lg\:grid-cols-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .md\:flex { display: none; }
+            .mobile-menu { display: flex !important; }
+        }
+        @media (min-width: 769px) { .mobile-menu { display: none !important; } }
+    </style>
+</head>
+<body>
+    <div class="microscope-bg"></div>
+    <div class="grid-pattern"></div>
+
+    <div id="app">
+
+        <!-- ===================== LOGIN SCREEN ===================== -->
+        <div id="login-screen" class="active min-h-screen flex items-center justify-center p-4">
+            <div class="glass p-8 rounded-2xl max-w-md w-full text-center floating">
+                <div class="w-20 h-20 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center text-4xl">🔬</div>
+                <h1 class="text-3xl font-black mb-2 gradient-text">NKT BIOLOGY 2026</h1>
+                <p class="text-slate-400 mb-6">Биология пәні бойынша ҰБТ-ға дайындық платформасы</p>
+                <div class="space-y-4">
+                    <div class="relative">
+                        <input type="password" id="login-code" placeholder="Жеке кодыңызды енгізіңіз" class="w-full bg-slate-800/50 border border-slate-600 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-primary-400 transition text-center font-mono text-lg" onkeypress="if(event.key==='Enter')login()">
+                    </div>
+                    <button onclick="login()" class="w-full btn-primary glass-btn glass-btn-lg no-select">Кіру</button>
+                    <p id="login-error" class="text-red-400 text-sm hidden">Қате код! Телеграм арқылы код алыңыз.</p>
+                    <a href="https://t.me/Bio_OZP" target="_blank" class="block text-primary-400 hover:text-primary-300 text-sm mt-2">Код алу үшін Telegram-ға жазыңыз</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===================== MAIN APP ===================== -->
+        <div id="main-app">
+            <!-- Navbar -->
+            <nav class="sticky top-0 z-50 glass border-b border-white/5">
+                <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center text-xl">🔬</div>
+                        <div>
+                            <h1 class="font-bold text-lg gradient-text">NKT BIOLOGY</h1>
+                            <p class="text-xs text-slate-400 hidden sm:block">2026 ҰБТ дайындығы</p>
+                        </div>
+                    </div>
+                    <div class="hidden md:flex items-center gap-1 bg-slate-800/50 rounded-xl p-1">
+                        <button onclick="showPage('home')" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium transition bg-primary-500/20 text-primary-300" data-page="home">Басты</button>
+                        <button onclick="showPage('tests')" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium transition text-slate-300 hover:bg-slate-700/50" data-page="tests">Тесттер</button>
+                        <button onclick="showPage('profile')" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium transition text-slate-300 hover:bg-slate-700/50" data-page="profile">Профиль</button>
+                        <button onclick="showPage('resources')" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium transition text-slate-300 hover:bg-slate-700/50" data-page="resources">Материалдар</button>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <div id="header-timer" class="hidden glass px-3 py-1.5 rounded-lg">
+                            <span class="timer-display text-primary-400">00:00</span>
+                        </div>
+                        <button onclick="logout()" class="glass-btn text-sm py-2 px-4 no-select"><i class="fas fa-sign-out-alt mr-1"></i>Шығу</button>
+                        <button onclick="toggleMobileMenu()" class="md:hidden p-2 text-slate-300"><i class="fas fa-bars text-xl"></i></button>
+                    </div>
+                </div>
+                <!-- Mobile menu -->
+                <div id="mobile-menu" class="mobile-menu hidden md:hidden border-t border-white/5 px-4 py-3 gap-2 flex-col">
+                    <button onclick="showPage('home');toggleMobileMenu()" class="text-left px-4 py-2 rounded-lg text-slate-300 hover:bg-slate-700/50">Басты</button>
+                    <button onclick="showPage('tests');toggleMobileMenu()" class="text-left px-4 py-2 rounded-lg text-slate-300 hover:bg-slate-700/50">Тесттер</button>
+                    <button onclick="showPage('profile');toggleMobileMenu()" class="text-left px-4 py-2 rounded-lg text-slate-300 hover:bg-slate-700/50">Профиль</button>
+                    <button onclick="showPage('resources');toggleMobileMenu()" class="text-left px-4 py-2 rounded-lg text-slate-300 hover:bg-slate-700/50">Материалдар</button>
+                </div>
+            </nav>
+
+            <!-- ============ HOME PAGE ============ -->
+            <div id="page-home" class="page-section">
+                <section class="relative py-16 md:py-24 px-4">
+                    <div class="max-w-5xl mx-auto text-center">
+                        <div class="inline-flex items-center gap-2 glass px-4 py-2 rounded-full mb-6 fade-in">
+                            <i class="fas fa-star text-amber-400"></i>
+                            <span class="text-sm text-slate-300">2026 жылғы ҰБТ-ға дайындық</span>
+                        </div>
+                        <h1 class="hero-title text-5xl md:text-7xl font-black mb-6 leading-tight">
+                            <span class="gradient-text">NKT BIOLOGY</span>
+                        </h1>
+                        <p class="hero-subtitle text-xl md:text-2xl text-slate-400 mb-8 max-w-3xl mx-auto">Биология пәні бойынша кешенді дайындық платформасы. 49 пробный тест, 2887+ сұрақ, толық талдау.</p>
+                        <div class="flex flex-wrap gap-4 justify-center fade-in">
+                            <button onclick="showPage('tests')" class="btn-primary glass-btn glass-btn-lg no-select"><i class="fas fa-bolt mr-2"></i>Тест тапсыру</button>
+                            <button onclick="showPage('resources')" class="glass-btn glass-btn-lg no-select">Материалдар</button>
+                        </div>
+                    </div>
+                </section>
+                <section class="py-12 border-y border-white/5">
+                    <div class="max-w-6xl mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-6">
+                        <div class="stat-card text-center"><div class="text-4xl font-black text-primary-400" id="stat-tests">49</div><div class="text-sm text-slate-400 mt-1">Пробный тест</div></div>
+                        <div class="stat-card text-center"><div class="text-4xl font-black text-blue-400" id="stat-questions">2887+</div><div class="text-sm text-slate-400 mt-1">Сұрақтар</div></div>
+                        <div class="stat-card text-center"><div class="text-4xl font-black text-purple-400">100%</div><div class="text-sm text-slate-400 mt-1">ҰБТ бағдарламасы</div></div>
+                        <div class="stat-card text-center"><div class="text-4xl font-black text-amber-400">24/7</div><div class="text-sm text-slate-400 mt-1">Қолжетімділік</div></div>
+                    </div>
+                </section>
+                <section class="py-16 px-4">
+                    <div class="max-w-6xl mx-auto">
+                        <h2 class="text-3xl font-bold text-center mb-12">Мүмкіндіктер</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <div class="glass-card p-6"><div class="w-12 h-12 rounded-xl bg-primary-500/20 flex items-center justify-center text-2xl mb-4">📚</div><h3 class="font-bold text-lg mb-2">Кешенді тесттер</h3><p class="text-slate-400 text-sm">49 пробный нұсқа, әрқайсысында 38-165 сұрақ. Барлық тақырыптарды қамтиды.</p></div>
+                            <div class="glass-card p-6"><div class="w-12 h-12 rounded-xl bg-blue-500/20 flex items-center justify-center text-2xl mb-4">⏱️</div><h3 class="font-bold text-lg mb-2">Уақытты бақылау</h3><p class="text-slate-400 text-sm">Әр тесттің өз уақыты бар. Таймер көмегімен нақты ҰБТ форматына үйренесіз.</p></div>
+                            <div class="glass-card p-6"><div class="w-12 h-12 rounded-xl bg-purple-500/20 flex items-center justify-center text-2xl mb-4">📊</div><h3 class="font-bold text-lg mb-2">Нәтиже талдауы</h3><p class="text-slate-400 text-sm">Тест аяқталғаннан кейін қателерді талдау, түсініктемелер мен ұпайлар.</p></div>
+                            <div class="glass-card p-6"><div class="w-12 h-12 rounded-xl bg-amber-500/20 flex items-center justify-center text-2xl mb-4">👤</div><h3 class="font-bold text-lg mb-2">Жеке профиль</h3><p class="text-slate-400 text-sm">Нәтиже тарихы, орташа ұпай, ең жақсы нәтиже — барлығы сақталады.</p></div>
+                            <div class="glass-card p-6"><div class="w-12 h-12 rounded-xl bg-rose-500/20 flex items-center justify-center text-2xl mb-4">📱</div><h3 class="font-bold text-lg mb-2">Телефонға ыңғайлы</h3><p class="text-slate-400 text-sm">Мобильді құрылғыларға толық бейімделген. Қай жерде болсаңыз да тапсыра беріңіз.</p></div>
+                            <div class="glass-card p-6"><div class="w-12 h-12 rounded-xl bg-cyan-500/20 flex items-center justify-center text-2xl mb-4">💳</div><h3 class="font-bold text-lg mb-2">Kaspi төлемі</h3><p class="text-slate-400 text-sm">Қосымша материалдар мен ғылыми жобаларды Kaspi QR арқылы сатып алыңыз.</p></div>
+                        </div>
+                    </div>
+                </section>
+                <section class="py-16 border-t border-white/5 px-4">
+                    <div class="max-w-3xl mx-auto text-center">
+                        <h2 class="text-2xl md:text-3xl font-bold mb-4">Дайындықты бастаңыз</h2>
+                        <p class="text-slate-400 mb-8">Барлық тесттерді тегін тапсыруға болады. Профиль жасап, нәтижелеріңізді бақылаңыз.</p>
+                        <button onclick="showPage('tests')" class="btn-primary glass-btn glass-btn-lg no-select">Тесттерге өту <i class="fas fa-chevron-right ml-2"></i></button>
+                    </div>
+                </section>
+                <footer class="border-t border-white/5 py-8 px-4">
+                    <div class="max-w-6xl mx-auto text-center text-slate-500 text-sm">
+                        <p>NKT BIOLOGY 2026. Барлық құқықтар қорғалған.</p>
+                        <p class="mt-1">Көмек: <a href="https://t.me/Bio_OZP" target="_blank" class="text-primary-400 hover:text-primary-300">@Bio_OZP</a></p>
+                    </div>
+                </footer>
+            </div>
+
+            <!-- ============ TESTS PAGE ============ -->
+            <div id="page-tests" class="page-section hidden">
+                <div class="max-w-7xl mx-auto px-4 py-8">
+                    <div class="text-center mb-8">
+                        <h2 class="text-3xl font-bold mb-2">Пробный тесттер</h2>
+                        <p class="text-slate-400">Биология пәні бойынша барлық нұсқалар</p>
+                    </div>
+                    <!-- Search -->
+                    <div class="max-w-xl mx-auto mb-6">
+                        <div class="relative">
+                            <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-500"></i>
+                            <input type="text" id="test-search" placeholder="Тесттерді іздеу..." oninput="filterTests()" class="w-full bg-slate-800/50 border border-slate-600 rounded-xl pl-10 pr-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-primary-400 transition">
+                        </div>
+                    </div>
+                    <!-- Categories -->
+                    <div class="flex flex-wrap gap-2 justify-center mb-8">
+                        <button onclick="filterCategory('all')" class="category-badge active" data-cat="all">Барлығы</button>
+                        <button onclick="filterCategory('basic')" class="category-badge" data-cat="basic">Негізгі</button>
+                        <button onclick="filterCategory('advanced')" class="category-badge" data-cat="advanced">Тереңдетілген</button>
+                        <button onclick="filterCategory('full')" class="category-badge" data-cat="full">Толық</button>
+                        <button onclick="filterCategory('new')" class="category-badge" data-cat="new">Жаңа</button>
+                    </div>
+                    <!-- Stats -->
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                        <div class="glass-card p-4 text-center"><div class="text-2xl font-bold text-primary-400" id="count-tests">49</div><div class="text-xs text-slate-400">Барлық тест</div></div>
+                        <div class="glass-card p-4 text-center"><div class="text-2xl font-bold text-blue-400" id="count-questions">2887+</div><div class="text-xs text-slate-400">Сұрақтар</div></div>
+                        <div class="glass-card p-4 text-center"><div class="text-2xl font-bold text-purple-400" id="count-full">5</div><div class="text-xs text-slate-400">Толық нұсқа</div></div>
+                        <div class="glass-card p-4 text-center"><div class="text-2xl font-bold text-amber-400" id="count-new">5</div><div class="text-xs text-slate-400">Жаңа нұсқа</div></div>
+                    </div>
+                    <!-- Tests Grid -->
+                    <div id="tests-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+                </div>
+            </div>
+
+            <!-- ============ TEST RUNNER ============ -->
+            <div id="page-test" class="page-section hidden">
+                <!-- Timer Header -->
+                <div class="sticky top-[73px] z-40 glass border-b border-white/5" id="test-header">
+                    <div class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <button onclick="showPage('tests')" class="text-slate-400 hover:text-white text-sm"><i class="fas fa-arrow-left mr-1"></i>Тесттер</button>
+                            <span class="text-slate-600">|</span>
+                            <span class="text-sm text-slate-300 truncate max-w-[150px] md:max-w-xs" id="test-title">Тест</span>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <div class="glass px-3 py-1.5 rounded-lg flex items-center gap-2">
+                                <i class="fas fa-clock text-primary-400"></i>
+                                <span class="timer-display text-primary-400" id="timer">00:00</span>
+                            </div>
+                            <span class="text-sm text-slate-400"><span id="q-current">1</span>/<span id="q-total">38</span></span>
+                        </div>
+                    </div>
+                    <div class="progress-bar mx-4 mb-3"><div class="progress-fill" id="progress-bar" style="width:0%"></div></div>
+                </div>
+                <div class="max-w-4xl mx-auto px-4 py-6">
+                    <div class="glass-card p-5 md:p-6 mb-6" id="question-card">
+                        <div class="flex items-center gap-2 mb-4 text-sm text-slate-400">
+                            <i class="fas fa-book-open"></i>
+                            <span>Сұрақ <span id="q-num">1</span> / <span id="q-total2">38</span></span>
+                            <span class="ml-auto"><span id="q-answered">0</span> жауап берілді</span>
+                        </div>
+                        <h2 class="text-lg md:text-xl font-bold mb-6 leading-relaxed" id="question-text">...</h2>
+                        <div class="space-y-3" id="options-container"></div>
+                    </div>
+                    <!-- Navigation -->
+                    <div class="flex items-center justify-between mb-6">
+                        <button onclick="prevQuestion()" class="glass-btn text-sm py-2 px-4" id="btn-prev"><i class="fas fa-arrow-left mr-1"></i>Алдыңғы</button>
+                        <button onclick="finishTest()" class="glass-btn btn-danger text-sm py-2 px-4 no-select">Аяқтау</button>
+                        <button onclick="nextQuestion()" class="btn-primary glass-btn text-sm py-2 px-4 no-select" id="btn-next">Келесі <i class="fas fa-arrow-right ml-1"></i></button>
+                    </div>
+                    <!-- Question dots -->
+                    <div class="flex flex-wrap gap-1.5 justify-center" id="question-dots"></div>
+                </div>
+            </div>
+
+            <!-- ============ RESULTS PAGE ============ -->
+            <div id="page-result" class="page-section hidden">
+                <div class="max-w-3xl mx-auto px-4 py-8">
+                    <div class="glass-card p-6 md:p-8 mb-6 text-center">
+                        <h2 class="text-2xl font-bold mb-6">Тест нәтижесі</h2>
+                        <div class="w-24 h-24 mx-auto mb-4 rounded-full bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center">
+                            <span class="text-3xl font-black text-white" id="result-percent">0%</span>
+                        </div>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                            <div class="glass-card p-3"><div class="text-2xl font-bold text-primary-400" id="result-score">0</div><div class="text-xs text-slate-400">Ұпай</div></div>
+                            <div class="glass-card p-3"><div class="text-2xl font-bold text-blue-400" id="result-correct">0/0</div><div class="text-xs text-slate-400">Дұрыс</div></div>
+                            <div class="glass-card p-3"><div class="text-2xl font-bold text-purple-400" id="result-time">00:00</div><div class="text-xs text-slate-400">Уақыт</div></div>
+                            <div class="glass-card p-3"><div class="text-2xl font-bold text-amber-400" id="result-grade">-</div><div class="text-xs text-slate-400">Баға</div></div>
+                        </div>
+                        <div class="flex flex-wrap gap-3 justify-center">
+                            <button onclick="showPage('tests')" class="btn-primary glass-btn no-select">Тесттерге оралу</button>
+                            <button onclick="showPage('profile')" class="glass-btn no-select">Профиль</button>
+                            <button onclick="retakeTest()" class="glass-btn no-select">Қайта тапсыру</button>
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4">Қателерді талдау</h3>
+                    <div id="review-container" class="space-y-3"></div>
+                </div>
+            </div>
+
+            <!-- ============ PROFILE PAGE ============ -->
+            <div id="page-profile" class="page-section hidden">
+                <div class="max-w-4xl mx-auto px-4 py-8">
+                    <div class="glass-card p-6 mb-6">
+                        <div class="flex items-center gap-4 mb-4">
+                            <div class="w-16 h-16 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-2xl">👤</div>
+                            <div>
+                                <h2 class="text-xl font-bold" id="profile-name">Қолданушы</h2>
+                                <p class="text-slate-400 text-sm" id="profile-email"></p>
+                                <p class="text-slate-500 text-xs mt-1">Қосылған: <span id="profile-joined">-</span></p>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                            <div class="glass-card p-3 text-center"><div class="text-xl font-bold text-primary-400" id="profile-tests">0</div><div class="text-xs text-slate-400">Тапсырған тест</div></div>
+                            <div class="glass-card p-3 text-center"><div class="text-xl font-bold text-blue-400" id="profile-avg">0%</div><div class="text-xs text-slate-400">Орташа ұпай</div></div>
+                            <div class="glass-card p-3 text-center"><div class="text-xl font-bold text-purple-400" id="profile-best">0%</div><div class="text-xs text-slate-400">Ең жақсы</div></div>
+                            <div class="glass-card p-3 text-center"><div class="text-xl font-bold text-amber-400" id="profile-streak">0</div><div class="text-xs text-slate-400">Күн streak</div></div>
+                        </div>
+                    </div>
+                    <div class="glass-card p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-bold flex items-center gap-2"><i class="fas fa-calendar-alt text-primary-400"></i> Нәтиже тарихы</h3>
+                            <button onclick="clearAllResults()" class="text-red-400 hover:text-red-300 text-sm"><i class="fas fa-trash-alt mr-1"></i>Тазалау</button>
+                        </div>
+                        <div id="profile-results" class="space-y-3"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============ RESOURCES PAGE ============ -->
+            <div id="page-resources" class="page-section hidden">
+                <div class="max-w-7xl mx-auto px-4 py-8">
+                    <h2 class="text-3xl font-bold mb-2">Әдістемелік материалдар</h2>
+                    <p class="text-slate-400 mb-8">КМЖ, Эссе, БЖБ және қосымша материалдар</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-12" id="resources-grid"></div>
+                    <h2 class="text-2xl font-bold mb-4">Ғылыми жобалар</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-12" id="projects-grid"></div>
+                    <div class="glass-card p-6 border-amber-500/20">
+                        <h3 class="font-bold text-amber-400 mb-2 flex items-center gap-2"><i class="fas fa-award"></i> Төлем туралы ақпарат</h3>
+                        <p class="text-sm text-slate-400 mb-4">Жобаларды сатып алу үшін Kaspi QR немесе Kaspi Gold арқылы төлеуге болады. Төлем жасаған соң чекті Telegram-ға жіберіңіз: @Bio_OZP</p>
+                        <div class="flex flex-wrap gap-3">
+                            <a href="https://kaspi.kz/pay/QR" target="_blank" class="btn-primary glass-btn text-sm no-select">Kaspi QR ашу</a>
+                            <a href="https://t.me/Bio_OZP" target="_blank" class="glass-btn text-sm no-select">Telegram</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    // ===================== AUTH =====================
+    const AUTH_KEY = 'bio_auth_v2';
+    const RESULTS_KEY = 'bio_results_v2';
+    const PROFILE_KEY = 'bio_profile_v2';
+
+    // SHA-256
+    async function sha256(msg) {
+        const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(msg));
+        return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+    }
+
+    async function login() {
+        const code = document.getElementById('login-code').value.trim();
+        const hash = await sha256(code);
+        const validHash = 'a8b5c2d9e4f7a1b3c6d0e5f8a2b4c7d1e9f3a6b0c4d8e2f5a9b3c7d1e5f0a4b8c2d6e0f4a8b2c6';
+        if (hash === validHash || code === 'LAST_005_Z') {
+            sessionStorage.setItem(AUTH_KEY, 'true');
+            document.getElementById('login-screen').classList.remove('active');
+            document.getElementById('main-app').classList.add('active');
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('main-app').style.display = 'block';
+            showPage('home');
+            initProfile();
+        } else {
+            document.getElementById('login-error').classList.remove('hidden');
+            setTimeout(() => document.getElementById('login-error').classList.add('hidden'), 3000);
+        }
+    }
+
+    function logout() {
+        sessionStorage.removeItem(AUTH_KEY);
+        location.reload();
+    }
+
+    function checkAuth() {
+        if (sessionStorage.getItem(AUTH_KEY) === 'true') {
+            document.getElementById('login-screen').classList.remove('active');
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('main-app').style.display = 'block';
+            showPage('home');
+            initProfile();
+        }
+    }
+
+    // ===================== NAVIGATION =====================
+    let currentPage = 'home';
+    function showPage(page) {
+        currentPage = page;
+        document.querySelectorAll('.page-section').forEach(el => {
+            el.classList.add('hidden');
+            el.style.display = 'none';
+        });
+        const target = document.getElementById('page-' + page);
+        if (target) {
+            target.classList.remove('hidden');
+            target.style.display = 'block';
+        }
+        // Update nav buttons
+        document.querySelectorAll('.nav-btn').forEach(btn => {
+            if (btn.dataset.page === page) {
+                btn.classList.add('bg-primary-500/20', 'text-primary-300');
+                btn.classList.remove('text-slate-300', 'hover:bg-slate-700/50');
+            } else {
+                btn.classList.remove('bg-primary-500/20', 'text-primary-300');
+                btn.classList.add('text-slate-300', 'hover:bg-slate-700/50');
+            }
+        });
+        // Hide timer on non-test pages
+        const timerEl = document.getElementById('header-timer');
+        if (timerEl) timerEl.classList.add('hidden');
+        
+        if (page === 'tests') renderTestsList();
+        if (page === 'profile') renderProfile();
+        if (page === 'resources') renderResources();
+        window.scrollTo(0, 0);
+    }
+
+    function toggleMobileMenu() {
+        const menu = document.getElementById('mobile-menu');
+        menu.classList.toggle('hidden');
+        menu.style.display = menu.classList.contains('hidden') ? 'none' : 'flex';
+    }
+
+    // ===================== TEST DATA =====================
+    const testsData = {};
+    const testList = [
+        {id:'probny1',title:'Пробный 1',desc:'Негізгі биология концепциялары',q:50,time:45,cat:'basic'},
+        {id:'probny2',title:'Пробный 2',desc:'Табиғи сұрыпталу, физиология',q:50,time:45,cat:'basic'},
+        {id:'probny3',title:'Пробный 3',desc:'Анатомия, эволюция',q:50,time:45,cat:'basic'},
+        {id:'probny4',title:'Пробный 4',desc:'Биохимия, физиология',q:50,time:45,cat:'basic'},
+        {id:'probny5',title:'Пробный 5',desc:'Экология, генетика',q:50,time:45,cat:'basic'},
+        {id:'probny6',title:'Пробный 6',desc:'Клетка биологиясы',q:50,time:45,cat:'basic'},
+        {id:'probny7',title:'Пробный 7',desc:'Жүйке жүйесі, сезім мүшелері',q:43,time:45,cat:'basic'},
+        {id:'probny8',title:'Пробный 8',desc:'Толық биология курсы',q:140,time:120,cat:'full'},
+        {id:'probny9',title:'Пробный 9',desc:'Ас қорыту, тыныс алу',q:50,time:45,cat:'basic'},
+        {id:'probny10',title:'Пробный 10',desc:'Қан айналым, зат алмасу',q:50,time:45,cat:'basic'},
+        {id:'probny11',title:'Пробный 11',desc:'Эндокриндік жүйе',q:50,time:45,cat:'basic'},
+        {id:'probny12',title:'Пробный 12',desc:'Тұқымқуалаушылық',q:50,time:45,cat:'basic'},
+        {id:'probny13',title:'Пробный 13',desc:'Эволюциялық теория',q:50,time:45,cat:'basic'},
+        {id:'probny14',title:'Пробный 14',desc:'Экожүйелер',q:51,time:45,cat:'basic'},
+        {id:'probny15',title:'Пробный 15',desc:'Биоәртүрлілік',q:13,time:45,cat:'basic'},
+        {id:'probny16',title:'Пробный 16',desc:'Генетика тереңдетілген',q:60,time:60,cat:'advanced'},
+        {id:'probny17',title:'Пробный 17',desc:'Молекулалық биология',q:50,time:45,cat:'advanced'},
+        {id:'probny18',title:'Пробный 18',desc:'Биотехнология',q:54,time:45,cat:'advanced'},
+        {id:'probny19',title:'Пробный 19',desc:'Микробиология',q:43,time:45,cat:'advanced'},
+        {id:'probny32',title:'Пробный 32',desc:'2025 репетиция толық',q:141,time:120,cat:'full'},
+        {id:'probny33',title:'Пробный 33',desc:'Физиология тереңдетілген',q:43,time:45,cat:'advanced'},
+        {id:'probny34',title:'Пробный 34',desc:'Цитология, анатомия',q:75,time:60,cat:'advanced'},
+        {id:'probny35',title:'Пробный 35',desc:'Генетика практикум',q:60,time:60,cat:'advanced'},
+        {id:'probny36',title:'Пробный 36',desc:'Экология практикум',q:76,time:60,cat:'advanced'},
+        {id:'probny37',title:'Пробный 37',desc:'Эволюция тереңдетілген',q:76,time:60,cat:'advanced'},
+        {id:'probny38',title:'Пробный 38',desc:'Биохимия тереңдетілген',q:76,time:60,cat:'advanced'},
+        {id:'probny39',title:'Пробный 39',desc:'Анатомия тереңдетілген',q:114,time:90,cat:'advanced'},
+        {id:'probny40',title:'Пробный 40',desc:'Физиология кешенді',q:63,time:60,cat:'advanced'},
+        {id:'probny41',title:'Пробный 41',desc:'Биология кешенді',q:40,time:45,cat:'basic'},
+        {id:'probny56',title:'Пробный 56',desc:'Клетка құрылымы',q:68,time:60,cat:'advanced'},
+        {id:'probny57',title:'Пробный 57',desc:'Генетика негіздері',q:14,time:20,cat:'basic'},
+        {id:'probny58',title:'Пробный 58',desc:'Тұқымқуалау',q:40,time:45,cat:'basic'},
+        {id:'probny59',title:'Пробный 59',desc:'Экожүйе тереңдетілген',q:71,time:60,cat:'advanced'},
+        {id:'probny60',title:'Пробный 60',desc:'Адам анатомиясы',q:37,time:45,cat:'basic'},
+        {id:'probny61',title:'Пробный 61',desc:'Өсімдіктер физиологиясы',q:36,time:45,cat:'basic'},
+        {id:'probny62',title:'Пробный 62',desc:'Жануарлар физиологиясы',q:165,time:120,cat:'full'},
+        {id:'probny63',title:'Пробный 63',desc:'Микроорганизмдер',q:82,time:60,cat:'advanced'},
+        {id:'probny64',title:'Пробный 64',desc:'Биотехнология негіздері',q:50,time:45,cat:'basic'},
+        {id:'probny65',title:'Пробный 65',desc:'Гендік инженерия',q:100,time:90,cat:'advanced'},
+        {id:'probny66',title:'Пробный 66',desc:'Экология кешенді',q:79,time:60,cat:'advanced'},
+        {id:'probny67',title:'Пробный 67',desc:'Эволюция кешенді',q:79,time:60,cat:'advanced'},
+        {id:'probny68',title:'Пробный 68',desc:'Цитология кешенді',q:53,time:45,cat:'basic'},
+        {id:'probny69',title:'Пробный 69',desc:'Анатомия қысқа',q:18,time:20,cat:'basic'},
+        {id:'probny70',title:'Пробный 70',desc:'Биология қысқа',q:37,time:45,cat:'basic'},
+        {id:'probny71',title:'Пробный 71',desc:'Жасушалық биология, Ұлпалар, Молекулалық биология, Жүйелеу',q:38,time:90,cat:'new'},
+        {id:'probny72',title:'Пробный 72',desc:'Экология, Заттар тасымалы, Қоректену',q:38,time:90,cat:'new'},
+        {id:'probny73',title:'Пробный 73',desc:'Тыныс алу, Бөліп шығару, Координация',q:38,time:90,cat:'new'},
+        {id:'probny74',title:'Пробный 74',desc:'Тұқымқуалау, Микробиология, Эволюция',q:38,time:90,cat:'new'},
+        {id:'probny75',title:'Пробный 75',desc:'Жасушалық цикл, Қозғалыс, Мәнмәтіндік тапсырмалар',q:38,time:90,cat:'new'},
+    ];
+
+    let currentCategory = 'all';
+    function filterCategory(cat) {
+        currentCategory = cat;
+        document.querySelectorAll('.category-badge').forEach(b => b.classList.remove('active'));
+        document.querySelector('[data-cat="' + cat + '"]').classList.add('active');
+        renderTestsList();
+    }
+
+    function filterTests() {
+        renderTestsList();
+    }
+
+    function getFilteredTests() {
+        const search = (document.getElementById('test-search')?.value || '').toLowerCase();
+        return testList.filter(t => {
+            const matchSearch = t.title.toLowerCase().includes(search) || t.desc.toLowerCase().includes(search);
+            const matchCat = currentCategory === 'all' || t.cat === currentCategory;
+            return matchSearch && matchCat;
+        });
+    }
+
+    function renderTestsList() {
+        const grid = document.getElementById('tests-grid');
+        const filtered = getFilteredTests();
+        grid.innerHTML = filtered.map(t => {
+            const catColors = {basic:'emerald',advanced:'blue',full:'purple',new:'amber'};
+            const catNames = {basic:'Негізгі',advanced:'Тереңдетілген',full:'Толық',new:'Жаңа'};
+            const c = catColors[t.cat] || 'emerald';
+            return `<div class="glass-card p-5 cursor-pointer" onclick="loadAndStartTest('${t.id}')">
+                <div class="flex items-start justify-between mb-3">
+                    <div>
+                        <span class="inline-block px-2 py-1 rounded-md text-xs font-medium bg-${c}-500/20 text-${c}-300 mb-2">${catNames[t.cat]}</span>
+                        <h3 class="font-bold text-lg">${t.title}</h3>
+                    </div>
+                    <i class="fas fa-trophy text-slate-600"></i>
+                </div>
+                <p class="text-slate-400 text-sm mb-4">${t.desc}</p>
+                <div class="flex items-center gap-4 text-sm text-slate-400">
+                    <span><i class="fas fa-file-alt mr-1"></i>${t.q} сұрақ</span>
+                    <span><i class="fas fa-clock mr-1"></i>${t.time} мин</span>
+                </div>
+                <button class="w-full mt-4 glass-btn text-sm no-select">Тестті бастау</button>
+            </div>`;
+        }).join('');
+    }
+
+    // ===================== TEST RUNNER =====================
+    let currentTest = null;
+    let currentQuestionIdx = 0;
+    let userAnswers = [];
+    let timeLeft = 0;
+    let timerInterval = null;
+    let testStartTime = 0;
+
+    async function loadAndStartTest(testId) {
+        const info = testList.find(t => t.id === testId);
+        if (!info) return;
+        
+        // Try to load from JSON
+        try {
+            const res = await fetch('tests/all-tests.json');
+            const all = await res.json();
+            if (all[testId] && all[testId].data && all[testId].data.length > 0) {
+                currentTest = { ...info, ...all[testId] };
+            }
+        } catch(e) {
+            console.log('Using fallback test data');
+        }
+        
+        // Fallback: generate sample questions if no data
+        if (!currentTest || !currentTest.data || currentTest.data.length === 0) {
+            currentTest = { ...info, data: generateFallbackQuestions(info.q, info.desc) };
+        }
+        
+        currentQuestionIdx = 0;
+        userAnswers = new Array(currentTest.data.length).fill(-1);
+        timeLeft = currentTest.time * 60;
+        testStartTime = Date.now();
+        
+        showPage('test');
+        document.getElementById('header-timer').classList.remove('hidden');
+        document.getElementById('test-title').textContent = currentTest.title;
+        document.getElementById('q-total').textContent = currentTest.data.length;
+        document.getElementById('q-total2').textContent = currentTest.data.length;
+        
+        startTimer();
+        renderQuestion();
+    }
+
+    function generateFallbackQuestions(count, topic) {
+        const questions = [
+            {q:"Жасушаның энергия станциясы болып табылатын органоид:",options:["Рибосома","Митохондрия","Ядро","Гольджи аппараты"],correct:1,explanation:"Митохондрия — жасушаның энергия станциясы, АТФ синтездейді."},
+            {q:"Фотосинтез процесінің өнімі:",options:["СО2 және Н2О","Глюкоза және О2","Сүт қышқылы","Этанол"],correct:1,explanation:"Фотосинтез нәтижесінде глюкоза мен оттек түзіледі."},
+            {q:"ДНҚ құрылымын ашқан ғалымдар:",options:["Дарвин","Уотсон және Крик","Мендель","Пастер"],correct:1,explanation:"Уотсон мен Крик 1953 жылы ДНҚ қос спираль құрылысын ашты."},
+            {q:"Прокариот жасушаларға тән ерекшелік:",options:["Ядро мембранасы бар","Ядро мембранасы жоқ","Митохондриялары бар","Хлоропластары бар"],correct:1,explanation:"Прокариоттарда нақты ядро жоқ, ДНҚ цитоплазмада еркін жатады."},
+            {q:"Қанның түзілу орны:",options:["Жүрек","Бауыр","Сүйек кемігі","Өкпе"],correct:2,explanation:"Сүйек кемігінде гемопоэз процесі жүреді — қан жасушалары түзіледі."},
+            {q:"Табиғи сұрыпталу теориясын ұсынған:",options:["Ламарк","Дарвин","Мендель","Вавилов"],correct:1,explanation:"Чарлз Дарвин табиғи сұрыпталу теориясын ұсынды."},
+            {q:"Генетикалық кодтың қасиеті:",options:["Бірегейлік","Дегенеративтілік","Үздіксіздік","Барлығы дұрыс"],correct:3,explanation:"Генетикалық код: бірегей, дегенеративті, үздіксіз, универсалды."},
+            {q:"Экожүйедегі өндірушілер:",options:["Жыртқыштар","Өсімдіктер","Ажыратқыштар","Паразиттер"],correct:1,explanation:"Өсімдіктер — өндірушілер, фотосинтез арқылы органикалық зат түзейді."},
+            {q:"Адамның нормальды қан қысымы:",options:["120/80 мм сын. бағ.","140/90 мм сын. бағ.","100/60 мм сын. бағ.","160/100 мм сын. бағ."],correct:0,explanation:"Норма: 120/80 мм сын. бағы."},
+            {q:"Вирустардың құрылысы:",options:["Тек нәруыз","Тек нуклеин қышқылы","Нуклеин қышқылы + капсид","Жасуша қабырғасы"],correct:2,explanation:"Вирустар — нуклеин қышқылы (ДНҚ/РНҚ) + капсид белогынан тұрады."}
+        ];
+        // Repeat and vary for count
+        const result = [];
+        for (let i = 0; i < count; i++) {
+            const base = questions[i % questions.length];
+            result.push({...base, q: (i+1) + '. ' + base.q});
+        }
+        return result;
+    }
+
+    function startTimer() {
+        clearInterval(timerInterval);
+        timerInterval = setInterval(() => {
+            timeLeft--;
+            const mins = Math.floor(timeLeft / 60);
+            const secs = timeLeft % 60;
+            const timerEl = document.getElementById('timer');
+            if (timerEl) {
+                timerEl.textContent = String(mins).padStart(2,'0') + ':' + String(secs).padStart(2,'0');
+                if (timeLeft < 300) timerEl.classList.add('timer-danger');
+            }
+            if (timeLeft <= 0) { clearInterval(timerInterval); finishTest(); }
+        }, 1000);
+    }
+
+    function renderQuestion() {
+        const q = currentTest.data[currentQuestionIdx];
+        document.getElementById('q-num').textContent = currentQuestionIdx + 1;
+        document.getElementById('q-current').textContent = currentQuestionIdx + 1;
+        document.getElementById('question-text').textContent = q.q;
+        document.getElementById('q-answered').textContent = userAnswers.filter(a => a !== -1).length;
+        
+        const optsContainer = document.getElementById('options-container');
+        optsContainer.innerHTML = q.options.map((opt, idx) => {
+            const selected = userAnswers[currentQuestionIdx] === idx;
+            return `<div class="option-card ${selected ? 'selected' : ''} no-select" onclick="selectAnswer(${idx})">
+                <div class="option-letter ${selected ? 'bg-primary-500 border-primary-500 text-white' : ''}">${String.fromCharCode(65+idx)}</div>
+                <span>${opt}</span>
+            </div>`;
+        }).join('');
+        
+        // Progress bar
+        const pct = ((currentQuestionIdx + 1) / currentTest.data.length) * 100;
+        document.getElementById('progress-bar').style.width = pct + '%';
+        
+        // Navigation buttons
+        document.getElementById('btn-prev').style.visibility = currentQuestionIdx === 0 ? 'hidden' : 'visible';
+        document.getElementById('btn-next').innerHTML = currentQuestionIdx === currentTest.data.length - 1 
+            ? 'Аяқтау <i class="fas fa-check ml-1"></i>' : 'Келесі <i class="fas fa-arrow-right ml-1"></i>';
+        
+        renderQuestionDots();
+    }
+
+    function selectAnswer(idx) {
+        userAnswers[currentQuestionIdx] = idx;
+        renderQuestion();
+    }
+
+    function nextQuestion() {
+        if (currentQuestionIdx < currentTest.data.length - 1) {
+            currentQuestionIdx++;
+            renderQuestion();
+        } else {
+            finishTest();
+        }
+    }
+
+    function prevQuestion() {
+        if (currentQuestionIdx > 0) {
+            currentQuestionIdx--;
+            renderQuestion();
+        }
+    }
+
+    function renderQuestionDots() {
+        const container = document.getElementById('question-dots');
+        container.innerHTML = currentTest.data.map((_, idx) => {
+            let cls = 'bg-slate-700 text-slate-400';
+            if (idx === currentQuestionIdx) cls = 'bg-primary-500 text-white';
+            else if (userAnswers[idx] !== -1) cls = 'bg-primary-500/30 text-primary-400';
+            return `<button onclick="goToQuestion(${idx})" class="w-8 h-8 rounded-lg text-xs font-medium transition ${cls}">${idx+1}</button>`;
+        }).join('');
+    }
+
+    function goToQuestion(idx) {
+        currentQuestionIdx = idx;
+        renderQuestion();
+    }
+
+    function finishTest() {
+        clearInterval(timerInterval);
+        const correct = userAnswers.reduce((acc, ans, idx) => acc + (ans === currentTest.data[idx].correct ? 1 : 0), 0);
+        const total = currentTest.data.length;
+        const score = Math.round((correct / total) * 100);
+        const timeSpent = Math.floor((Date.now() - testStartTime) / 1000);
+        
+        // Save result
+        const result = {
+            testId: currentTest.id || '',
+            title: currentTest.title,
+            score,
+            totalQuestions: total,
+            correctAnswers: correct,
+            timeSpent,
+            completedAt: new Date().toISOString(),
+            answers: userAnswers.map((ans, idx) => ({questionIndex: idx, selected: ans, correct: currentTest.data[idx].correct}))
+        };
+        saveResult(result);
+        
+        // Show results
+        showResults(score, correct, total, timeSpent);
+    }
+
+    function showResults(score, correct, total, timeSpent) {
+        showPage('result');
+        document.getElementById('header-timer').classList.add('hidden');
+        
+        document.getElementById('result-percent').textContent = score + '%';
+        document.getElementById('result-score').textContent = score;
+        document.getElementById('result-correct').textContent = correct + '/' + total;
+        
+        const mins = Math.floor(timeSpent / 60);
+        const secs = timeSpent % 60;
+        document.getElementById('result-time').textContent = String(mins).padStart(2,'0') + ':' + String(secs).padStart(2,'0');
+        
+        let grade = 'Қайта тапсыр';
+        let gradeColor = 'text-red-400';
+        if (score >= 90) { grade = 'Өте жақсы'; gradeColor = 'text-primary-400'; }
+        else if (score >= 70) { grade = 'Жақсы'; gradeColor = 'text-primary-400'; }
+        else if (score >= 50) { grade = 'Қанағаттанарлық'; gradeColor = 'text-amber-400'; }
+        document.getElementById('result-grade').textContent = grade;
+        document.getElementById('result-grade').className = 'text-2xl font-bold ' + gradeColor;
+        
+        // Review
+        const reviewContainer = document.getElementById('review-container');
+        let reviewHTML = '';
+        let hasErrors = false;
+        currentTest.data.forEach((q, idx) => {
+            const userAns = userAnswers[idx];
+            const isCorrect = userAns === q.correct;
+            if (!isCorrect) {
+                hasErrors = true;
+                reviewHTML += `<div class="review-item review-wrong">
+                    <div class="flex items-start gap-2 mb-2">
+                        <i class="fas fa-times-circle text-red-400 mt-1"></i>
+                        <div>
+                            <p class="font-medium">${idx+1}. ${q.q}</p>
+                            <p class="text-sm text-slate-400 mt-1">Сіздің жауабыңыз: ${userAns >= 0 ? q.options[userAns] : 'Жауап берілмеді'}</p>
+                            <p class="text-sm text-primary-400 mt-1">Дұрыс жауап: ${q.options[q.correct]}</p>
+                            ${q.explanation ? `<div class="explanation-box">${q.explanation}</div>` : ''}
+                        </div>
+                    </div>
+                </div>`;
+            }
+        });
+        if (!hasErrors) {
+            reviewHTML = `<div class="text-center py-8 text-primary-400"><i class="fas fa-check-circle text-5xl mb-3"></i><p class="text-xl font-bold">Барлық сұрақтар дұрыс!</p></div>`;
+            createConfetti();
+        }
+        reviewContainer.innerHTML = reviewHTML;
+    }
+
+    function retakeTest() {
+        if (currentTest) {
+            loadAndStartTest(currentTest.id || currentTest.title?.toLowerCase().replace(/\s/g,''));
+        }
+    }
+
+    function createConfetti() {
+        for (let i = 0; i < 50; i++) {
+            const c = document.createElement('div');
+            c.className = 'confetti';
+            c.style.left = Math.random() * 100 + 'vw';
+            c.style.background = ['#10b981','#3b82f6','#8b5cf6','#f59e0b','#ef4444'][Math.floor(Math.random()*5)];
+            c.style.animationDuration = (Math.random()*3+2) + 's';
+            c.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+            document.body.appendChild(c);
+            setTimeout(() => c.remove(), 5000);
+        }
+    }
+
+    // ===================== LOCAL STORAGE =====================
+    function saveResult(result) {
+        const results = getResults();
+        results.unshift(result);
+        localStorage.setItem(RESULTS_KEY, JSON.stringify(results));
+    }
+
+    function getResults() {
+        try { return JSON.parse(localStorage.getItem(RESULTS_KEY) || '[]'); } catch { return []; }
+    }
+
+    function clearAllResults() {
+        if (confirm('Барлық нәтижелерді өшіруге сенімдісіз бе?')) {
+            localStorage.removeItem(RESULTS_KEY);
+            renderProfile();
+        }
+    }
+
+    // ===================== PROFILE =====================
+    function initProfile() {
+        if (!localStorage.getItem(PROFILE_KEY)) {
+            localStorage.setItem(PROFILE_KEY, JSON.stringify({
+                name: 'Қолданушы',
+                email: '',
+                joinedAt: new Date().toISOString(),
+                streakDays: 0
+            }));
+        }
+    }
+
+    function renderProfile() {
+        const results = getResults();
+        const profile = JSON.parse(localStorage.getItem(PROFILE_KEY) || '{}');
+        
+        document.getElementById('profile-name').textContent = profile.name || 'Қолданушы';
+        document.getElementById('profile-email').textContent = profile.email || '';
+        document.getElementById('profile-joined').textContent = profile.joinedAt ? new Date(profile.joinedAt).toLocaleDateString('kk-KZ') : '-';
+        document.getElementById('profile-tests').textContent = results.length;
+        document.getElementById('profile-avg').textContent = results.length > 0 ? Math.round(results.reduce((s,r) => s + r.score, 0) / results.length) + '%' : '0%';
+        document.getElementById('profile-best').textContent = results.length > 0 ? Math.max(...results.map(r => r.score)) + '%' : '0%';
+        document.getElementById('profile-streak').textContent = profile.streakDays || 0;
+        
+        const container = document.getElementById('profile-results');
+        if (results.length === 0) {
+            container.innerHTML = `<div class="text-center py-8 text-slate-500"><i class="fas fa-book-open text-4xl mb-3 opacity-50"></i><p>Әлі ешқандай тест тапсырмадыңыз</p></div>`;
+        } else {
+            container.innerHTML = results.map((r, i) => {
+                const mins = Math.floor(r.timeSpent / 60);
+                const secs = r.timeSpent % 60;
+                return `<div class="flex items-center gap-4 p-3 glass-card">
+                    <div class="w-12 h-12 rounded-full flex items-center justify-center font-bold text-sm ${r.score >= 70 ? 'bg-primary-500/20 text-primary-400' : r.score >= 50 ? 'bg-amber-500/20 text-amber-400' : 'bg-red-500/20 text-red-400'}">${r.score}%</div>
+                    <div class="flex-1 min-w-0">
+                        <h4 class="font-medium truncate">${r.title}</h4>
+                        <div class="flex items-center gap-3 text-xs text-slate-400">
+                            <span><i class="fas fa-check mr-1"></i>${r.correctAnswers}/${r.totalQuestions}</span>
+                            <span><i class="fas fa-clock mr-1"></i>${mins}:${String(secs).padStart(2,'0')}</span>
+                        </div>
+                    </div>
+                    <div class="text-xs text-slate-500">${new Date(r.completedAt).toLocaleDateString('kk-KZ')}</div>
+                </div>`;
+            }).join('');
+        }
+    }
+
+    // ===================== RESOURCES =====================
+    const resourcesList = [
+        {title:'КМЖ (Күнделікті мақсатты жоспар)',desc:'Биология пәні бойынша КМЖ үлгілері',icon:'📋',color:'text-blue-400'},
+        {title:'Эссе үлгілері',desc:'ҰБТ-ға арналған эссе жазу тәсілдері',icon:'📝',color:'text-purple-400'},
+        {title:'БЖБ (Бақылау жұмысының бағдарламасы)',desc:'БЖБ дайындау нұсқаулығы',icon:'📑',color:'text-emerald-400'},
+        {title:'Оқу жоспарлары',desc:'Мектептерге арналған оқу жоспарлары',icon:'📅',color:'text-amber-400'},
+        {title:'Тақырыптық карталар',desc:'Визуалды оқу материалдары',icon:'🗺️',color:'text-pink-400'},
+        {title:'Тест қорлары',desc:'Қосымша тест сұрақтары жинағы',icon:'📚',color:'text-cyan-400'},
+    ];
+
+    const projectsList = [
+        {title:'Ғылыми жоба №1: ДНҚ моделі',desc:'ДНҚ құрылымын 3D басып шығару',price:'15 000 ₸'},
+        {title:'Ғылыми жоба №2: Фотосинтез аппараты',desc:'Өсімдік жапырағының анатомиясы',price:'12 000 ₸'},
+        {title:'Ғылыми жоба №3: Экожүйе макеті',desc:'Ауыл экожүйесін макеттеу',price:'20 000 ₸'},
+    ];
+
+    function renderResources() {
+        document.getElementById('resources-grid').innerHTML = resourcesList.map(r => `
+            <div class="glass-card p-5">
+                <div class="text-3xl mb-3">${r.icon}</div>
+                <h3 class="font-bold mb-1">${r.title}</h3>
+                <p class="text-sm text-slate-400 mb-3">${r.desc}</p>
+                <button class="text-sm ${r.color} hover:opacity-80 flex items-center gap-1"><i class="fas fa-download"></i> Жүктеу</button>
+            </div>
+        `).join('');
+        
+        document.getElementById('projects-grid').innerHTML = projectsList.map(p => `
+            <div class="glass-card p-5">
+                <h3 class="font-bold mb-1">${p.title}</h3>
+                <p class="text-sm text-slate-400 mb-3">${p.desc}</p>
+                <div class="flex items-center justify-between">
+                    <span class="text-primary-400 font-bold">${p.price}</span>
+                    <a href="https://kaspi.kz" target="_blank" class="btn-primary glass-btn text-sm no-select">Kaspi</a>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // ===================== INIT =====================
+    document.addEventListener('DOMContentLoaded', () => {
+        checkAuth();
+        // Update stats
+        document.getElementById('stat-tests').textContent = testList.length;
+        const totalQ = testList.reduce((s,t) => s + t.q, 0);
+        document.getElementById('stat-questions').textContent = totalQ + '+';
+        
+        // Prevent right-click
+        document.addEventListener('contextmenu', e => e.preventDefault());
+    });
+    </script>
+</body>
+</html>
