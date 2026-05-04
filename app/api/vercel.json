@@ -1,0 +1,24 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/ai/chat",
+      "destination": "/api/ai/chat.ts"
+    },
+    {
+      "source": "/api/ai/generate-tests",
+      "destination": "/api/ai/generate-tests.ts"
+    },
+    {
+      "source": "/api/(.*)",
+      "destination": "/api/$1"
+    }
+  ],
+  "functions": {
+    "api/ai/chat.ts": {
+      "maxDuration": 30
+    },
+    "api/ai/generate-tests.ts": {
+      "maxDuration": 30
+    }
+  }
+}
