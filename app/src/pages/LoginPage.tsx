@@ -1,91 +1,136 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
-import { sha256, generateToken } from "@/lib/auth";
-import { setAuthToken } from "@/lib/storage";
-import { Lock, Eye, EyeOff } from "lucide-react";
+import { Microscope, Lock, ArrowRight, ShieldCheck } from "lucide-react";
+
+const ACCESS_CODE = "NKT2026"; // 🔐 Сіздің кіріс кодыңыз
+const COOKIE_NAME = "nkt_access";
+
+function getCookie(name: string): string | null {
+  const match = document.cookie.match(new RegExp("(^| )" + name + "=([^;]+)"));
+  return match ? match[2] : null;
+}
+
+function setCookie(name: string, value: string, days: number) {
+  const date = new Date();
+  date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+  document.cookie = `${name}=${value};expires=${date.toUTCString()};path=/;SameSite=Strict`;
+}
+
+export function isAuthenticated(): boolean {
+  return getCookie(COOKIE_NAME) === ACCESS_CODE || localStorage.getItem("nkt_auth") === "true";
+}
+
+export function clearAuth() {
+  document.cookie = `${COOKIE_NAME}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;`;
+  localStorage.removeItem("nkt_auth");
+}
 
 export default function LoginPage() {
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const [code, setCode] = useState("");
+  const [error, setError] = useState("");
+  const [showSuccess, setShowSuccess] = useState(false);
 
-  const handleLogin = async (e: React.FormEvent) => {
+  // Егер уже кірген болса — басты бетке жіберу
+  useEffect(() => {
+    if (isAuthenticated()) {
+      navigate("/");
+    }
+  }, [navigate]);
+
+  const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
     setError("");
 
-    const hash = await sha256(password);
-    // Server-side validation hash
-    const validHash = "a8b5c2d9e4f7a1b3c6d0e5f8a2b4c7d1e9f3a6b0c4d8e2f5a9b3c7d1e5f0a4b8c2d6e0f4a8b2c6";
-    
-    if (hash === validHash || password === "LAST_005_Z") {
-      const token = generateToken();
-      setAuthToken(token);
-      sessionStorage.setItem("bio_auth", "true");
-      navigate("/");
-    } else {
-      setError("Қате код! Көмек алу үшін @Bio_OZP Telegram-ға жазыңыз.");
+    if (!code.trim()) {
+      setError("Кодты жазыңыз");
+      return;
     }
-    setLoading(false);
+
+    if (code.trim() === ACCESS_CODE) {
+      // ✅ Дұрыс код — 7 күн сақтау
+      setCookie(COOKIE_NAME, ACCESS_CODE, 7);
+      localStorage.setItem("nkt_auth", "true");
+      setShowSuccess(true);
+      setTimeout(() => navigate("/"), 1000);
+    } else {
+      // ❌ Қате код
+      setError("Қате код! Кодты тексеріп, қайта жазыңыз.");
+    }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-800 p-4">
-      <div className="w-full max-w-md bg-white/10 backdrop-blur-lg rounded-2xl p-8 border border-white/20 shadow-2xl">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 flex items-center justify-center px-4">
+      <div className="w-full max-w-md">
+        {/* Бренд */}
         <div className="text-center mb-8">
-          <div className="w-16 h-16 bg-gradient-to-br from-green-400 to-emerald-600 rounded-xl flex items-center justify-center mx-auto mb-4">
-            <Lock className="w-8 h-8 text-white" />
+          <div className="w-16 h-16 bg-gradient-to-br from-emerald-400 to-green-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-emerald-500/20">
+            <Microscope className="w-8 h-8 text-white" />
           </div>
-          <h1 className="text-2xl font-bold text-white">NKT BIOLOGY 2026</h1>
-          <p className="text-white/60 mt-2">Кіру кодын енгізіңіз</p>
+          <h1 className="text-2xl font-bold text-white">NKT BIOLOGY</h1>
+          <p className="text-white/50 text-sm mt-1">2026 ОЗП дайындық</p>
         </div>
 
-        <form onSubmit={handleLogin} className="space-y-4">
-          <div className="relative">
-            <input
-              type={showPassword ? "text" : "password"}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Жеке код"
-              className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-emerald-400 pr-12"
-            />
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-white"
-            >
-              {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-            </button>
+        {/* Кіру карточкасы */}
+        <div className="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-xl">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-10 h-10 bg-emerald-500/20 rounded-xl flex items-center justify-center">
+              <Lock className="w-5 h-5 text-emerald-400" />
+            </div>
+            <div>
+              <h2 className="font-semibold text-white">Кіру коды</h2>
+              <p className="text-xs text-white/40">Сайтқа өту үшін кодты енгізіңіз</p>
+            </div>
           </div>
 
-          {error && (
-            <div className="p-3 bg-red-500/20 border border-red-500/30 rounded-xl text-red-200 text-sm">
-              {error}
+          {showSuccess ? (
+            <div className="text-center py-6">
+              <ShieldCheck className="w-12 h-12 text-emerald-400 mx-auto mb-3" />
+              <p className="text-emerald-400 font-medium">Код дұрыс!</p>
+              <p className="text-white/40 text-sm">Басты бетке өтудеміз...</p>
             </div>
+          ) : (
+            <form onSubmit={handleLogin} className="space-y-4">
+              <div>
+                <label className="block text-xs text-white/40 mb-2">Кодты енгізіңіз</label>
+                <input
+                  type="password"
+                  value={code}
+                  onChange={(e) => setCode(e.target.value)}
+                  placeholder="Мысалы: NKT2026"
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-white/20 outline-none focus:border-emerald-500/50 focus:bg-white/[0.07] transition text-center tracking-widest font-mono"
+                  autoFocus
+                />
+              </div>
+
+              {error && (
+                <div className="bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3 text-red-400 text-sm text-center">
+                  {error}
+                </div>
+              )}
+
+              <button
+                type="submit"
+                className="w-full py-3 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl font-semibold transition flex items-center justify-center gap-2"
+              >
+                <ArrowRight className="w-5 h-5" />
+                Кіру
+              </button>
+            </form>
           )}
+        </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full py-3 bg-gradient-to-r from-emerald-500 to-green-600 text-white rounded-xl font-semibold hover:from-emerald-600 hover:to-green-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {loading ? "Тексерілуде..." : "Кіру"}
-          </button>
-        </form>
-
-        <div className="mt-6 text-center">
-          <a
-            href="https://t.me/Bio_OZP"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-emerald-400 hover:text-emerald-300 text-sm"
-          >
-            Код алу үшін Telegram-ға жазыңыз
-          </a>
+        {/* Көмек */}
+        <div className="text-center mt-6">
+          <p className="text-white/30 text-xs">
+            Код алу үшін: Telegram @Bio_OZP
+          </p>
+          <p className="text-white/20 text-xs mt-1">
+            Код 7 күн бойы сақталады
+          </p>
         </div>
       </div>
     </div>
   );
 }
+
