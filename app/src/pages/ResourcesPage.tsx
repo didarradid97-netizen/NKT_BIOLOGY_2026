@@ -1,14 +1,20 @@
 import { useNavigate } from "react-router";
 import Navbar from "@/components/Navbar";
-import { BookOpen, ArrowLeft, ExternalLink, FileText, Video } from "lucide-react";
+import { BookOpen, ArrowLeft, ExternalLink, FileText, Video, Download, Award } from "lucide-react";
 
-const materials = [
-  { title: "Клетка биологиясы", type: "PDF", url: "#" },
-  { title: "Генетика негіздері", type: "PDF", url: "#" },
-  { title: "Экология тақырыптары", type: "PDF", url: "#" },
-  { title: "Эволюция теориясы", type: "PDF", url: "#" },
-  { title: "Физиология негіздері", type: "PDF", url: "#" },
-  { title: "Биохимия қысқаша", type: "PDF", url: "#" },
+const RESOURCES = [
+  { title: "КМЖ (Күнделікті мақсатты жоспар)", desc: "Биология пәні бойынша КМЖ үлгілері", icon: FileText, color: "text-blue-400", bg: "bg-blue-500/10" },
+  { title: "Эссе үлгілері", desc: "ОЗП-ға арналған эссе жазу тәсілдері", icon: FileText, color: "text-purple-400", bg: "bg-purple-500/10" },
+  { title: "БЖБ (Бақылау жұмысы)", desc: "БЖБ дайындау нұсқаулығы", icon: FileText, color: "text-emerald-400", bg: "bg-emerald-500/10" },
+  { title: "Оқу жоспарлары", desc: "Мектептерге арналған оқу жоспарлары", icon: FileText, color: "text-amber-400", bg: "bg-amber-500/10" },
+  { title: "Тақырыптық карталар", desc: "Визуалды оқу материалдары", icon: FileText, color: "text-pink-400", bg: "bg-pink-500/10" },
+  { title: "Тест қорлары", desc: "Қосымша тест сұрақтары жинағы", icon: FileText, color: "text-cyan-400", bg: "bg-cyan-500/10" },
+];
+
+const PROJECTS = [
+  { title: "Ғылыми жоба №1: ДНҚ моделі", desc: "ДНҚ құрылымын 3D басып шығару", price: "15 000 ₸" },
+  { title: "Ғылыми жоба №2: Фотосинтез аппараты", desc: "Өсімдік жапырағының анатомиясы", price: "12 000 ₸" },
+  { title: "Ғылыми жоба №3: Экожүйе макеті", desc: "Ауыл экожүйесін макеттеу", price: "20 000 ₸" },
 ];
 
 export default function ResourcesPage() {
@@ -18,7 +24,7 @@ export default function ResourcesPage() {
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 text-white">
       <Navbar />
 
-      <div className="max-w-4xl mx-auto px-4 py-8">
+      <main className="max-w-7xl mx-auto px-4 py-8">
         <button
           onClick={() => navigate("/")}
           className="flex items-center gap-2 text-white/60 hover:text-white mb-6 transition"
@@ -27,36 +33,75 @@ export default function ResourcesPage() {
           Артқа
         </button>
 
-        <div className="text-center mb-12">
-          <h1 className="text-3xl md:text-4xl font-bold mb-4">Материалдар</h1>
-          <p className="text-white/60">ОЗП-ға дайындыққа қажетті барлық материалдар</p>
-        </div>
-
-        <div className="grid md:grid-cols-2 gap-4">
-          {materials.map((material) => (
-            <a
-              key={material.title}
-              href={material.url}
-              className="bg-white/5 border border-white/10 rounded-2xl p-6 flex items-center gap-4 hover:bg-white/10 transition group"
-            >
-              <div className="w-12 h-12 bg-emerald-500/20 rounded-xl flex items-center justify-center flex-shrink-0">
-                {material.type === "PDF" ? (
-                  <FileText className="w-6 h-6 text-emerald-400" />
-                ) : (
-                  <Video className="w-6 h-6 text-emerald-400" />
-                )}
+        {/* Resources */}
+        <h1 className="text-2xl md:text-3xl font-bold mb-6">Әдістемелік материалдар</h1>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-12">
+          {RESOURCES.map((res, i) => (
+            <div key={i} className="bg-white/5 rounded-xl p-5 border border-white/10 hover:border-white/20 transition group">
+              <div className={`w-10 h-10 ${res.bg} rounded-lg flex items-center justify-center mb-3`}>
+                <res.icon className={`w-5 h-5 ${res.color}`} />
               </div>
-              <div className="flex-1">
-                <h3 className="font-semibold mb-1">{material.title}</h3>
-                <span className="text-xs text-white/50 bg-white/5 px-2 py-1 rounded-lg">
-                  {material.type}
-                </span>
-              </div>
-              <ExternalLink className="w-5 h-5 text-white/30 group-hover:text-white/60 transition" />
-            </a>
+              <h3 className="font-bold mb-1">{res.title}</h3>
+              <p className="text-sm text-white/50 mb-3">{res.desc}</p>
+              <button className="text-sm text-emerald-400 hover:text-emerald-300 flex items-center gap-1 transition">
+                <Download className="w-4 h-4" /> Жүктеу
+              </button>
+            </div>
           ))}
         </div>
 
+        {/* Projects */}
+        <h2 className="text-xl md:text-2xl font-bold mb-4">Ғылыми жобалар</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-12">
+          {PROJECTS.map((proj, i) => (
+            <div key={i} className="bg-white/5 rounded-xl p-5 border border-white/10">
+              <h3 className="font-bold mb-1">{proj.title}</h3>
+              <p className="text-sm text-white/50 mb-3">{proj.desc}</p>
+              <div className="flex items-center justify-between">
+                <span className="text-emerald-400 font-bold">{proj.price}</span>
+                <a
+                  href="https://kaspi.kz"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-3 py-1.5 bg-emerald-500 text-white rounded-lg text-sm hover:bg-emerald-600 transition"
+                >
+                  Kaspi арқылы төлеу
+                </a>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Payment Info */}
+        <div className="bg-amber-500/10 rounded-xl p-6 border border-amber-500/20">
+          <h3 className="font-bold text-amber-400 mb-2 flex items-center gap-2">
+            <Award className="w-5 h-5" /> Төлем туралы ақпарат
+          </h3>
+          <p className="text-sm text-white/60 mb-4">
+            Жобаларды сатып алу үшін Kaspi QR немесе Kaspi Gold арқылы төлеуге болады.
+            Төлем жасаған соң чекті Telegram-ға жіберіңіз: @Bio_OZP
+          </p>
+          <div className="flex flex-wrap gap-3">
+            <a
+              href="https://kaspi.kz/pay/QR"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-4 py-2 bg-amber-500 text-white rounded-lg text-sm hover:bg-amber-600 transition"
+            >
+              Kaspi QR ашу
+            </a>
+            <a
+              href="https://t.me/Bio_OZP"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-4 py-2 bg-white/10 text-white rounded-lg text-sm hover:bg-white/20 transition flex items-center gap-1"
+            >
+              <ExternalLink className="w-4 h-4" /> Telegram
+            </a>
+          </div>
+        </div>
+
+        {/* Footer CTA */}
         <div className="mt-12 bg-white/5 border border-white/10 rounded-2xl p-8 text-center">
           <BookOpen className="w-12 h-12 text-emerald-400 mx-auto mb-4" />
           <h2 className="text-xl font-bold mb-2">Толық оқулық</h2>
@@ -65,7 +110,8 @@ export default function ResourcesPage() {
             Жүктеу
           </button>
         </div>
-      </div>
+      </main>
     </div>
   );
 }
+
