@@ -1,22 +1,59 @@
-export async function sha256(message: string): Promise<string> {
-  const encoder = new TextEncoder();
-  const data = encoder.encode(message);
-  const hashBuffer = await crypto.subtle.digest("SHA-256", data);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  return hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
+// ============================================
+// 🔐 КОД ДОСТУП ЖҮЙЕСІ (Cookie + LocalStorage)
+// ============================================
+
+const ACCESS_CODE = "NKT2026"; // Сіз өзгерте аласыз
+const COOKIE_NAME = "nkt_access";
+const AUTH_KEY = "nkt_auth";
+
+// Cookie Utils
+function getCookie(name: string): string | null {
+  const match = document.cookie.match(new RegExp("(^| )" + name + "=([^;]+)"));
+  return match ? match[2] : null;
 }
 
-// Hashed password for "LAST_005_Z" - backend validated, not stored in plain text
-const VALID_HASH = "7e4f8d2c9a1b5e3f6c0d4a8b2e5f9c3d1a7b4e0f8c2d6a9b3e7f1c5d0a4b8e2f6c";
-
-export async function checkPassword(password: string): Promise<boolean> {
-  const hash = await sha256(password);
-  return hash === VALID_HASH;
+function setCookie(name: string, value: string, days: number) {
+  const date = new Date();
+  date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+  document.cookie = `${name}=${value};expires=${date.toUTCString()};path=/;SameSite=Strict`;
 }
 
-// Generate a random access token for the session
-export function generateToken(): string {
-  return Array.from(crypto.getRandomValues(new Uint8Array(32)))
-    .map(b => b.toString(16).padStart(2, "0"))
-    .join("");
+export function isAuthenticated(): boolean {
+  const cookie = getCookie(COOKIE_NAME);
+  const local = localStorage.getItem(AUTH_KEY);
+  return cookie === ACCESS_CODE || local === "true";
+}
+
+export function authenticateWithCode(code: string): boolean {
+  if (code.trim() === ACCESS_CODE) {
+    setCookie(COOKIE_NAME, ACCESS_CODE, 7); // 7 күн
+    localStorage.setItem(AUTH_KEY, "true");
+    return true;
+  }
+  return false;
+}
+
+export function clearAuth() {
+  document.cookie = `${COOKIE_NAME}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;`;
+  localStorage.removeItem(AUTH_KEY);
+}
+
+// Eski storage.ts function compatibility
+export function saveResult(result: any) {
+  try {
+    const key = "bio_results";
+    const existing = JSON.parse(localStorage.getItem(key) || "[]");
+    existing.push(result);
+    localStorage.setItem(key, JSON.stringify(existing));
+  } catch {
+    // ignore
+  }
+}
+
+export function getResults(): any[] {
+  try {
+    return JSON.parse(localStorage.getItem("bio_results") || "[]");
+  } catch {
+    return [];
+  }
 }
