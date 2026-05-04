@@ -24,7 +24,7 @@ interface Message {
 }
 
 // ✅ Groq API тікелей фронтендтен шақыру
-const GROQ_API_KEY = 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;
+const GROQ_API_KEY = process.env.REACT_APP_GROQ_API_KEY;
 
 async function askGroq(messages: { role: string; content: string }[]): Promise<string> {
   if (!GROQ_API_KEY) {
