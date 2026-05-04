@@ -1,7 +1,14 @@
 // ============================================
 // 💾 Storage + 🔐 Auth (Re-export from auth.ts)
 // ============================================
-export { isAuthenticated, clearAuth, authenticateWithCode, saveResult, getResults } from "./auth";
+
+// 🔄 Auth функцияларын auth.ts-тен қайта экспорттау
+// Ескі кодтар (@/lib/storage) және жаңа кодтар (@/lib/auth) екеуі де жұмыс істейді
+export {
+  isAuthenticated,
+  authenticateWithCode,
+  clearAuth,
+} from "./auth";
 
 // Тест нәтижелерін сақтау
 export interface TestResult {
