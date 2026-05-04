@@ -1,33 +1,58 @@
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-
-    if (!process.env.GROQ_API_KEY) {
-      return Response.json({ error: "API key жоқ" }, { status: 500 });
+    
+    // API кілт бар ма тексеру
+    if (!process.env.GEMINI_API_KEY) {
+      return Response.json(
+        { error: "API кілт табылмады" }, 
+        { status: 500 }
+      );
     }
 
-    const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${process.env.GROQ_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: body.model || "llama-3.3-70b-versatile",
-        messages: body.messages,
-        temperature: body.temperature || 0.7,
-      }),
-    });
+    const userMessage = body.messages?.at(-1)?.content || "";
+
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contents: [{
+            parts: [{ 
+              text: "Сен биология мұғалімісің. Қазақша жауап бер. Сұрақ: " + userMessage 
+            }]
+          }]
+        }),
+      }
+    );
 
     if (!response.ok) {
-      const err = await response.json();
-      return Response.json({ error: err }, { status: response.status });
+      return Response.json(
+        { error: "AI сервисі қате қайтарды" }, 
+        { status: 502 }
+      );
     }
 
     const data = await response.json();
-    return Response.json(data);
+    const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+
+    if (!text) {
+      return Response.json(
+        { error: "Жауап алынбады" }, 
+        { status: 502 }
+      );
+    }
+
+    // Groq форматына сәйкес қайтару
+    return Response.json({
+      choices: [{ message: { content: text } }]
+    });
 
   } catch (error) {
-    return Response.json({ error: "Сервер қатесі" }, { status: 500 });
+    return Response.json(
+      { error: "Сервер қатесі" }, 
+      { status: 500 }
+    );
   }
 }
