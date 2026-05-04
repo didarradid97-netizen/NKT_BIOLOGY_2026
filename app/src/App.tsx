@@ -13,6 +13,7 @@ import TestCreator from "@/pages/TestCreator";
 import AITestGenerator from "@/pages/AITestGenerator";
 import MyTests from "@/pages/MyTests";
 import CustomTestRunner from "@/pages/CustomTestRunner";
+import SearchQuestions from "@/pages/SearchQuestions";
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
       <Route path="/ai-test-generator" element={<AITestGenerator />} />
       <Route path="/my-tests" element={<MyTests />} />
       <Route path="/custom-test/:testId" element={<CustomTestRunner />} />
+      <Route path="/search" element={<SearchQuestions />} />
 
       <Route path="*" element={<NotFound />} />
     </Routes>
@@ -38,3 +40,4 @@ function App() {
 }
 
 export default App;
+
