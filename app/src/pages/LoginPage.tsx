@@ -94,12 +94,15 @@ export default function LoginPage() {
               <div>
                 <label className="block text-xs text-white/40 mb-2">Кодты енгізіңіз</label>
                 <input
+                  id="access-code"
+                  name="access-code"
                   type="password"
                   value={code}
                   onChange={(e) => setCode(e.target.value)}
                   placeholder="Мысалы: NKT2026"
                   className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-white/20 outline-none focus:border-emerald-500/50 focus:bg-white/[0.07] transition text-center tracking-widest font-mono"
                   autoFocus
+                  autoComplete="off"
                 />
               </div>
 
@@ -133,4 +136,5 @@ export default function LoginPage() {
     </div>
   );
 }
+
 
