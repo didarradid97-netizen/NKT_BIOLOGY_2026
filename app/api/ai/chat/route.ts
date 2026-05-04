@@ -6,59 +6,51 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
 
-    const apiKey = process.env.ANTHROPIC_API_KEY;
+    const apiKey = process.env.GROQ_API_KEY;
     if (!apiKey) {
       return NextResponse.json(
-        { error: "ANTHROPIC_API_KEY табылмады" },
+        { error: "GROQ_API_KEY табылмады" },
         { status: 500 }
       );
     }
 
-    // Хабарламаларды дайындау
     const messages = (body.messages || []).map((m: { role: string; content: string }) => ({
       role: m.role === "user" ? "user" : "assistant",
       content: m.content,
     }));
 
-    const response = await fetch("https://api.anthropic.com/v1/messages", {
+    const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
       headers: {
-        "x-api-key": apiKey,
-        "anthropic-version": "2023-06-01",
-        "content-type": "application/json",
+        "Authorization": `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "claude-haiku-4-5-20251001",
+        model: "llama-3.3-70b-versatile",
+        messages: [
+          {
+            role: "system",
+            content: "Сен NKT мектебінің биология мұғалімісің. Оқушыларға қазақ тілінде түсінікті, қысқа және нақты жауап бер.",
+          },
+          ...messages,
+        ],
+        temperature: 0.7,
         max_tokens: 1024,
-        system:
-          "Сен NKT мектебінің биология мұғалімісің. Оқушыларға қазақ тілінде түсінікті, қысқа және нақты жауап бер. Биология тақырыптары: клетка, генетика, фотосинтез, эволюция, экология.",
-        messages,
       }),
     });
 
     if (!response.ok) {
       const err = await response.json();
-      console.error("Anthropic қатесі:", err);
+      console.error("Groq қатесі:", err);
       return NextResponse.json(
-        { error: "AI сервисі қате қайтарды", details: err },
+        { error: "Groq қате қайтарды", details: err },
         { status: 502 }
       );
     }
 
     const data = await response.json();
-    const text = data.content?.[0]?.text ?? "Жауап алынбады";
+    return NextResponse.json(data);
 
-    // Groq форматымен сәйкес қайтару (фронтенд өзгертпеу үшін)
-    return NextResponse.json({
-      choices: [
-        {
-          message: {
-            role: "assistant",
-            content: text,
-          },
-        },
-      ],
-    });
   } catch (error) {
     console.error("route.ts қатесі:", error);
     return NextResponse.json(
