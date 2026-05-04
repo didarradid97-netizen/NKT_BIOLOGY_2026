@@ -86,8 +86,25 @@ export default function AITrainer() {
           data?.response ||
           "Кешіріңіз, уақытша жауап бере алмаймын.";
       } else {
-        // Fallback: егер backend жоқ болса, локалды жауап (offline режим)
-        assistantContent = getLocalResponse(userMsg.content);
+        // Backend қате қайтарды — қате себебін көрсету
+        let errorData;
+        try {
+          errorData = await response.json();
+        } catch {
+          errorData = {};
+        }
+
+        if (errorData?.error?.includes("GROQ_API_KEY")) {
+          assistantContent =
+            "⚠️ **GROQ_API_KEY орнатылмаған.**\n\nAdmin: `.env` файлына `GROQ_API_KEY=gsk_...` қосыңыз.\n\nУақытша локалды жауап:\n" +
+            getLocalResponse(userMsg.content);
+        } else {
+          assistantContent =
+            "⚠️ **Сервер қатесі** (" + response.status + ")\n\n" +
+            (errorData?.error || "Белгісіз қате") +
+            "\n\nУақытша локалды жауап:\n" +
+            getLocalResponse(userMsg.content);
+        }
       }
 
       const assistantMsg: Message = {
@@ -99,9 +116,12 @@ export default function AITrainer() {
       setMessages((prev) => [...prev, assistantMsg]);
       saveChatMessage(assistantMsg);
     } catch (err) {
+      // Fetch itself failed (network error, server down)
       const fallbackMsg: Message = {
         role: "assistant",
-        content: getLocalResponse(userMsg.content),
+        content:
+          "⚠️ **Серверге қосылу мүмкін болмады.**\n\nУақытша локалды жауап:\n" +
+          getLocalResponse(userMsg.content),
         timestamp: new Date().toISOString(),
       };
       setMessages((prev) => [...prev, fallbackMsg]);
