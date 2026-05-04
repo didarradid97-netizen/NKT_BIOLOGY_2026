@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useParams, useNavigate } from "react-router";
 import { isAuthenticated, saveResult, TestResult } from "@/lib/storage";
-import { getCustomTestById, CustomTest, CustomQuestion } from "@/lib/customTestStorage";
+import { getCustomTestById } from "@/lib/customTestStorage";
+import type { CustomTest, CustomQuestion } from "@/lib/customTestStorage";
 import { TestAnalysis } from "@/components/TestAnalysis";
 import {
   ArrowLeft,
