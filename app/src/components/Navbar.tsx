@@ -15,11 +15,13 @@ import {
   Menu,
   X,
   ChevronDown,
+  Search,
 } from "lucide-react";
 
 const mainLinks = [
   { path: "/", label: "Басты", icon: Home },
   { path: "/tests", label: "Тесттер", icon: FileText },
+  { path: "/search", label: "Іздеу", icon: Search },
 ];
 
 const testLinks = [
@@ -199,3 +201,4 @@ export default function Navbar() {
     </>
   );
 }
+
