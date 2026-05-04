@@ -1,0 +1,466 @@
+import { useState, useRef } from "react";
+import { useNavigate } from "react-router";
+import { isAuthenticated } from "@/lib/storage";
+import { saveCustomTest, CustomTest, CustomQuestion } from "@/lib/customTestStorage";
+import { parseFile } from "@/components/FileParser";
+import { useTilt } from "@/hooks/use3DEffects";
+import {
+  ArrowLeft,
+  Sparkles,
+  FileText,
+  Upload,
+  Loader2,
+  Save,
+  Check,
+  AlertCircle,
+  Wand2,
+} from "lucide-react";
+
+export default function AITestGenerator() {
+  const navigate = useNavigate();
+  const [source, setSource] = useState<"text" | "file">("text");
+  const [text, setText] = useState("");
+  const [file, setFile] = useState<File | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [generated, setGenerated] = useState<CustomTest | null>(null);
+  const [title, setTitle] = useState("");
+  const [category, setCategory] = useState("Негізгі");
+  const [timeLimit, setTimeLimit] = useState(30);
+  const [error, setError] = useState("");
+  const fileRef = useRef<HTMLInputElement>(null);
+  const { ref: cardRef, style: cardStyle } = useTilt(10);
+
+  if (!isAuthenticated()) {
+    navigate("/login");
+    return null;
+  }
+
+  const handleGenerate = async () => {
+    setError("");
+    setGenerated(null);
+
+    let content = "";
+    if (source === "text") {
+      if (!text.trim() || text.trim().length < 50) {
+        setError("Мәтін 50 таңбадан кем болмауы керек");
+        return;
+      }
+      content = text.trim();
+    } else {
+      if (!file) {
+        setError("Файл таңдаңыз");
+        return;
+      }
+      try {
+        content = await parseFile(file);
+      } catch (e) {
+        setError("Файлды оқу қатесі: " + (e as Error).message);
+        return;
+      }
+    }
+
+    setLoading(true);
+    try {
+      // Backend арқылы AI генерация
+      const response = await fetch("/api/ai/generate-tests", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          content,
+          count: 10,
+          model: "llama-3.3-70b-versatile",
+        }),
+      });
+
+      let questions: CustomQuestion[] = [];
+
+      if (response.ok) {
+        const data = await response.json();
+        questions = parseAIQuestions(data.questions || data.response || "");
+      } else {
+        // Fallback: мәтіннен автоматты сұрақ құру
+        questions = generateFromText(content);
+      }
+
+      if (questions.length === 0) {
+        setError("Сұрақтар генерацияланбады, мәтінді тексеріңіз");
+        setLoading(false);
+        return;
+      }
+
+      const test: CustomTest = {
+        id: "ai_" + Date.now(),
+        title: title || "AI генерацияланған тест",
+        description: `Мәтіннен генерацияланған: ${content.slice(0, 80)}...`,
+        category,
+        timeLimit,
+        questions,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+
+      setGenerated(test);
+    } catch (err) {
+      setError("Генерация қатесі. Backend тексеріңіз.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSave = () => {
+    if (!generated) return;
+    const final = { ...generated, title: title || generated.title };
+    saveCustomTest(final);
+    navigate("/my-tests");
+  };
+
+  return (
+    <div className="min-h-screen bg-[#0f172a] text-[#e2e8f0]">
+      <nav className="sticky top-0 z-50 bg-[#0f172a]/85 backdrop-blur-xl border-b border-white/[0.06]">
+        <div className="max-w-[1200px] mx-auto px-4 py-3 flex items-center justify-between">
+          <button
+            onClick={() => navigate("/")}
+            className="flex items-center gap-2 text-sm font-medium text-[#94a3b8] hover:text-[#6ee7b7] transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Артқа
+          </button>
+          <h1 className="font-bold text-lg bg-gradient-to-r from-[#a855f7] to-[#3b82f6] bg-clip-text text-transparent flex items-center gap-2">
+            <Sparkles className="w-5 h-5 text-[#a855f7]" />
+            AI Тест Генераторы
+          </h1>
+          <div className="w-16" />
+        </div>
+      </nav>
+
+      <div className="max-w-[900px] mx-auto px-4 py-8">
+        {!generated ? (
+          <div className="space-y-6">
+            {/* Source toggle */}
+            <div className="flex items-center gap-2 p-1 bg-white/[0.04] border border-white/[0.08] rounded-xl w-fit mx-auto">
+              <button
+                onClick={() => setSource("text")}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                  source === "text"
+                    ? "bg-[#10b981]/15 text-[#6ee7b7] border border-[#10b981]/25"
+                    : "text-[#64748b] hover:text-[#cbd5e1]"
+                }`}
+              >
+                <FileText className="w-4 h-4 inline mr-1" />
+                Мәтін
+              </button>
+              <button
+                onClick={() => setSource("file")}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                  source === "file"
+                    ? "bg-[#10b981]/15 text-[#6ee7b7] border border-[#10b981]/25"
+                    : "text-[#64748b] hover:text-[#cbd5e1]"
+                }`}
+              >
+                <Upload className="w-4 h-4 inline mr-1" />
+                Файл
+              </button>
+            </div>
+
+            {/* Input area */}
+            <div
+              ref={cardRef}
+              style={cardStyle}
+              className="bg-white/[0.04] border border-white/[0.08] rounded-2xl p-6 space-y-4"
+            >
+              {source === "text" ? (
+                <div>
+                  <label className="block text-xs text-[#64748b] mb-2">
+                    Биология мәтінін қойыңыз (теория, тақырып, оқулық үзіндісі)
+                  </label>
+                  <textarea
+                    value={text}
+                    onChange={(e) => setText(e.target.value)}
+                    placeholder="Мысалы: Фотосинтез — жарық энергиясын химиялық энергияға айналдыру процесі. Жасыл өсімдіктерде жүретін басты процесс..."
+                    rows={10}
+                    className="w-full bg-[#0f172a]/80 border border-white/[0.12] rounded-xl px-4 py-3 text-sm text-[#f1f5f9] placeholder-[#475569] outline-none focus:border-[#a855f7] focus:shadow-[0_0_0_3px_rgba(168,85,247,0.15)] resize-none"
+                  />
+                  <p className="text-xs text-[#475569] mt-1">
+                    {text.length} таңба • кемінде 50 таңба
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  <div
+                    onClick={() => fileRef.current?.click()}
+                    className="border-2 border-dashed border-white/[0.14] rounded-2xl p-8 text-center hover:border-[#a855f7]/40 hover:bg-white/[0.02] transition-all cursor-pointer"
+                  >
+                    <Upload className="w-10 h-10 text-[#475569] mx-auto mb-3" />
+                    <p className="text-sm text-[#cbd5e1] font-medium">
+                      {file ? file.name : "PDF, DOCX, TXT файлын жүктеңіз"}
+                    </p>
+                    <p className="text-xs text-[#475569] mt-1">
+                      {file ? `${(file.size / 1024).toFixed(1)} KB` : "Макс. 5MB"}
+                    </p>
+                  </div>
+                  <input
+                    ref={fileRef}
+                    type="file"
+                    accept=".txt,.pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain"
+                    className="hidden"
+                    onChange={(e) => setFile(e.target.files?.[0] || null)}
+                  />
+                </div>
+              )}
+
+              {/* Meta */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div>
+                  <label className="block text-xs text-[#64748b] mb-1">Тест атауы</label>
+                  <input
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    placeholder="Автоматты атау"
+                    className="w-full bg-[#0f172a]/80 border border-white/[0.12] rounded-xl px-4 py-2.5 text-sm text-[#f1f5f9] placeholder-[#475569] outline-none focus:border-[#a855f7]"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs text-[#64748b] mb-1">Санат</label>
+                  <select
+                    value={category}
+                    onChange={(e) => setCategory(e.target.value)}
+                    className="w-full bg-[#0f172a]/80 border border-white/[0.12] rounded-xl px-4 py-2.5 text-sm text-[#f1f5f9] outline-none focus:border-[#a855f7]"
+                  >
+                    {["Негізгі", "Тереңдетілген", "Толық", "Жаңа"].map((c) => (
+                      <option key={c} value={c} className="bg-[#0f172a]">
+                        {c}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs text-[#64748b] mb-1">Уақыт (мин)</label>
+                  <input
+                    type="number"
+                    min={1}
+                    max={120}
+                    value={timeLimit}
+                    onChange={(e) => setTimeLimit(Number(e.target.value))}
+                    className="w-full bg-[#0f172a]/80 border border-white/[0.12] rounded-xl px-4 py-2.5 text-sm text-[#f1f5f9] outline-none focus:border-[#a855f7]"
+                  />
+                </div>
+              </div>
+
+              {error && (
+                <div className="flex items-center gap-2 text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3">
+                  <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                  {error}
+                </div>
+              )}
+
+              <button
+                onClick={handleGenerate}
+                disabled={loading}
+                className="w-full py-3 rounded-xl bg-gradient-to-r from-[#a855f7] to-[#3b82f6] text-white font-semibold text-sm shadow-lg shadow-[#a855f7]/20 hover:shadow-[#a855f7]/30 flex items-center justify-center gap-2 transition-all active:scale-[0.98] disabled:opacity-50"
+              >
+                {loading ? (
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                ) : (
+                  <Wand2 className="w-5 h-5" />
+                )}
+                {loading ? "Генерациялауда..." : "AI генерациялау"}
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg font-bold text-[#e2e8f0]">
+                {generated.title} — {generated.questions.length} сұрақ
+              </h2>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setGenerated(null)}
+                  className="px-4 py-2 rounded-xl bg-white/[0.06] border border-white/[0.12] text-[#cbd5e1] text-sm font-medium hover:bg-white/[0.10] transition-all"
+                >
+                  Қайта
+                </button>
+                <button
+                  onClick={handleSave}
+                  className="px-5 py-2 rounded-xl bg-gradient-to-r from-[#10b981] to-[#059669] text-white text-sm font-semibold shadow-lg shadow-[#10b981]/20 hover:shadow-[#10b981]/30 flex items-center gap-2 transition-all active:scale-95"
+                >
+                  <Save className="w-4 h-4" />
+                  Сақтау
+                </button>
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              {generated.questions.map((q, i) => (
+                <div
+                  key={q.id}
+                  className="bg-white/[0.04] border border-white/[0.08] rounded-2xl p-4"
+                >
+                  <div className="flex items-start gap-3">
+                    <span className="flex-shrink-0 w-7 h-7 rounded-full bg-[#a855f7]/15 text-[#a78bfa] text-xs font-bold flex items-center justify-center border border-[#a855f7]/20">
+                      {i + 1}
+                    </span>
+                    <div className="flex-1 space-y-2">
+                      <p className="text-sm font-medium text-[#e2e8f0]">{q.text}</p>
+                      {q.image && (
+                        <img
+                          src={q.image}
+                          alt=""
+                          className="max-h-40 rounded-xl border border-white/[0.08]"
+                        />
+                      )}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2">
+                        {q.options.map((opt, j) => (
+                          <div
+                            key={j}
+                            className={`flex items-center gap-2 px-3 py-2 rounded-xl text-sm ${
+                              j === q.correctAnswer
+                                ? "bg-[#10b981]/10 border border-[#10b981]/30 text-[#6ee7b7]"
+                                : "bg-white/[0.03] border border-white/[0.06] text-[#94a3b8]"
+                            }`}
+                          >
+                            <span
+                              className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold ${
+                                j === q.correctAnswer
+                                  ? "bg-[#10b981] text-white"
+                                  : "bg-white/[0.08] text-[#64748b]"
+                              }`}
+                            >
+                              {String.fromCharCode(65 + j)}
+                            </span>
+                            {opt}
+                            {j === q.correctAnswer && (
+                              <Check className="w-3.5 h-3.5 ml-auto text-[#10b981]" />
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                      {q.explanation && (
+                        <p className="text-xs text-[#64748b] mt-2 bg-white/[0.03] rounded-lg p-2">
+                          <span className="text-[#a855f7] font-medium">Түсініктеме:</span>{" "}
+                          {q.explanation}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// Парсер AI жауабы
+function parseAIQuestions(raw: string | any[]): CustomQuestion[] {
+  if (Array.isArray(raw)) {
+    return raw
+      .filter((q) => q && q.text)
+      .map((q, i) => ({
+        id: "ai_q_" + i,
+        text: q.text || q.question || "",
+        image: q.image,
+        options: q.options || q.choices || q.answers || ["", "", "", ""],
+        correctAnswer: Math.max(0, Math.min(3, Number(q.correctAnswer) || 0)),
+        explanation: q.explanation || q.explain || "",
+      }));
+  }
+
+  if (typeof raw !== "string") return [];
+
+  const lines = raw.split(/\n/);
+  const questions: CustomQuestion[] = [];
+  let current: Partial<CustomQuestion> = {};
+  let options: string[] = [];
+
+  lines.forEach((line) => {
+    const qMatch = line.match(/^\s*(?:\d+\.\s*)?(?:Question|Сұрақ|Q)?\s*[:\.]?\s*(.+)/i);
+    const optMatch = line.match(/^\s*([A-Da-d])[\.\)]\s*(.+)/);
+    const correctMatch = line.match(/(?:Дұрыс|Correct|Answer)\s*[:\.]?\s*([A-Da-d]|\d)/i);
+    const explMatch = line.match(/(?:Түсініктеме|Explanation|Explain)\s*[:\.]?\s*(.+)/i);
+
+    if (qMatch && !optMatch) {
+      if (current.text) {
+        questions.push({
+          id: "ai_q_" + questions.length,
+          text: current.text || "",
+          options: options.length >= 2 ? options : ["", "", "", ""],
+          correctAnswer: Math.max(0, Math.min(3, current.correctAnswer || 0)),
+          explanation: current.explanation || "",
+        });
+      }
+      current = { text: qMatch[1].trim() };
+      options = [];
+    } else if (optMatch) {
+      options.push(optMatch[2].trim());
+    } else if (correctMatch) {
+      const ans = correctMatch[1].toUpperCase();
+      current.correctAnswer = ans.charCodeAt(0) - 65;
+    } else if (explMatch) {
+      current.explanation = explMatch[1].trim();
+    } else if (line.trim() && !current.text) {
+      current.text = line.trim();
+    }
+  });
+
+  if (current.text) {
+    questions.push({
+      id: "ai_q_" + questions.length,
+      text: current.text || "",
+      options: options.length >= 2 ? options : ["", "", "", ""],
+      correctAnswer: Math.max(0, Math.min(3, current.correctAnswer || 0)),
+      explanation: current.explanation || "",
+    });
+  }
+
+  return questions.filter((q) => q.text && q.options.length >= 2);
+}
+
+// Fallback: мәтіннен кілт сөздер бойынша сұрақ генерация
+function generateFromText(text: string): CustomQuestion[] {
+  const sentences = text
+    .replace(/[.!?]+/g, ".")
+    .split(".")
+    .map((s) => s.trim())
+    .filter((s) => s.length > 20 && s.length < 200);
+
+  const keywords = [
+    "фотосинтез",
+    "дымқылдану",
+    "жасуша",
+    "клетка",
+    "ядро",
+    "митохондрия",
+    "ДНҚ",
+    "ДНК",
+    "ген",
+    "эволюция",
+    "сұрыпталу",
+    "экология",
+    "био",
+    "қоректану",
+    "тыныс",
+    "қан",
+    "ас қорыту",
+  ];
+
+  const found = sentences.filter((s) =>
+    keywords.some((k) => s.toLowerCase().includes(k))
+  );
+
+  const picked = found.length >= 5 ? found.slice(0, 10) : sentences.slice(0, 10);
+
+  return picked.map((s, i) => {
+    const words = s.split(/\s+/).filter((w) => w.length > 4);
+    const distractors = words.length > 2 ? words.slice(0, 3) : ["нұсқа 1", "нұсқа 2", "нұсқа 3"];
+    return {
+      id: "auto_" + i,
+      text: s,
+      options: ["Дұрыс", ...distractors.map((w) => `${w} — қате`), "Белгісіз"].slice(0, 4),
+      correctAnswer: 0,
+      explanation: `Мәтіннен алынған: "${s.slice(0, 60)}..."`,
+    };
+  });
+}
