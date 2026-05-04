@@ -1,6 +1,9 @@
+// ============================================
+// 🤖 AI ЖАТТЫҚТЫРУШЫ (КАЗАХСКИЙ)
+// ============================================
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router";
-import { isAuthenticated } from "@/lib/storage";
+import { isAuthenticated } from "@/lib/auth";
 import { getChatHistory, saveChatMessage, clearChatHistory } from "@/lib/aiStorage";
 import { use3DCard } from "@/hooks/use3DEffects";
 import {
@@ -63,7 +66,6 @@ export default function AITrainer() {
     setLoading(true);
 
     try {
-      // Backend арқылы Groq API-ге жіберу (токен қауіпсіз!)
       const response = await fetch("/api/ai/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -86,7 +88,6 @@ export default function AITrainer() {
           data?.response ||
           "Кешіріңіз, уақытша жауап бере алмаймын.";
       } else {
-        // Backend қате қайтарды — қате себебін көрсету
         let errorData;
         try {
           errorData = await response.json();
@@ -116,7 +117,6 @@ export default function AITrainer() {
       setMessages((prev) => [...prev, assistantMsg]);
       saveChatMessage(assistantMsg);
     } catch (err) {
-      // Fetch itself failed (network error, server down)
       const fallbackMsg: Message = {
         role: "assistant",
         content:
