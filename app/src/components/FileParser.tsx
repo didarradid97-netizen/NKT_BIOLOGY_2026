@@ -11,13 +11,10 @@ export async function parseFile(file: File): Promise<string> {
   }
 
   if (ext === "pdf" || file.type === "application/pdf") {
-    // Frontend-те толық PDF парсинг қиын. Backend қолданыңыз немесе pdfjs-dist қосыңыз.
-    // Осында негізгі тексті алу үшін қарапайым тәсіл:
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = () => {
         const text = String(reader.result || "");
-        // PDF ішінен мәтінді бөліп алу (қарапайым heuristic)
         const cleaned = text
           .replace(/[^\x20-\x7E\xC0-\xFF\s]/g, " ")
           .replace(/\s+/g, " ")
@@ -26,7 +23,7 @@ export async function parseFile(file: File): Promise<string> {
         else
           reject(
             new Error(
-              "PDF мәтіні алынбады. Backend /api/parse/file endpoint жасаңыз немесе pdfjs-dist кітапханасын қосыңыз."
+              "PDF мәтіні алынбады. Backend /api/parse/file endpoint жасаңыз."
             )
           );
       };
@@ -36,26 +33,13 @@ export async function parseFile(file: File): Promise<string> {
   }
 
   if (ext === "docx" || file.type.includes("wordprocessingml")) {
-    // DOCX үшін mammoth.js кітапханасы қажет. Backend арқылы оңай.
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = async () => {
-        try {
-          // Егер mammoth орнатылған болса қолдануға болады
-          const mammoth = await import("mammoth");
-          const result = await mammoth.extractRawText({ arrayBuffer: reader.result as ArrayBuffer });
-          if (result.value && result.value.length > 20) resolve(result.value);
-          else reject(new Error("DOCX мәтіні бос"));
-        } catch {
-          reject(
-            new Error(
-              'DOCX оқу үшін "npm install mammoth" командасын орындаңыз'
-            )
-          );
-        }
-      };
-      reader.onerror = () => reject(new Error("DOCX оқу қатесі"));
-      reader.readAsArrayBuffer(file);
+    // mammoth кітапханасы қажет. Орнату: npm install mammoth
+    return new Promise((_resolve, reject) => {
+      reject(
+        new Error(
+          'DOCX оқу үшін терминалда "npm install mammoth" командасын орындаңыз, содан кейін қайта build жасаңыз.'
+        )
+      );
     });
   }
 
@@ -70,3 +54,4 @@ export function isSupportedFile(fileName: string): boolean {
   const ext = getFileExtension(fileName);
   return ["txt", "pdf", "docx"].includes(ext);
 }
+
