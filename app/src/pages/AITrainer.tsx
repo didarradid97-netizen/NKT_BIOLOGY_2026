@@ -23,6 +23,43 @@ interface Message {
   timestamp: string;
 }
 
+// ✅ Groq API тікелей фронтендтен шақыру
+const GROQ_API_KEY = import.meta.env.VITE_GROQ_API_KEY;
+
+async function askGroq(messages: { role: string; content: string }[]): Promise<string> {
+  if (!GROQ_API_KEY) {
+    throw new Error("VITE_GROQ_API_KEY табылмады");
+  }
+
+  const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${GROQ_API_KEY}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      model: "llama-3.3-70b-versatile",
+      messages: [
+        {
+          role: "system",
+          content: "Сен NKT мектебінің биология мұғалімісің. Оқушыларға қазақ тілінде түсінікті, қысқа және нақты жауап бер. Тақырыптар: жасуша, генетика, фотосинтез, эволюция, экология, физиология.",
+        },
+        ...messages,
+      ],
+      temperature: 0.7,
+      max_tokens: 1024,
+    }),
+  });
+
+  if (!response.ok) {
+    const err = await response.json();
+    throw new Error(err?.error?.message || "Groq қате қайтарды");
+  }
+
+  const data = await response.json();
+  return data.choices[0].message.content;
+}
+
 export default function AITrainer() {
   const navigate = useNavigate();
   const [messages, setMessages] = useState<Message[]>([]);
@@ -66,62 +103,22 @@ export default function AITrainer() {
     setLoading(true);
 
     try {
-      const response = await fetch("/api/ai/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          messages: newMessages.map((m) => ({
-            role: m.role,
-            content: m.content,
-          })),
-          model: "llama-3.3-70b-versatile",
-          temperature: 0.7,
-        }),
-      });
-
-      let assistantContent = "";
-
-      if (response.ok) {
-        const data = await response.json();
-        assistantContent =
-          data?.choices?.[0]?.message?.content ||
-          data?.response ||
-          "Кешіріңіз, уақытша жауап бере алмаймын.";
-      } else {
-        let errorData;
-        try {
-          errorData = await response.json();
-        } catch {
-          errorData = {};
-        }
-
-        if (errorData?.error?.includes("GROQ_API_KEY")) {
-          assistantContent =
-            "⚠️ **GROQ_API_KEY орнатылмаған.**\n\nAdmin: `.env` файлына `GROQ_API_KEY=gsk_...` қосыңыз.\n\nУақытша локалды жауап:\n" +
-            getLocalResponse(userMsg.content);
-        } else {
-          assistantContent =
-            "⚠️ **Сервер қатесі** (" + response.status + ")\n\n" +
-            (errorData?.error || "Белгісіз қате") +
-            "\n\nУақытша локалды жауап:\n" +
-            getLocalResponse(userMsg.content);
-        }
-      }
+      const content = await askGroq(
+        newMessages.map((m) => ({ role: m.role, content: m.content }))
+      );
 
       const assistantMsg: Message = {
         role: "assistant",
-        content: assistantContent,
+        content,
         timestamp: new Date().toISOString(),
       };
-
       setMessages((prev) => [...prev, assistantMsg]);
       saveChatMessage(assistantMsg);
-    } catch (err) {
+    } catch (err: unknown) {
+      const errorMsg = err instanceof Error ? err.message : "Белгісіз қате";
       const fallbackMsg: Message = {
         role: "assistant",
-        content:
-          "⚠️ **Серверге қосылу мүмкін болмады.**\n\nУақытша локалды жауап:\n" +
-          getLocalResponse(userMsg.content),
+        content: `⚠️ Қате: ${errorMsg}\n\n${getLocalResponse(userMsg.content)}`,
         timestamp: new Date().toISOString(),
       };
       setMessages((prev) => [...prev, fallbackMsg]);
@@ -134,16 +131,14 @@ export default function AITrainer() {
   const getLocalResponse = (question: string): string => {
     const q = question.toLowerCase();
     if (q.includes("клетка") || q.includes("жасуша"))
-      return "Жасуша — тірі ағзалардың құрылымдық және функционалдық негізгі бірлігі. Прокариоттық және эукариоттық жасушаларға бөлінеді. Негізгі органеллалары: ядро, митохондрия, рибосома, Гольджи аппараты, эндоплазмалық тор.";
-    if (q.includes("фотосинтез") || q.includes("құрамдас"))
-      return "Фотосинтез — жарық энергиясын химиялық энергияға айналдыру процесі. Формуласы: 6CO₂ + 6H₂O → C₆H₁₂O₆ + 6O₂. Хлорофилл пигменті күн сәулесін сіңіреді.";
-    if (q.includes("днк") || q.includes("dns") || q.includes("ген"))
-      return "ДНК — дезоксирибонуклеин қышқылы, генетикалық ақпарат тасымалдаушы. Двойты спираль құрылымы, нуклеотидтерден (аденин, гуанин, цитозин, тимин) тұрады. Репликация, транскрипция, трансляция процестері.";
-    if (q.includes("эволюция") || q.includes("сұрыпталу"))
-      return "Эволюция — тірі ағзалардың өзгеруі және түрлердің пайда болуы. Негізгі механизмдері: табиғи сұрыпталу, мутациялар, генетикалық айырбас, бөліну. Дарвиннің түсіндіруі бойынша — табиғи сұрыпталу және өзгергіштік.";
-    if (q.includes("озп") || q.includes("ұбт") || q.includes("экзамен"))
-      return "ОЗП (Орта білімге қабылдау) биологиядан дайындық: 1) Клетка биологиясы, 2) Генетика, 3) Эволюция, 4) Экология, 5) Анатомия және физиология. Әр тақырып бойынша тест тапсырып, қателерді талдау — ең тиімді дайындық.";
-    return "Бұл сұраққа нақты жауап беру үшін backend-ді қосу қажет (Groq API). Әзірге мен локалды биология базасында жұмыс істеймін. Клетка, генетика, фотосинтез, эволюция тақырыптарына сұрақ қойыңыз, немесе '/api/ai/chat' endpoint жасаңыз.";
+      return "Жасуша — тірі ағзалардың құрылымдық және функционалдық негізгі бірлігі. Прокариоттық және эукариоттық жасушаларға бөлінеді.";
+    if (q.includes("фотосинтез"))
+      return "Фотосинтез — жарық энергиясын химиялық энергияға айналдыру процесі. 6CO₂ + 6H₂O → C₆H₁₂O₆ + 6O₂.";
+    if (q.includes("днк") || q.includes("ген"))
+      return "ДНК — генетикалық ақпарат тасымалдаушы. Двойты спираль құрылымы, нуклеотидтерден тұрады.";
+    if (q.includes("эволюция"))
+      return "Эволюция — тірі ағзалардың өзгеруі. Механизмдері: табиғи сұрыпталу, мутациялар, генетикалық айырбас.";
+    return "Интернет байланысын тексеріңіз немесе басқа сұрақ қойыңыз.";
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -163,7 +158,6 @@ export default function AITrainer() {
 
   return (
     <div className="min-h-screen bg-[#0f172a] text-[#e2e8f0]">
-      {/* Navbar */}
       <nav className="sticky top-0 z-50 bg-[#0f172a]/85 backdrop-blur-xl border-b border-white/[0.06]">
         <div className="max-w-[1200px] mx-auto px-4 py-3 flex items-center justify-between">
           <button
@@ -190,7 +184,6 @@ export default function AITrainer() {
       </nav>
 
       <div className="max-w-[900px] mx-auto px-4 py-6 flex flex-col h-[calc(100vh-64px)]">
-        {/* Welcome */}
         {showWelcome && messages.length === 0 && (
           <div
             ref={cardRef}
@@ -228,15 +221,12 @@ export default function AITrainer() {
           </div>
         )}
 
-        {/* Messages */}
         {messages.length > 0 && (
           <div className="flex-1 overflow-y-auto space-y-4 mb-4 pr-1">
             {messages.map((msg, i) => (
               <div
                 key={i}
-                className={`flex gap-3 ${
-                  msg.role === "user" ? "flex-row-reverse" : ""
-                }`}
+                className={`flex gap-3 ${msg.role === "user" ? "flex-row-reverse" : ""}`}
               >
                 <div
                   className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
@@ -252,7 +242,7 @@ export default function AITrainer() {
                   )}
                 </div>
                 <div
-                  className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${
+                  className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap ${
                     msg.role === "user"
                       ? "bg-[#3b82f6]/20 border border-[#3b82f6]/30 text-[#e2e8f0]"
                       : "bg-white/[0.05] border border-white/[0.08] text-[#e2e8f0]"
@@ -276,7 +266,6 @@ export default function AITrainer() {
           </div>
         )}
 
-        {/* Input */}
         <div className="border-t border-white/[0.08] pt-4">
           <div className="flex gap-2 items-end">
             <textarea
@@ -303,12 +292,10 @@ export default function AITrainer() {
             </button>
           </div>
           <p className="text-[10px] text-[#475569] mt-2 text-center">
-            AI жауаптары нұсқаулық сипатта болады. Backend қосқанда Groq API-мен
-            нақты жауап аласыз.
+            Groq AI · Llama 3.3 70B · Қазақша биология жаттықтырушысы
           </p>
         </div>
       </div>
     </div>
   );
 }
-
