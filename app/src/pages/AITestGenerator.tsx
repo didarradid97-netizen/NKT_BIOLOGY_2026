@@ -21,7 +21,8 @@ import {
 
 // ✅ Groq API тікелей фронтендтен
 async function generateTestsWithGroq(content: string, count: number): Promise<any[]> {
-  const apiKey = (import.meta as Record<string, unknown> & { env: Record<string, string> }).env.VITE_GROQ_API_KEY;
+  // @ts-ignore
+  const apiKey = import.meta.env.VITE_GROQ_API_KEY;
 
   if (!apiKey) {
     throw new Error("VITE_GROQ_API_KEY табылмады. Vercel → Settings → Environment Variables-қа қосыңыз.");
@@ -64,7 +65,6 @@ async function generateTestsWithGroq(content: string, count: number): Promise<an
       ],
       temperature: 0.8,
       max_tokens: 4096,
-      response_format: { type: "json_object" },
     }),
   });
 

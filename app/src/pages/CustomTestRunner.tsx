@@ -12,7 +12,8 @@ import {
 
 // ✅ Groq API тікелей фронтендтен — подсказкалар
 async function askGroqHint(question: string, options: string[], hintType: string): Promise<string> {
-  const apiKey = (import.meta as Record<string, unknown> & { env: Record<string, string> }).env.VITE_GROQ_API_KEY;
+  // @ts-ignore
+  const apiKey = import.meta.env.VITE_GROQ_API_KEY;
 
   if (!apiKey) {
     throw new Error("VITE_GROQ_API_KEY табылмады");
