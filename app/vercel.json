@@ -1,20 +1,5 @@
 {
-  "routes": [
-    {
-      "src": "/api/ai/chat",
-      "dest": "/api/ai/chat.ts"
-    },
-    {
-      "src": "/api/ai/generate-tests",
-      "dest": "/api/ai/generate-tests.ts"
-    },
-    {
-      "src": "/api/(.*)",
-      "dest": "/api/boot.ts"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/index.html"
-    }
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
