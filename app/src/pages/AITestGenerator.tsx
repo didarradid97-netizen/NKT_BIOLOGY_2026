@@ -1,85 +1,18 @@
 // ============================================
-// 🤖📄 AI ТЕСТ ГЕНЕРАТОРЫ (КАЗАХСКИЙ)
+// 🤖📄 AI ТЕСТ ГЕНЕРАТОРЫ — Backend API
 // ============================================
 import { useState, useRef } from "react";
 import { useNavigate } from "react-router";
 import { saveCustomTest } from "@/lib/customTestStorage";
 import { useTilt } from "@/hooks/use3DEffects";
 import {
-  ArrowLeft,
-  Sparkles,
-  FileText,
-  Upload,
-  Loader2,
-  Save,
-  Check,
-  AlertCircle,
-  Wand2,
-  Wifi,
-  WifiOff,
+  ArrowLeft, Sparkles, FileText, Upload, Loader2, Save, Check,
+  AlertCircle, Wand2, Wifi, WifiOff, AlertTriangle,
 } from "lucide-react";
 
-// ✅ Groq API тікелей фронтендтен
-async function generateTestsWithGroq(content: string, count: number): Promise<any[]> {
-  // @ts-ignore
-  const apiKey = import.meta.env.VITE_GROQ_API_KEY;
+const API_URL = "/api/generate-tests";
 
-  if (!apiKey) {
-    throw new Error("VITE_GROQ_API_KEY табылмады. Vercel → Settings → Environment Variables-қа қосыңыз.");
-  }
-
-  const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      model: "llama-3.3-70b-versatile",
-      messages: [
-        {
-          role: "system",
-          content: `Сен — NKT BIOLOGY платформасының AI тест генераторысың. Биология мәтінінен қазақша тест сұрақтары жасайсың.
-
-Ережелер:
-1. ҚАЗАҚША тест сұрақтары
-2. Әр сұрақта 4 нұсқа (A, B, C, D)
-3. Дұрыс жауапты белгіле
-4. Түсініктеме бер
-5. ОЗП/ҰБТ деңгейінде қиындық
-6. Тек JSON форматында жауап бер:
-
-[
-  {
-    "text": "Сұрақ мәтіні",
-    "options": ["A нұсқа", "B нұсқа", "C нұсқа", "D нұсқа"],
-    "correctAnswer": 0,
-    "explanation": "Түсініктеме"
-  }
-]`,
-        },
-        {
-          role: "user",
-          content: `Мына мәтін бойынша ${count} тест сұрағы жаса:\n\n${content.slice(0, 3000)}`,
-        },
-      ],
-      temperature: 0.8,
-      max_tokens: 4096,
-    }),
-  });
-
-  if (!response.ok) {
-    const err = await response.json().catch(() => ({}));
-    throw new Error(err?.error?.message || `Groq қате: ${response.status}`);
-  }
-
-  const data = await response.json();
-  const raw = data.choices[0].message.content;
-  const parsed = JSON.parse(raw);
-  return Array.isArray(parsed) ? parsed : parsed.questions || [];
-}
-
-// Fallback — егер Groq API жоқ болса
+// Fallback тест сұрақтары
 function getFallbackQuestions(content: string): any[] {
   const lower = content.toLowerCase();
   const questions: any[] = [];
@@ -131,119 +64,70 @@ export default function AITestGenerator() {
   const { ref: cardRef, style: cardStyle } = useTilt(10);
 
   const handleGenerate = async () => {
-    setError("");
-    setGenerated(null);
+    setError(""); setGenerated(null);
 
     let content = "";
     if (source === "text") {
-      if (!text.trim() || text.trim().length < 20) {
-        setError("Мәтін 20 таңбадан кем болмауы керек");
-        return;
-      }
+      if (!text.trim() || text.trim().length < 20) { setError("Мәтін 20 таңбадан кем болмауы керек"); return; }
       content = text.trim();
     } else {
-      if (!file) {
-        setError("Файл таңдаңыз");
-        return;
-      }
-      try {
-        content = await file.text();
-      } catch {
-        setError("Файлды оқу қатесі");
-        return;
-      }
+      if (!file) { setError("Файл таңдаңыз"); return; }
+      try { content = await file.text(); } catch { setError("Файлды оқу қатесі"); return; }
     }
 
     setLoading(true);
     try {
-      const questions = await generateTestsWithGroq(content, questionCount);
-
-      if (!questions || questions.length === 0) {
-        throw new Error("Сұрақтар бос");
-      }
-
+      const res = await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ content, count: questionCount }),
+      });
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      const data = await res.json();
+      if (!data.questions || data.questions.length === 0) throw new Error("Сұрақтар бос");
       const test = {
-        id: "ai_" + Date.now(),
-        title: title || "AI Тест",
-        description: content.slice(0, 80) + "...",
-        category,
-        timeLimit,
-        questions: questions.map((q: any, i: number) => ({
-          id: "ai_" + i,
-          text: q.text,
-          options: q.options,
-          correctAnswer: q.correctAnswer,
-          explanation: q.explanation,
-        })),
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
+        id: "ai_" + Date.now(), title: title || "AI Тест", description: content.slice(0, 80) + "...",
+        category, timeLimit,
+        questions: data.questions.map((q: any, i: number) => ({ ...q, id: "ai_" + i })),
+        createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(),
       };
-
-      setGenerated(test);
-      setOnline(true);
-    } catch (err: unknown) {
-      const errorMsg = err instanceof Error ? err.message : "Белгісіз қате";
-      console.error("Groq error:", errorMsg);
-
-      // Fallback
+      setGenerated(test); setOnline(true);
+    } catch (err: any) {
       const fallbackQuestions = getFallbackQuestions(content);
       const test = {
-        id: "ai_" + Date.now(),
-        title: title || "AI Тест (Fallback)",
-        description: content.slice(0, 80) + "...",
-        category,
-        timeLimit,
+        id: "ai_" + Date.now(), title: title || "AI Тест (Fallback)", description: content.slice(0, 80) + "...",
+        category, timeLimit,
         questions: fallbackQuestions.slice(0, questionCount),
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
+        createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(),
       };
-      setGenerated(test);
-      setOnline(false);
-      setError("⚠️ " + errorMsg + "\nЛокалды сұрақтар берілді.");
-    } finally {
-      setLoading(false);
-    }
+      setGenerated(test); setOnline(false);
+      setError("⚠️ Сервер offline — локалды сұрақтар берілді. GROQ_API_KEY тексеріңіз.");
+    } finally { setLoading(false); }
   };
 
-  const handleSave = () => {
-    if (!generated) return;
-    saveCustomTest(generated);
-    navigate("/my-tests");
-  };
+  const handleSave = () => { if (!generated) return; saveCustomTest(generated); navigate("/my-tests"); };
 
   return (
     <div className="min-h-screen bg-[#0f172a] text-[#e2e8f0]">
       <nav className="sticky top-0 z-50 bg-[#0f172a]/85 backdrop-blur-xl border-b border-white/[0.06]">
         <div className="max-w-[1200px] mx-auto px-4 py-3 flex items-center justify-between">
-          <button onClick={() => navigate("/")} className="flex items-center gap-2 text-sm font-medium text-[#94a3b8] hover:text-[#6ee7b7] transition-colors">
-            <ArrowLeft className="w-4 h-4" /> Артқа
-          </button>
-          <h1 className="font-bold text-lg bg-gradient-to-r from-[#a855f7] to-[#3b82f6] bg-clip-text text-transparent flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-[#a855f7]" /> AI Тест Генераторы
-          </h1>
-          <div className="flex items-center gap-2">
-            {online ? <Wifi className="w-4 h-4 text-[#10b981]" /> : <WifiOff className="w-4 h-4 text-red-400" />}
-          </div>
+          <button onClick={() => navigate("/")} className="flex items-center gap-2 text-sm font-medium text-[#94a3b8] hover:text-[#6ee7b7] transition-colors"><ArrowLeft className="w-4 h-4" /> Артқа</button>
+          <h1 className="font-bold text-lg bg-gradient-to-r from-[#a855f7] to-[#3b82f6] bg-clip-text text-transparent flex items-center gap-2"><Sparkles className="w-5 h-5 text-[#a855f7]" /> AI Тест Генераторы</h1>
+          <div className="flex items-center gap-2">{online ? <Wifi className="w-4 h-4 text-[#10b981]" /> : <WifiOff className="w-4 h-4 text-red-400" />}</div>
         </div>
       </nav>
-
       <div className="max-w-[900px] mx-auto px-4 py-8">
         {!generated ? (
           <div className="space-y-6">
             <div className="flex items-center gap-1 p-1 bg-white/[0.04] border border-white/[0.08] rounded-xl w-fit mx-auto">
-              <button onClick={() => setSource("text")} className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${source === "text" ? "bg-[#10b981]/15 text-[#6ee7b7] border border-[#10b981]/25" : "text-[#64748b] hover:text-[#cbd5e1]"}`}>
-                <FileText className="w-4 h-4 inline mr-1" /> Мәтін
-              </button>
-              <button onClick={() => setSource("file")} className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${source === "file" ? "bg-[#10b981]/15 text-[#6ee7b7] border border-[#10b981]/25" : "text-[#64748b] hover:text-[#cbd5e1]"}`}>
-                <Upload className="w-4 h-4 inline mr-1" /> Файл (TXT)
-              </button>
+              <button onClick={() => setSource("text")} className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${source === "text" ? "bg-[#10b981]/15 text-[#6ee7b7] border border-[#10b981]/25" : "text-[#64748b] hover:text-[#cbd5e1]"}`}><FileText className="w-4 h-4 inline mr-1" /> Мәтін</button>
+              <button onClick={() => setSource("file")} className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${source === "file" ? "bg-[#10b981]/15 text-[#6ee7b7] border border-[#10b981]/25" : "text-[#64748b] hover:text-[#cbd5e1]"}`}><Upload className="w-4 h-4 inline mr-1" /> Файл (TXT)</button>
             </div>
-
             <div ref={cardRef} style={cardStyle} className="bg-white/[0.04] border border-white/[0.08] rounded-2xl p-6 space-y-4">
               {source === "text" ? (
                 <div>
                   <label className="block text-xs text-[#64748b] mb-2">Биология мәтінін қойыңыз</label>
-                  <textarea value={text} onChange={(e) => setText(e.target.value)} placeholder="Мысалы: Фотосинтез — жарық энергиясын химиялық энергияға айналдыру процесі..." rows={10}
+                  <textarea value={text} onChange={e => setText(e.target.value)} placeholder="Мысалы: Фотосинтез — жарық энергиясын..." rows={10}
                     className="w-full bg-[#0f172a]/80 border border-white/[0.12] rounded-xl px-4 py-3 text-sm text-[#f1f5f9] placeholder-[#475569] outline-none focus:border-[#a855f7] resize-none" />
                   <p className="text-xs text-[#475569] mt-1">{text.length} таңба • кемінде 20</p>
                 </div>
@@ -254,24 +138,20 @@ export default function AITestGenerator() {
                     <p className="text-sm text-[#cbd5e1] font-medium">{file ? file.name : "TXT файлын жүктеңіз"}</p>
                     <p className="text-xs text-[#475569] mt-1">{file ? `${(file.size / 1024).toFixed(1)} KB` : "Макс. 5MB • тек TXT"}</p>
                   </div>
-                  <input ref={fileRef} type="file" accept=".txt,text/plain" className="hidden" onChange={(e) => setFile(e.target.files?.[0] || null)} />
+                  <input ref={fileRef} type="file" accept=".txt,text/plain" className="hidden" onChange={e => setFile(e.target.files?.[0] || null)} />
                 </div>
               )}
-
               <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
-                <div><label className="block text-xs text-[#64748b] mb-1">Атауы</label><input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="AI Тест" className="w-full bg-[#0f172a]/80 border border-white/[0.12] rounded-xl px-4 py-2.5 text-sm text-[#f1f5f9] placeholder-[#475569] outline-none focus:border-[#a855f7]" /></div>
-                <div><label className="block text-xs text-[#64748b] mb-1">Санат</label><select value={category} onChange={(e) => setCategory(e.target.value)} className="w-full bg-[#0f172a]/80 border border-white/[0.12] rounded-xl px-4 py-2.5 text-sm text-[#f1f5f9] outline-none focus:border-[#a855f7]">{["Негізгі", "Тереңдетілген", "Толық", "Жаңа"].map((c) => <option key={c} value={c} className="bg-[#0f172a]">{c}</option>)}</select></div>
-                <div><label className="block text-xs text-[#64748b] mb-1">Уақыт (мин)</label><input type="number" min={1} max={120} value={timeLimit} onChange={(e) => setTimeLimit(Number(e.target.value))} className="w-full bg-[#0f172a]/80 border border-white/[0.12] rounded-xl px-4 py-2.5 text-sm text-[#f1f5f9] outline-none focus:border-[#a855f7]" /></div>
-                <div><label className="block text-xs text-[#64748b] mb-1">Сұрақ саны</label><input type="number" min={1} max={20} value={questionCount} onChange={(e) => setQuestionCount(Number(e.target.value))} className="w-full bg-[#0f172a]/80 border border-white/[0.12] rounded-xl px-4 py-2.5 text-sm text-[#f1f5f9] outline-none focus:border-[#a855f7]" /></div>
+                <div><label className="block text-xs text-[#64748b] mb-1">Атауы</label><input value={title} onChange={e => setTitle(e.target.value)} placeholder="AI Тест" className="w-full bg-[#0f172a]/80 border border-white/[0.12] rounded-xl px-4 py-2.5 text-sm text-[#f1f5f9] placeholder-[#475569] outline-none focus:border-[#a855f7]" /></div>
+                <div><label className="block text-xs text-[#64748b] mb-1">Санат</label><select value={category} onChange={e => setCategory(e.target.value)} className="w-full bg-[#0f172a]/80 border border-white/[0.12] rounded-xl px-4 py-2.5 text-sm text-[#f1f5f9] outline-none focus:border-[#a855f7]">{["Негізгі", "Тереңдетілген", "Толық", "Жаңа"].map(c => <option key={c} value={c} className="bg-[#0f172a]">{c}</option>)}</select></div>
+                <div><label className="block text-xs text-[#64748b] mb-1">Уақыт (мин)</label><input type="number" min={1} max={120} value={timeLimit} onChange={e => setTimeLimit(Number(e.target.value))} className="w-full bg-[#0f172a]/80 border border-white/[0.12] rounded-xl px-4 py-2.5 text-sm text-[#f1f5f9] outline-none focus:border-[#a855f7]" /></div>
+                <div><label className="block text-xs text-[#64748b] mb-1">Сұрақ саны</label><input type="number" min={1} max={20} value={questionCount} onChange={e => setQuestionCount(Number(e.target.value))} className="w-full bg-[#0f172a]/80 border border-white/[0.12] rounded-xl px-4 py-2.5 text-sm text-[#f1f5f9] outline-none focus:border-[#a855f7]" /></div>
               </div>
-
-              {error && <div className="flex items-center gap-2 text-sm text-amber-400 bg-amber-500/10 border border-amber-500/20 rounded-xl px-4 py-3"><AlertCircle className="w-4 h-4 flex-shrink-0" />{error}</div>}
-
+              {error && <div className="flex items-center gap-2 text-sm text-amber-400 bg-amber-500/10 border border-amber-500/20 rounded-xl px-4 py-3"><AlertTriangle className="w-4 h-4 flex-shrink-0" /> {error}</div>}
               <button onClick={handleGenerate} disabled={loading} className="w-full py-3 rounded-xl bg-gradient-to-r from-[#a855f7] to-[#3b82f6] text-white font-semibold text-sm shadow-lg shadow-[#a855f7]/20 hover:shadow-[#a855f7]/30 flex items-center justify-center gap-2 transition-all active:scale-[0.98] disabled:opacity-50">
-                {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Wand2 className="w-5 h-5" />}
-                {loading ? "Генерациялауда..." : "Тест генерациялау"}
+                {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Wand2 className="w-5 h-5" />}{loading ? "Генерациялауда..." : "Тест генерациялау"}
               </button>
-              <p className="text-[10px] text-[#475569] text-center">Groq AI · Llama 3.3 70B · Тест генерациясы</p>
+              <p className="text-[10px] text-[#475569] text-center">🤖 Backend API • Groq AI • llama-3.3-70b</p>
             </div>
           </div>
         ) : (
