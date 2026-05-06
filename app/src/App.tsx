@@ -1,13 +1,11 @@
 import { Routes, Route } from "react-router";
 import HomePage from "@/pages/HomePage";
 import TestsPage from "@/pages/TestsPage";
-import TestRunner from "@/pages/TestRunner";
 import ProfilePage from "@/pages/ProfilePage";
 import ResourcesPage from "@/pages/ResourcesPage";
 import LoginPage from "@/pages/LoginPage";
-import NotFound from "@/pages/NotFound";
 
-// ЖАҢА қосылған жүйелер:
+// Жаңа беттер (барлығы істейтін)
 import AITrainer from "@/pages/AITrainer";
 import TestCreator from "@/pages/TestCreator";
 import AITestGenerator from "@/pages/AITestGenerator";
@@ -22,18 +20,27 @@ import LiveClass from "@/pages/LiveClass";
 import UpdatesPage from "@/pages/UpdatesPage";
 import SyllabusPage from "@/pages/SyllabusPage";
 
+// Кез келген құрылғыда дұрыс жұмыс істейтін 404 бет
+function NotFound() {
+  return (
+    <div className="min-h-screen bg-[#0f172a] text-white flex flex-col items-center justify-center gap-4">
+      <h1 className="text-4xl font-bold">404</h1>
+      <p>Бет табылмады</p>
+      <a href="/" className="text-emerald-400 hover:underline">Басты бетке</a>
+    </div>
+  );
+}
+
 function App() {
   return (
     <Routes>
-      {/* Бұрынғы роуттар */}
       <Route path="/" element={<HomePage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/tests" element={<TestsPage />} />
-      <Route path="/test/:testId" element={<TestRunner />} />
       <Route path="/profile" element={<ProfilePage />} />
       <Route path="/resources" element={<ResourcesPage />} />
 
-      {/* Жаңа роуттар */}
+      {/* Жаңа беттер */}
       <Route path="/ai-trainer" element={<AITrainer />} />
       <Route path="/test-creator" element={<TestCreator />} />
       <Route path="/ai-test-generator" element={<AITestGenerator />} />
@@ -48,4 +55,10 @@ function App() {
       <Route path="/updates" element={<UpdatesPage />} />
       <Route path="/syllabus" element={<SyllabusPage />} />
 
+      {/* 404 */}
       <Route path="*" element={<NotFound />} />
+    </Routes>
+  );
+}
+
+export default App;
