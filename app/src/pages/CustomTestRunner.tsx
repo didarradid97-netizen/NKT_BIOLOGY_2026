@@ -1,296 +1,176 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+// ============================================
+// ▶️ TEST RUNNER + AI ПОДСКАЗКАЛАР (Groq API)
+// ============================================
+import { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate } from "react-router";
-import { isAuthenticated, saveResult, TestResult } from "@/lib/storage";
-import { getCustomTestById } from "@/lib/customTestStorage";
-import type { CustomTest, CustomQuestion } from "@/lib/customTestStorage";
-import { TestAnalysis } from "@/components/TestAnalysis";
+import { getCustomTest, saveTestResult } from "@/lib/customTestStorage";
 import {
-  ArrowLeft,
-  Clock,
-  ChevronLeft,
-  ChevronRight,
-  Check,
-  X,
-  RotateCcw,
-  Home,
-  AlertCircle,
+  ArrowLeft, Clock, ChevronRight, ChevronLeft, Lightbulb,
+  CheckCircle, XCircle, RotateCcw, Home, Loader2, Sparkles,
 } from "lucide-react";
+
+const HINT_API = "/api/hints";
 
 export default function CustomTestRunner() {
   const { testId } = useParams<{ testId: string }>();
   const navigate = useNavigate();
-  const [test, setTest] = useState<CustomTest | null>(null);
+  const test = getCustomTest(testId || "");
+
   const [current, setCurrent] = useState(0);
   const [answers, setAnswers] = useState<Record<number, number>>({});
   const [timeLeft, setTimeLeft] = useState(0);
   const [finished, setFinished] = useState(false);
-  const [showConfirm, setShowConfirm] = useState(false);
-  const timerRef = useRef<ReturnType<typeof setInterval>>();
+  const [hint, setHint] = useState("");
+  const [hintLoading, setHintLoading] = useState(false);
+  const [showHint, setShowHint] = useState(false);
+  const [hintType, setHintType] = useState<"mini" | "full">("mini");
 
   useEffect(() => {
-    if (!isAuthenticated()) {
-      navigate("/login");
-      return;
-    }
-    if (!testId) {
-      navigate("/my-tests");
-      return;
-    }
-    const found = getCustomTestById(testId);
-    if (!found) {
-      navigate("/my-tests");
-      return;
-    }
-    setTest(found);
-    setTimeLeft(found.timeLimit * 60);
-  }, [testId, navigate]);
+    if (test && timeLeft === 0) setTimeLeft(test.timeLimit * 60);
+  }, [test]);
 
   useEffect(() => {
-    if (finished || !test) return;
-    timerRef.current = setInterval(() => {
-      setTimeLeft((t) => {
-        if (t <= 1) {
-          clearInterval(timerRef.current);
-          handleFinish(true);
-          return 0;
-        }
-        return t - 1;
+    if (!finished && timeLeft > 0) {
+      const timer = setInterval(() => {
+        setTimeLeft((prev) => { if (prev <= 1) { setFinished(true); return 0; } return prev - 1; });
+      }, 1000);
+      return () => clearInterval(timer);
+    }
+  }, [finished, timeLeft]);
+
+  const getHint = useCallback(async () => {
+    if (!test || hintLoading) return;
+    const q = test.questions[current];
+    if (!q) return;
+    setHintLoading(true); setShowHint(true);
+    try {
+      const res = await fetch(HINT_API, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ question: q.text, options: q.options, hintType }),
       });
-    }, 1000);
-    return () => clearInterval(timerRef.current);
-  }, [finished, test]);
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      const data = await res.json();
+      setHint(data.hint || "Подсказка алу мүмкін болмады");
+    } catch {
+      setHint("🤖 AI уақытша қолжетімсіз. Сұрақты мұқият оқыңыз және жауап нұсқаларын салыстырыңыз.");
+    } finally { setHintLoading(false); }
+  }, [test, current, hintLoading, hintType]);
 
-  const handleAnswer = (qIndex: number, optIndex: number) => {
-    setAnswers((prev) => ({ ...prev, [qIndex]: optIndex }));
+  const handleAnswer = (opt: number) => {
+    if (finished) return;
+    setAnswers((prev) => ({ ...prev, [current]: opt }));
   };
 
-  const handleFinish = (auto = false) => {
+  const handleFinish = () => { setFinished(true); setShowHint(false); };
+
+  const handleSaveResult = () => {
     if (!test) return;
-    if (!auto && Object.keys(answers).length < test.questions.length) {
-      setShowConfirm(true);
-      return;
-    }
-    clearInterval(timerRef.current);
-    setFinished(true);
-
-    const correct = test.questions.filter((q, i) => answers[i] === q.correctAnswer).length;
-    const total = test.questions.length;
-    const result: TestResult = {
-      testId: test.id,
-      title: test.title,
-      score: Math.round((correct / total) * 100),
-      totalQuestions: total,
-      correctAnswers: correct,
-      timeSpent: test.timeLimit * 60 - timeLeft,
-      completedAt: new Date().toISOString(),
-      answers: test.questions.map((q, i) => ({
-        questionIndex: i,
-        selected: answers[i] ?? -1,
-        correct: q.correctAnswer,
-      })),
-    };
-    saveResult(result);
+    let correct = 0;
+    test.questions.forEach((q, i) => { if (answers[i] === q.correctAnswer) correct++; });
+    saveTestResult({ testId: test.id, testTitle: test.title, score: correct, total: test.questions.length, answers, completedAt: new Date().toISOString() });
+    navigate("/progress");
   };
 
-  const formatTime = (s: number) => {
-    const m = Math.floor(s / 60);
-    const sec = s % 60;
-    return `${m.toString().padStart(2, "0")}:${sec.toString().padStart(2, "0")}`;
-  };
+  if (!test) return <div className="min-h-screen bg-[#0f172a] text-white flex items-center justify-center">Тест табылмады</div>;
 
-  if (!test) {
-    return (
-      <div className="min-h-screen bg-[#0f172a] flex items-center justify-center text-[#94a3b8]">
-        <div className="flex items-center gap-2">
-          <div className="w-5 h-5 border-2 border-[#10b981] border-t-transparent rounded-full animate-spin" />
-          Жүктелуде...
-        </div>
-      </div>
-    );
-  }
+  const minutes = Math.floor(timeLeft / 60);
+  const seconds = timeLeft % 60;
+  const progress = ((current + 1) / test.questions.length) * 100;
 
   if (finished) {
-    const correct = test.questions.filter((q, i) => answers[i] === q.correctAnswer).length;
-    const total = test.questions.length;
+    let correct = 0;
+    test.questions.forEach((q, i) => { if (answers[i] === q.correctAnswer) correct++; });
+    const pct = Math.round((correct / test.questions.length) * 100);
     return (
       <div className="min-h-screen bg-[#0f172a] text-[#e2e8f0]">
-        <div className="max-w-[800px] mx-auto px-4 py-8">
-          <TestAnalysis
-            test={test}
-            answers={answers}
-            timeSpent={test.timeLimit * 60 - timeLeft}
-            onRetry={() => {
-              setFinished(false);
-              setAnswers({});
-              setCurrent(0);
-              setTimeLeft(test.timeLimit * 60);
-            }}
-            onHome={() => navigate("/")}
-          />
+        <div className="max-w-[800px] mx-auto px-4 py-12">
+          <div className="text-center mb-8">
+            <div className={`w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4 ${pct >= 70 ? "bg-[#10b981]/20" : pct >= 50 ? "bg-[#f59e0b]/20" : "bg-red-500/20"}`}>
+              {pct >= 70 ? <CheckCircle className="w-10 h-10 text-[#10b981]" /> : <XCircle className="w-10 h-10 text-red-400" />}
+            </div>
+            <h1 className="text-2xl font-bold mb-2">{pct >= 70 ? "Өте жақсы!" : pct >= 50 ? "Жақсы" : "Қайта тырысыңыз"}</h1>
+            <p className="text-4xl font-extrabold bg-gradient-to-r from-[#34d399] to-[#3b82f6] bg-clip-text text-transparent">{correct}/{test.questions.length} ({pct}%)</p>
+          </div>
+          <div className="space-y-3 mb-8">
+            {test.questions.map((q, i) => (
+              <div key={q.id} className={`rounded-2xl border p-4 ${answers[i] === q.correctAnswer ? "bg-[#10b981]/5 border-[#10b981]/20" : "bg-red-500/5 border-red-500/20"}`}>
+                <p className="text-sm font-medium mb-2">{i + 1}. {q.text}</p>
+                <div className="text-xs">Сіздің жауабыңыз: <span className={answers[i] === q.correctAnswer ? "text-[#10b981]" : "text-red-400"}>{answers[i] !== undefined ? q.options[answers[i]] : "Жоқ"}</span> • Дұрыс: <span className="text-[#10b981]">{q.options[q.correctAnswer]}</span></div>
+              </div>
+            ))}
+          </div>
+          <div className="flex gap-3 justify-center">
+            <button onClick={() => { setCurrent(0); setAnswers({}); setFinished(false); setTimeLeft(test.timeLimit * 60); }} className="px-5 py-3 rounded-xl bg-white/[0.06] text-[#e2e8f0] font-medium flex items-center gap-2"><RotateCcw className="w-4 h-4" />Қайта</button>
+            <button onClick={handleSaveResult} className="px-5 py-3 rounded-xl bg-gradient-to-r from-[#10b981] to-[#059669] text-white font-semibold flex items-center gap-2"><CheckCircle className="w-4 h-4" />Сақтау</button>
+            <button onClick={() => navigate("/")} className="px-5 py-3 rounded-xl bg-white/[0.06] text-[#e2e8f0] font-medium flex items-center gap-2"><Home className="w-4 h-4" />Басты</button>
+          </div>
         </div>
       </div>
     );
   }
 
   const q = test.questions[current];
-  const isDanger = timeLeft < 60;
 
   return (
     <div className="min-h-screen bg-[#0f172a] text-[#e2e8f0]">
       {/* Header */}
-      <div className="sticky top-0 z-50 bg-[#0f172a]/95 backdrop-blur-xl border-b border-white/[0.06]">
+      <div className="sticky top-0 z-50 bg-[#0f172a]/90 backdrop-blur-xl border-b border-white/[0.06]">
         <div className="max-w-[900px] mx-auto px-4 py-3 flex items-center justify-between">
-          <button
-            onClick={() => navigate("/my-tests")}
-            className="flex items-center gap-2 text-sm text-[#94a3b8] hover:text-[#6ee7b7] transition-colors"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            <span className="hidden sm:inline">Шығу</span>
-          </button>
-          <div className="flex items-center gap-3">
-            <span className="text-xs text-[#64748b]">
-              {current + 1} / {test.questions.length}
-            </span>
-            <div className="w-24 sm:w-32 h-1.5 bg-white/[0.08] rounded-full overflow-hidden">
-              <div
-                className="h-full bg-gradient-to-r from-[#10b981] to-[#3b82f6] rounded-full transition-all"
-                style={{ width: `${((current + 1) / test.questions.length) * 100}%` }}
-              />
-            </div>
-          </div>
-          <div
-            className={`flex items-center gap-1.5 font-mono text-sm font-bold ${
-              isDanger ? "text-red-400 animate-pulse" : "text-[#e2e8f0]"
-            }`}
-          >
-            <Clock className="w-4 h-4" />
-            {formatTime(timeLeft)}
-          </div>
+          <button onClick={() => navigate("/my-tests")} className="p-2 rounded-lg bg-white/[0.06] text-[#94a3b8] hover:text-white"><ArrowLeft className="w-4 h-4" /></button>
+          <div className="flex-1 mx-4"><div className="h-2 bg-white/[0.06] rounded-full overflow-hidden"><div className="h-full bg-gradient-to-r from-[#10b981] to-[#3b82f6] rounded-full transition-all" style={{ width: `${progress}%` }} /></div></div>
+          <div className={`flex items-center gap-1.5 text-sm font-mono ${timeLeft < 60 ? "text-red-400" : "text-[#e2e8f0]"}`}><Clock className="w-4 h-4" />{String(minutes).padStart(2, "0")}:{String(seconds).padStart(2, "0")}</div>
         </div>
       </div>
 
-      {/* Question */}
-      <div className="max-w-[800px] mx-auto px-4 py-6">
-        <div className="bg-white/[0.04] border border-white/[0.08] rounded-2xl p-4 sm:p-6 space-y-5">
-          <h2 className="text-base sm:text-lg font-semibold leading-relaxed">
-            {current + 1}. {q.text}
-          </h2>
-          {q.image && (
-            <img
-              src={q.image}
-              alt="Сұрақ"
-              className="max-h-64 rounded-xl border border-white/[0.08] mx-auto"
-            />
-          )}
-          <div className="space-y-2.5">
-            {q.options.map((opt, j) => {
-              const selected = answers[current] === j;
-              return (
-                <button
-                  key={j}
-                  onClick={() => handleAnswer(current, j)}
-                  className={`w-full flex items-center gap-3 p-3.5 sm:p-4 rounded-xl border-2 text-left transition-all active:scale-[0.98] ${
-                    selected
-                      ? "bg-[#10b981]/10 border-[#10b981]/40 text-[#e2e8f0]"
-                      : "bg-white/[0.03] border-white/[0.06] text-[#cbd5e1] hover:bg-white/[0.06] hover:border-white/[0.12]"
-                  }`}
-                >
-                  <span
-                    className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 border-2 transition-all ${
-                      selected
-                        ? "bg-[#10b981] border-[#10b981] text-white"
-                        : "border-white/[0.18] text-[#64748b]"
-                    }`}
-                  >
-                    {String.fromCharCode(65 + j)}
-                  </span>
-                  <span className="text-sm">{opt}</span>
-                </button>
-              );
-            })}
+      <div className="max-w-[900px] mx-auto px-4 py-6">
+        {/* Question */}
+        <div className="mb-6">
+          <div className="flex items-center justify-between mb-4">
+            <span className="text-sm text-[#94a3b8]">Сұрақ {current + 1} / {test.questions.length}</span>
           </div>
+          <h2 className="text-lg font-bold text-[#e2e8f0] mb-6">{q.text}</h2>
+          {q.image && <img src={q.image} alt="" className="max-h-48 rounded-xl mb-4 border border-white/[0.08]" />}
+          <div className="space-y-3">
+            {q.options.map((opt, idx) => (
+              <button key={idx} onClick={() => handleAnswer(idx)} className={`w-full flex items-center gap-3 p-4 rounded-xl border text-left transition-all ${answers[current] === idx ? "bg-[#10b981]/10 border-[#10b981]/30" : "bg-white/[0.04] border-white/[0.08] hover:bg-white/[0.06]"}`}>
+                <span className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 ${answers[current] === idx ? "bg-[#10b981] text-white" : "bg-white/[0.06] text-[#64748b]"}`}>{String.fromCharCode(65 + idx)}</span>
+                <span className="text-sm">{opt}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* AI Hint */}
+        <div className="mb-6 bg-gradient-to-r from-[#f59e0b]/10 to-[#d97706]/5 border border-[#f59e0b]/20 rounded-2xl p-4">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-[#fbbf24]" />
+              <span className="text-sm font-medium text-[#fbbf24]">🤖 AI Подсказка</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <select value={hintType} onChange={(e) => setHintType(e.target.value as "mini" | "full")} className="bg-[#0f172a]/80 border border-white/[0.12] rounded-lg px-2 py-1 text-xs text-[#e2e8f0]">
+                <option value="mini">Жеңіл</option>
+                <option value="full">Толық</option>
+              </select>
+              <button onClick={getHint} disabled={hintLoading} className="px-3 py-1.5 rounded-lg bg-[#f59e0b]/15 text-[#fbbf24] text-xs font-medium flex items-center gap-1 hover:bg-[#f59e0b]/25 transition-all disabled:opacity-50">
+                {hintLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : <Lightbulb className="w-3 h-3" />}{hintLoading ? "Ойлауда..." : "Подсказка алу"}
+              </button>
+            </div>
+          </div>
+          {showHint && (hintLoading ? <div className="flex items-center gap-2 text-sm text-[#94a3b8]"><Loader2 className="w-4 h-4 animate-spin text-[#fbbf24]" />AI ойлауда...</div> : hint ? <div className="text-sm text-[#e2e8f0] leading-relaxed bg-white/[0.03] rounded-xl p-3">{hint}</div> : null)}
         </div>
 
         {/* Navigation */}
-        <div className="flex items-center justify-between mt-6">
-          <button
-            onClick={() => setCurrent((c) => Math.max(0, c - 1))}
-            disabled={current === 0}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/[0.06] border border-white/[0.12] text-[#cbd5e1] text-sm font-medium disabled:opacity-30 transition-all active:scale-95"
-          >
-            <ChevronLeft className="w-4 h-4" />
-            Алдыңғы
-          </button>
-
-          {/* Dots */}
-          <div className="hidden sm:flex items-center gap-1.5">
-            {test.questions.map((_, i) => (
-              <button
-                key={i}
-                onClick={() => setCurrent(i)}
-                className={`w-2 h-2 rounded-full transition-all ${
-                  i === current
-                    ? "bg-[#10b981] w-4"
-                    : answers[i] !== undefined
-                    ? "bg-[#3b82f6]"
-                    : "bg-white/[0.12]"
-                }`}
-              />
-            ))}
-          </div>
-
+        <div className="flex items-center justify-between">
+          <button onClick={() => setCurrent(Math.max(0, current - 1))} disabled={current === 0} className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/[0.06] text-[#e2e8f0] text-sm disabled:opacity-30 transition-all"><ChevronLeft className="w-4 h-4" />Алдыңғы</button>
           {current < test.questions.length - 1 ? (
-            <button
-              onClick={() => setCurrent((c) => c + 1)}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/[0.06] border border-white/[0.12] text-[#cbd5e1] text-sm font-medium hover:bg-white/[0.10] transition-all active:scale-95"
-            >
-              Келесі
-              <ChevronRight className="w-4 h-4" />
-            </button>
+            <button onClick={() => setCurrent(current + 1)} className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#10b981] to-[#059669] text-white text-sm font-medium shadow-lg shadow-[#10b981]/20 transition-all">Келесі<ChevronRight className="w-4 h-4" /></button>
           ) : (
-            <button
-              onClick={() => handleFinish()}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#10b981] to-[#059669] text-white text-sm font-semibold shadow-lg shadow-[#10b981]/20 hover:shadow-[#10b981]/30 transition-all active:scale-95"
-            >
-              <Check className="w-4 h-4" />
-              Аяқтау
-            </button>
+            <button onClick={handleFinish} className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#3b82f6] to-[#6366f1] text-white text-sm font-semibold shadow-lg shadow-[#3b82f6]/20 transition-all">Аяқтау<CheckCircle className="w-4 h-4" /></button>
           )}
         </div>
       </div>
-
-      {/* Confirm dialog */}
-      {showConfirm && (
-        <div className="fixed inset-0 z-[300] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-[#1e293b] border border-white/[0.08] rounded-2xl p-6 max-w-sm w-full space-y-4">
-            <div className="flex items-center gap-3 text-amber-400">
-              <AlertCircle className="w-6 h-6" />
-              <h3 className="font-bold">Назар аударыңыз</h3>
-            </div>
-            <p className="text-sm text-[#94a3b8]">
-              {test.questions.length - Object.keys(answers).length} сұраққа жауап бермедіңіз. Тестті аяқтағыңыз
-              келе ме?
-            </p>
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => setShowConfirm(false)}
-                className="flex-1 py-2.5 rounded-xl bg-white/[0.06] border border-white/[0.12] text-[#cbd5e1] text-sm font-medium hover:bg-white/[0.10] transition-all"
-              >
-                Жоқ, жалғастыру
-              </button>
-              <button
-                onClick={() => {
-                  setShowConfirm(false);
-                  handleFinish(true);
-                }}
-                className="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-[#10b981] to-[#059669] text-white text-sm font-semibold transition-all"
-              >
-                Иә, аяқтау
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
