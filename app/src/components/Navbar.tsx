@@ -16,11 +16,18 @@ import {
   X,
   ChevronDown,
   Search,
+  BarChart3,
+  Users,
+  Trophy,
+  Video,
+  Bell,
+  GraduationCap,
 } from "lucide-react";
 
 const mainLinks = [
   { path: "/", label: "Басты", icon: Home },
   { path: "/tests", label: "Тесттер", icon: FileText },
+  { path: "/syllabus", label: "Силлабус", icon: GraduationCap },
   { path: "/search", label: "Іздеу", icon: Search },
 ];
 
@@ -122,6 +129,47 @@ export default function Navbar() {
                 {link.label}
               </Link>
             ))}
+            <Link
+              to="/progress"
+              className={`px-3 py-2 rounded-xl text-xs font-medium transition-all ${
+                isActive("/progress")
+                  ? "bg-[#10b981]/12 text-[#6ee7b7]"
+                  : "text-[#94a3b8] hover:bg-white/[0.05] hover:text-[#e2e8f0]"
+              }`}
+            >
+              Прогресс
+            </Link>
+            <Link
+              to="/group-test"
+              className={`px-3 py-2 rounded-xl text-xs font-medium transition-all ${
+                isActive("/group-test")
+                  ? "bg-[#10b981]/12 text-[#6ee7b7]"
+                  : "text-[#94a3b8] hover:bg-white/[0.05] hover:text-[#e2e8f0]"
+              }`}
+            >
+              Топтық тест
+            </Link>
+            <Link
+              to="/live"
+              className={`px-3 py-2 rounded-xl text-xs font-medium transition-all ${
+                isActive("/live")
+                  ? "bg-[#10b981]/12 text-[#6ee7b7]"
+                  : "text-[#94a3b8] hover:bg-white/[0.05] hover:text-[#e2e8f0]"
+              }`}
+            >
+              Тірі сабақ
+            </Link>
+            <Link
+              to="/updates"
+              className={`px-3 py-2 rounded-xl text-xs font-medium transition-all flex items-center gap-1 ${
+                isActive("/updates")
+                  ? "bg-[#f59e0b]/12 text-[#fbbf24]"
+                  : "text-[#fbbf24] hover:bg-[#f59e0b]/10 hover:text-[#fbbf24]"
+              }`}
+            >
+              <Bell className="w-3 h-3" />
+              Жаңалықтар
+            </Link>
 
             {authenticated && (
               <button
@@ -157,11 +205,18 @@ export default function Navbar() {
             <X className="w-5 h-5" />
           </button>
 
+          <div className="px-4 py-2 text-xs font-bold text-[#475569] uppercase tracking-wider">Негізгі</div>
           <Link to="/" onClick={() => setMobOpen(false)} className="flex items-center gap-3 p-4 rounded-2xl text-lg font-semibold text-[#e2e8f0] bg-white/[0.04]">
             <Home className="w-5 h-5 text-[#10b981]" /> Басты
           </Link>
           <Link to="/tests" onClick={() => setMobOpen(false)} className="flex items-center gap-3 p-4 rounded-2xl text-lg font-semibold text-[#e2e8f0] bg-white/[0.04]">
             <FileText className="w-5 h-5 text-[#10b981]" /> Тесттер
+          </Link>
+          <Link to="/syllabus" onClick={() => setMobOpen(false)} className="flex items-center gap-3 p-4 rounded-2xl text-lg font-semibold text-[#e2e8f0] bg-white/[0.04]">
+            <GraduationCap className="w-5 h-5 text-[#f59e0b]" /> Силлабус
+          </Link>
+          <Link to="/search" onClick={() => setMobOpen(false)} className="flex items-center gap-3 p-4 rounded-2xl text-lg font-semibold text-[#e2e8f0] bg-white/[0.04]">
+            <Search className="w-5 h-5 text-[#3b82f6]" /> Іздеу
           </Link>
           <div className="px-4 py-2 text-xs font-bold text-[#475569] uppercase tracking-wider">Менің тесттерім</div>
           <Link to="/my-tests" onClick={() => setMobOpen(false)} className="flex items-center gap-3 p-4 rounded-2xl text-base font-medium text-[#cbd5e1] bg-white/[0.02] ml-2">
@@ -175,8 +230,26 @@ export default function Navbar() {
           </Link>
 
           <div className="px-4 py-2 text-xs font-bold text-[#475569] uppercase tracking-wider">Қосымша</div>
+          <Link to="/updates" onClick={() => setMobOpen(false)} className="flex items-center gap-3 p-4 rounded-2xl text-lg font-semibold text-[#fbbf24] bg-[#f59e0b]/10 border border-[#f59e0b]/20">
+            <Bell className="w-5 h-5 text-[#f59e0b]" /> Жаңалықтар
+          </Link>
           <Link to="/ai-trainer" onClick={() => setMobOpen(false)} className="flex items-center gap-3 p-4 rounded-2xl text-lg font-semibold text-[#e2e8f0] bg-white/[0.04]">
             <Bot className="w-5 h-5 text-[#a855f7]" /> AI Жаттықтырушы
+          </Link>
+          <Link to="/search" onClick={() => setMobOpen(false)} className="flex items-center gap-3 p-4 rounded-2xl text-lg font-semibold text-[#e2e8f0] bg-white/[0.04]">
+            <Search className="w-5 h-5 text-[#3b82f6]" /> Іздеу
+          </Link>
+          <Link to="/progress" onClick={() => setMobOpen(false)} className="flex items-center gap-3 p-4 rounded-2xl text-lg font-semibold text-[#e2e8f0] bg-white/[0.04]">
+            <BarChart3 className="w-5 h-5 text-[#10b981]" /> Прогресс
+          </Link>
+          <Link to="/group-test" onClick={() => setMobOpen(false)} className="flex items-center gap-3 p-4 rounded-2xl text-lg font-semibold text-[#e2e8f0] bg-white/[0.04]">
+            <Users className="w-5 h-5 text-[#f59e0b]" /> Топтық тест
+          </Link>
+          <Link to="/achievements" onClick={() => setMobOpen(false)} className="flex items-center gap-3 p-4 rounded-2xl text-lg font-semibold text-[#e2e8f0] bg-white/[0.04]">
+            <Trophy className="w-5 h-5 text-[#f59e0b]" /> Жетістіктер
+          </Link>
+          <Link to="/live" onClick={() => setMobOpen(false)} className="flex items-center gap-3 p-4 rounded-2xl text-lg font-semibold text-[#e2e8f0] bg-white/[0.04]">
+            <Video className="w-5 h-5 text-[#ef4444]" /> Тірі сабақ
           </Link>
           <Link to="/resources" onClick={() => setMobOpen(false)} className="flex items-center gap-3 p-4 rounded-2xl text-lg font-semibold text-[#e2e8f0] bg-white/[0.04]">
             <BookOpen className="w-5 h-5 text-[#3b82f6]" /> Материалдар
@@ -201,4 +274,3 @@ export default function Navbar() {
     </>
   );
 }
-
