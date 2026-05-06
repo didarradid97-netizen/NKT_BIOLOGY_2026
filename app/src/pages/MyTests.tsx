@@ -18,6 +18,7 @@ import {
   PenLine,
   Download,
   Upload,
+  Share2,
 } from "lucide-react";
 
 export default function MyTests() {
@@ -191,6 +192,13 @@ export default function MyTests() {
                         >
                           <Play className="w-4 h-4" />
                           Тапсыру
+                        </button>
+                        <button
+                          onClick={() => navigate(`/share/${test.id}`)}
+                          className="flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl bg-[#3b82f6]/10 border border-[#3b82f6]/20 text-[#60a5fa] text-sm font-medium hover:bg-[#3b82f6]/15 active:scale-95 transition-all"
+                        >
+                          <Share2 className="w-4 h-4" />
+                          Бөлісу
                         </button>
                         <button
                           onClick={() => navigate("/test-creator", { state: { editTestId: test.id } })}

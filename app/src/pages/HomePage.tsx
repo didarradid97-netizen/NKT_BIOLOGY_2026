@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router";
 import Navbar from "@/components/Navbar";
 import { isAuthenticated } from "@/lib/storage";
-import { BookOpen, Award, Clock, Users, Zap, ChevronRight, Star, Phone } from "lucide-react";
+import { BookOpen, Award, Clock, Users, Zap, ChevronRight, Star, Phone, GraduationCap, BarChart3, Trophy, Radio, Bell, Bot, PenLine, Sparkles } from "lucide-react";
 
 export default function HomePage() {
   const navigate = useNavigate();
@@ -41,6 +41,41 @@ export default function HomePage() {
                 Материалдар
               </button>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Жаңа мүмкіндіктер */}
+      <section className="py-8">
+        <div className="max-w-7xl mx-auto px-4">
+          <h2 className="text-xl font-bold text-center mb-6 text-white/90">Жаңа мүмкіндіктер</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {[
+              { icon: GraduationCap, title: "Силлабус", desc: "5 модуль • 22 тақырып • 136 сағат", color: "from-amber-500 to-orange-500", path: "/syllabus" },
+              { icon: BarChart3, title: "Прогресс", desc: "Тақырыптық талдау • График", color: "from-pink-500 to-rose-500", path: "/progress" },
+              { icon: Users, title: "Топтық тест", desc: "Промокод • Рейтинг • Бәсеке", color: "from-cyan-500 to-blue-500", path: "/group-test" },
+              { icon: Radio, title: "Тірі сабақ", desc: "Экран бөлісу • Чат • LIVE", color: "from-red-500 to-rose-500", path: "/live" },
+              { icon: Bell, title: "Жаңалықтар", desc: "Барлық жаңартулар туралы", color: "from-yellow-500 to-amber-500", path: "/updates" },
+              { icon: Bot, title: "AI Жаттықтырушы", desc: "200+ тақырып • Серверсіз", color: "from-emerald-500 to-green-500", path: "/ai-trainer" },
+              { icon: PenLine, title: "Тест құру", desc: "Өз тестіңді жаса", color: "from-blue-500 to-indigo-500", path: "/test-creator" },
+              { icon: Sparkles, title: "AI Генератор", desc: "Мәтіннен тест жасау", color: "from-purple-500 to-violet-500", path: "/ai-test-generator" },
+              { icon: Trophy, title: "Жетістіктер", desc: "XP • Деңгей • Ачивкалар", color: "from-orange-500 to-amber-500", path: "/achievements" },
+            ].map((item) => (
+              <div
+                key={item.path}
+                onClick={() => navigate(item.path)}
+                className="group cursor-pointer bg-white/5 border border-white/10 rounded-2xl p-5 hover:bg-white/10 hover:border-white/20 transition-all flex items-center gap-4"
+              >
+                <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${item.color} flex items-center justify-center flex-shrink-0 shadow-lg`}>
+                  <item.icon className="w-6 h-6 text-white" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-bold text-white text-sm mb-0.5 group-hover:text-emerald-400 transition-colors">{item.title}</h3>
+                  <p className="text-white/50 text-xs">{item.desc}</p>
+                </div>
+                <ChevronRight className="w-4 h-4 text-white/30 group-hover:text-white/60 transition-colors flex-shrink-0" />
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -109,4 +144,3 @@ export default function HomePage() {
     </div>
   );
 }
-

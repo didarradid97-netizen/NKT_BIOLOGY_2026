@@ -113,8 +113,8 @@ export default function TestsPage() {
                   <div className="w-12 h-12 bg-emerald-500/20 rounded-xl flex items-center justify-center">
                     <FileText className="w-6 h-6 text-emerald-400" />
                   </div>
-                  <span className="px-3 py-1 bg-white/5 rounded-full text-xs text-white/50">
-                    Пробный
+                  <span className="px-3 py-1 bg-emerald-500/10 rounded-full text-xs text-emerald-400 font-bold">
+                    #{test.id.replace('probny', '').replace('prob', '')}
                   </span>
                 </div>
                 <h3 className="text-lg font-semibold mb-2">{test.title}</h3>
@@ -141,4 +141,3 @@ export default function TestsPage() {
     </div>
   );
 }
-
