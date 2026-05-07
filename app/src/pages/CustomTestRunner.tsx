@@ -68,57 +68,35 @@ function getLocalExplanation(q: string, options: string[], correctIdx: number): 
   return `📚 **Сұрақ түсініктемесі:**\n${base}\n\n✅ **Дұрыс жауап:** ${options[correctIdx] || "Белгісіз"}\n\n🎯 **Неге дұрыс?**\nСұрақты мұқият оқыңыз, контексті анықтаңыз. ОЗП-да осындай сұрақтар жиі кездеседі.\n\n⚠️ (Сервер offline — локалды түсіндірме)`;
 }
 
-// Public тесттерді жүктеу (public/tests/)
+// Public тесттерді жүктеу (public/tests/all-tests.json)
 async function loadPublicTest(testId: string): Promise<TestData | null> {
-  // Тазалау: пробелдер мен арнайы таңбаларды ауыстыру
-  const cleanId = testId.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9а-яё-]/gi, '');
-
-  // 1. Барлық тесттер тізімін жүктеу
   try {
     const res = await fetch('/tests/all-tests.json');
-    if (res.ok) {
-      const data = await res.json();
-      const tests = Array.isArray(data) ? data : data.tests || [];
-      // ID бойынша іздеу
-      const found = tests.find((t: any) =>
-        t.id === testId ||
-        t.id === cleanId ||
-        (t.title && t.title.toLowerCase() === testId.toLowerCase()) ||
-        (t.title && t.title.toLowerCase().includes(testId.toLowerCase()))
-      );
-      if (found) return found as TestData;
-    }
-  } catch { /* ignore */ }
+    if (!res.ok) return null;
+    const data = await res.json();
 
-  // 2. Бөлек .json файл ретінде көрмек
-  const tryFiles = [
-    `/tests/${testId}.json`,
-    `/tests/${cleanId}.json`,
-    `/tests/probny-${testId.replace(/\D/g, '')}.json`,
-    `/tests/test-${cleanId}.json`,
-  ];
+    // all-tests.json құрылымы: { "probny1": { title, description, questions, time, data: [...] }, ... }
+    const raw = data[testId];
+    if (!raw) return null;
 
-  for (const url of tryFiles) {
-    try {
-      const res = await fetch(url);
-      if (res.ok) return await res.json();
-    } catch { /* ignore */ }
+    // Сыртқы форматты ішкі TestData форматына түрлендіру
+    const mapped: TestData = {
+      id: testId,
+      title: raw.title || testId,
+      description: raw.description || "",
+      timeLimit: raw.time || 45,
+      questions: (raw.data || []).map((q: any, idx: number) => ({
+        id: `${testId}-q${idx}`,
+        text: q.q || "Сұрақ",
+        options: Array.isArray(q.options) ? q.options : [],
+        correctAnswer: typeof q.correct === "number" ? q.correct : 0,
+        explanation: q.explanation || "",
+      })),
+    };
+    return mapped;
+  } catch {
+    return null;
   }
-
-  // 3. Индекс файл арқылы
-  try {
-    const indexRes = await fetch('/tests/index.json');
-    if (indexRes.ok) {
-      const index = await indexRes.json();
-      const entry = index.find((e: any) => e.id === testId || e.id === cleanId || e.title?.toLowerCase().includes(testId.toLowerCase()));
-      if (entry?.file) {
-        const fileRes = await fetch(`/tests/${entry.file}`);
-        if (fileRes.ok) return await fileRes.json();
-      }
-    }
-  } catch { /* ignore */ }
-
-  return null;
 }
 
 export default function CustomTestRunner() {
