@@ -5,7 +5,7 @@ import ProfilePage from "@/pages/ProfilePage";
 import ResourcesPage from "@/pages/ResourcesPage";
 import LoginPage from "@/pages/LoginPage";
 
-// Жаңа беттер (барлығы істейтін)
+// Негізгі беттер
 import AITrainer from "@/pages/AITrainer";
 import TestCreator from "@/pages/TestCreator";
 import AITestGenerator from "@/pages/AITestGenerator";
@@ -20,7 +20,17 @@ import LiveClass from "@/pages/LiveClass";
 import UpdatesPage from "@/pages/UpdatesPage";
 import SyllabusPage from "@/pages/SyllabusPage";
 
-// Кез келген құрылғыда дұрыс жұмыс істейтін 404 бет
+// 🔥 ЖАҢА 20 ФИЧА
+import AIDiagnosis from "@/pages/AIDiagnosis";
+import VoiceTeacher from "@/pages/VoiceTeacher";
+import SmartScan from "@/pages/SmartScan";
+import DuelMode from "@/pages/DuelMode";
+import GlobalRating from "@/pages/GlobalRating";
+import MentorHub from "@/pages/MentorHub";
+import DailyHub from "@/pages/DailyHub";
+import VirtualLab from "@/pages/VirtualLab";
+import TeacherHub from "@/pages/TeacherHub";
+
 function NotFound() {
   return (
     <div className="min-h-screen bg-[#0f172a] text-white flex flex-col items-center justify-center gap-4">
@@ -41,7 +51,7 @@ function App() {
       <Route path="/profile" element={<ProfilePage />} />
       <Route path="/resources" element={<ResourcesPage />} />
 
-      {/* Жаңа беттер */}
+      {/* Негізгі жүйелер */}
       <Route path="/ai-trainer" element={<AITrainer />} />
       <Route path="/test-creator" element={<TestCreator />} />
       <Route path="/ai-test-generator" element={<AITestGenerator />} />
@@ -56,7 +66,17 @@ function App() {
       <Route path="/updates" element={<UpdatesPage />} />
       <Route path="/syllabus" element={<SyllabusPage />} />
 
-      {/* 404 */}
+      {/* 🔥 ЖАҢА 20 ФИЧА ROUTE-тары */}
+      <Route path="/ai-diagnosis" element={<AIDiagnosis />} />
+      <Route path="/voice-teacher" element={<VoiceTeacher />} />
+      <Route path="/smart-scan" element={<SmartScan />} />
+      <Route path="/duel" element={<DuelMode />} />
+      <Route path="/global-rating" element={<GlobalRating />} />
+      <Route path="/mentor" element={<MentorHub />} />
+      <Route path="/daily" element={<DailyHub />} />
+      <Route path="/virtual-lab" element={<VirtualLab />} />
+      <Route path="/teacher-hub" element={<TeacherHub />} />
+
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
