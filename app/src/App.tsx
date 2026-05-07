@@ -4,7 +4,6 @@ import TestsPage from "@/pages/TestsPage";
 import ProfilePage from "@/pages/ProfilePage";
 import ResourcesPage from "@/pages/ResourcesPage";
 import LoginPage from "@/pages/LoginPage";
-import TestRunner from "@/pages/TestRunner";
 
 // Жаңа беттер (барлығы істейтін)
 import AITrainer from "@/pages/AITrainer";
