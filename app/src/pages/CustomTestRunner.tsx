@@ -70,22 +70,55 @@ function getLocalExplanation(q: string, options: string[], correctIdx: number): 
 
 // Public тесттерді жүктеу (public/tests/)
 async function loadPublicTest(testId: string): Promise<TestData | null> {
+  // Тазалау: пробелдер мен арнайы таңбаларды ауыстыру
+  const cleanId = testId.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9а-яё-]/gi, '');
+
+  // 1. Барлық тесттер тізімін жүктеу
   try {
-    // Барлық тесттер тізімін жүктеу
     const res = await fetch('/tests/all-tests.json');
-    if (!res.ok) throw new Error('all-tests.json not found');
-    const tests: TestData[] = await res.json();
-    const found = tests.find(t => t.id === testId || t.title?.toLowerCase().includes(testId.toLowerCase()));
-    if (found) return found;
+    if (res.ok) {
+      const data = await res.json();
+      const tests = Array.isArray(data) ? data : data.tests || [];
+      // ID бойынша іздеу
+      const found = tests.find((t: any) =>
+        t.id === testId ||
+        t.id === cleanId ||
+        (t.title && t.title.toLowerCase() === testId.toLowerCase()) ||
+        (t.title && t.title.toLowerCase().includes(testId.toLowerCase()))
+      );
+      if (found) return found as TestData;
+    }
+  } catch { /* ignore */ }
 
-    // Немесе бөлек файл ретінде көрмек
-    const res2 = await fetch(`/tests/${testId}.json`);
-    if (res2.ok) return await res2.json();
+  // 2. Бөлек .json файл ретінде көрмек
+  const tryFiles = [
+    `/tests/${testId}.json`,
+    `/tests/${cleanId}.json`,
+    `/tests/probny-${testId.replace(/\D/g, '')}.json`,
+    `/tests/test-${cleanId}.json`,
+  ];
 
-    return null;
-  } catch {
-    return null;
+  for (const url of tryFiles) {
+    try {
+      const res = await fetch(url);
+      if (res.ok) return await res.json();
+    } catch { /* ignore */ }
   }
+
+  // 3. Индекс файл арқылы
+  try {
+    const indexRes = await fetch('/tests/index.json');
+    if (indexRes.ok) {
+      const index = await indexRes.json();
+      const entry = index.find((e: any) => e.id === testId || e.id === cleanId || e.title?.toLowerCase().includes(testId.toLowerCase()));
+      if (entry?.file) {
+        const fileRes = await fetch(`/tests/${entry.file}`);
+        if (fileRes.ok) return await fileRes.json();
+      }
+    }
+  } catch { /* ignore */ }
+
+  return null;
 }
 
 export default function CustomTestRunner() {
