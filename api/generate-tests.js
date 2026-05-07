@@ -1,18 +1,32 @@
-// api/generate-tests.js — AI Test Generator API
+// ============================================
+// 🤖 AI TEST GENERATOR API — КӘСІПТІ ДЕҢГЕЙ
+// ============================================
+// Vercel Function: POST /api/generate-tests
+
 const GROQ_API_KEY = process.env.GROQ_API_KEY;
 const GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
 
-const SYSTEM_PROMPT = `Сен — NKT BIOLOGY платформасының AI тест генераторысың. Биология мәтінінен қазақша тест сұрақтары жасайсың.
+const SYSTEM_PROMPT = `Сен — NKT BIOLOGY платформасының кәсіпқой AI тест генераторысың. 
 
 Ережелер:
-1. ҚАЗАҚША тест сұрақтары
+1. ТЕК қазақша тест сұрақтары
 2. Әр сұрақта 4 нұсқа (A, B, C, D)
 3. Дұрыс жауапты белгіле (correctAnswer: 0/1/2/3)
-4. Түсініктеме бер
-5. ОЗП/ҰБТ деңгейінде
+4. Түсініктеме бер — қысқа, түсінікті
+5. ОЗП/ҰБТ деңгейінде қиындық
+6. Тема бойынша терең сұрақтар
+7. Дұрыс/қате нұсқаларын жан-жақты жаз
+8. Формат — JSON массив
 
-Формат — JSON массив:
-[{"text":"...","options":["A","B","C","D"],"correctAnswer":0,"explanation":"..."}]`;
+ФОРМАТ:
+[
+  {
+    "text": "Сұрақ мәтіні",
+    "options": ["A нұсқа", "B нұсқа", "C нұсқа", "D нұсқа"],
+    "correctAnswer": 0,
+    "explanation": "Неге дұрыс екені"
+  }
+]`;
 
 module.exports = async (req, res) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -42,7 +56,7 @@ module.exports = async (req, res) => {
         model: "llama-3.3-70b-versatile",
         messages: [
           { role: "system", content: SYSTEM_PROMPT },
-          { role: "user", content: `Мына мәтін бойынша ${count} тест жаса:\n\n${content.slice(0, 3000)}\n\nТЕК JSON форматында жауап бер, ешқандай қосымша мәтінсіз:` },
+          { role: "user", content: `Мына мәтін бойынша ${count} тест сұрағы жаса:\n\n${content.slice(0, 3000)}\n\nТЕК JSON форматында жауап бер, ешқандай қосымша мәтінсіз:` },
         ],
         temperature: 0.8,
         max_tokens: 4096,
@@ -55,10 +69,8 @@ module.exports = async (req, res) => {
     }
 
     const raw = data.choices[0].message.content;
-    // Парсим JSON из ответа
     let questions = [];
     try {
-      // Пытаемся найти JSON массив в ответе
       const jsonMatch = raw.match(/\[[\s\S]*\]/);
       if (jsonMatch) {
         questions = JSON.parse(jsonMatch[0]);
@@ -66,7 +78,6 @@ module.exports = async (req, res) => {
         questions = JSON.parse(raw);
       }
     } catch {
-      // Если не удалось распарсить, возвращаем raw для отладки
       return res.status(200).json({ questions: [], raw, error: "JSON parse failed" });
     }
 
