@@ -4,11 +4,13 @@
 import { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate } from "react-router";
 import { getCustomTest, saveTestResult } from "@/lib/customTestStorage";
+import { recordWrongAnswer } from "@/lib/memoryStorage";
+import { getMotivationMessage } from "@/lib/mentorStorage";
 import {
   ArrowLeft, Clock, ChevronRight, ChevronLeft, Lightbulb,
   CheckCircle, XCircle, RotateCcw, Home, Loader2, Sparkles,
   Wifi, WifiOff, AlertTriangle, BookOpen, GraduationCap,
-  Zap, Volume2, VolumeX,
+  Zap, Volume2, VolumeX, Heart, Skull, Timer, Flame,
 } from "lucide-react";
 
 const HINT_API = "/api/hints";
@@ -117,6 +119,14 @@ export default function CustomTestRunner() {
   const [errorInfo, setErrorInfo] = useState("");
   const [soundEnabled, setSoundEnabled] = useState(true);
 
+  // 🔥 ЖАҢА ФИЧАЛАР: Survival + Stress + Voice + Motivation
+  const [survivalMode, setSurvivalMode] = useState(false);
+  const [stressMode, setStressMode] = useState(false);
+  const [gameOver, setGameOver] = useState(false);
+  const [motivationMsg, setMotivationMsg] = useState("");
+  const [speaking, setSpeaking] = useState(false);
+  const [cheatLoading, setCheatLoading] = useState(false);
+
   // Тестті жүктеу (localStorage немесе public/tests/)
   useEffect(() => {
     if (!testId) return;
@@ -190,8 +200,68 @@ export default function CustomTestRunner() {
     } finally { setHintLoading(false); }
   }, [test, current, hintLoading, hintType]);
 
-  const handleAnswer = (opt: number) => { if (!finished && test) setAnswers(prev => ({ ...prev, [current]: opt })); };
-  const handleFinish = () => { setFinished(true); setShowHint(false); };
+  const speakQuestion = useCallback(() => {
+    if (!test || speaking) return;
+    const q = test.questions[current];
+    const text = `Сұрақ: ${q.text}. Нұсқалар: ${q.options.map((o, i) => String.fromCharCode(65 + i) + ") " + o).join(", ")}`;
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = "ru-RU"; u.rate = 0.9;
+    u.onend = () => setSpeaking(false);
+    speechSynthesis.cancel(); speechSynthesis.speak(u); setSpeaking(true);
+  }, [test, current, speaking]);
+
+  const getCheatSheet = useCallback(async () => {
+    if (!test || cheatLoading) return;
+    const q = test.questions[current];
+    setCheatLoading(true); setShowHint(true); setErrorInfo("");
+    try {
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          messages: [
+            { role: "system", content: "Сен — кәсіпқой биология оқытушысы. 30 секундтық қысқа түсіндірме бер. Тек маңыздысы." },
+            { role: "user", content: `"${q.text}" сұрағын 30 секундта түсіндір. Нұсқалар: ${q.options.join(", ")}. Дұрыс: ${q.options[q.correctAnswer]}` },
+          ],
+          temperature: 0.6,
+        }),
+      });
+      const data = await res.json();
+      setHint(data.response || "❌ AI жауабы алынбады");
+      setOnline(true);
+    } catch {
+      setHint(getLocalExplanation(q.text, q.options, q.correctAnswer));
+      setOnline(false);
+      setErrorInfo("AI offline — локалды түсіндірме");
+    } finally { setCheatLoading(false); }
+  }, [test, current, cheatLoading]);
+    if (!finished && test && !gameOver) {
+      setAnswers(prev => ({ ...prev, [current]: opt }));
+      const q = test.questions[current];
+      // Survival Mode: қате = game over
+      if (survivalMode && opt !== q.correctAnswer) {
+        setGameOver(true);
+        setFinished(true);
+      }
+      // Memory AI: қате тақырыпты есте сақтау
+      if (opt !== q.correctAnswer) {
+        const topic = q.text.split(" ").slice(0, 3).join(" ");
+        recordWrongAnswer(topic);
+      }
+      // Motivation
+      const correctCount = Object.entries({ ...answers, [current]: opt }).filter(([i, a]) => test.questions[Number(i)]?.correctAnswer === a).length;
+      const totalAnswered = Object.keys({ ...answers, [current]: opt }).length;
+      setMotivationMsg(getMotivationMessage(correctCount, totalAnswered, 0));
+    }
+  };
+
+  const handleFinish = () => {
+    setFinished(true);
+    setShowHint(false);
+    const correct = test?.questions.filter((q, i) => answers[i] === q.correctAnswer).length || 0;
+    const total = test?.questions.length || 1;
+    setMotivationMsg(getMotivationMessage(correct, total, 0));
+  };
 
   const handleSaveResult = () => {
     if (!test) return;
@@ -282,13 +352,42 @@ export default function CustomTestRunner() {
           </div>
           <div className={`flex items-center gap-1.5 text-sm font-mono shrink-0 ${timeLeft < 60 ? "text-red-400" : "text-[#e2e8f0]"}`}><Clock className="w-4 h-4" />{String(minutes).padStart(2, "0")}:{String(seconds).padStart(2, "0")}</div>
           <button onClick={() => setSoundEnabled(!soundEnabled)} className="p-2 rounded-lg bg-white/[0.06] text-[#94a3b8] hover:text-white shrink-0">{soundEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}</button>
+          <button onClick={() => setSurvivalMode(!survivalMode)} title="Survival Mode" className={`p-2 rounded-lg shrink-0 transition-all ${survivalMode ? "bg-red-500/20 text-red-400 border border-red-500/30" : "bg-white/[0.06] text-[#94a3b8] hover:text-white"}`}><Skull className="w-4 h-4" /></button>
+          <button onClick={() => setStressMode(!stressMode)} title="Stress Mode" className={`p-2 rounded-lg shrink-0 transition-all ${stressMode ? "bg-[#f59e0b]/20 text-[#fbbf24] border border-[#f59e0b]/30 animate-pulse" : "bg-white/[0.06] text-[#94a3b8] hover:text-white"}`}><Timer className="w-4 h-4" /></button>
         </div>
       </div>
+
+      {/* Stress heartbeat overlay */}
+      {stressMode && !finished && (
+        <div className="fixed inset-0 pointer-events-none z-40">
+          <div className="absolute inset-0 bg-red-500/[0.02] animate-pulse" />
+        </div>
+      )}
 
       <div className="max-w-[1100px] mx-auto px-4 py-6">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
           {/* Негізгі аймақ */}
           <div className="lg:col-span-2 space-y-5">
+            {/* Motivation Banner */}
+            {motivationMsg && (
+              <div className="bg-gradient-to-r from-[#10b981]/10 to-[#3b82f6]/10 border border-[#10b981]/20 rounded-xl p-3 flex items-center gap-2 animate-pulse">
+                <Heart className="w-4 h-4 text-[#ec4899] flex-shrink-0" />
+                <p className="text-xs text-[#e2e8f0] font-medium">{motivationMsg}</p>
+              </div>
+            )}
+
+            {/* Game Over Banner */}
+            {gameOver && (
+              <div className="bg-red-500/15 border border-red-500/30 rounded-2xl p-6 text-center">
+                <Skull className="w-12 h-12 text-red-400 mx-auto mb-3" />
+                <h2 className="text-xl font-bold text-red-400 mb-2">❌ Survival Mode: Game Over</h2>
+                <p className="text-sm text-[#94a3b8] mb-4">Қате жауап бердіңіз. Қайта тырысыңыз!</p>
+                <button onClick={() => { setGameOver(false); setCurrent(0); setAnswers({}); setFinished(false); setTimeLeft(test.timeLimit * 60); }} className="px-5 py-2.5 rounded-xl bg-red-500/20 text-red-400 font-medium hover:bg-red-500/30 transition-all">
+                  <RotateCcw className="w-4 h-4 inline mr-2" /> Қайта
+                </button>
+              </div>
+            )}
+
             {/* Сұрақ */}
             <div className="bg-white/[0.04] border border-white/[0.08] rounded-2xl p-5">
               <div className="flex items-center justify-between mb-4">
@@ -338,6 +437,12 @@ export default function CustomTestRunner() {
                 </button>
                 <button onClick={() => getHint("explain")} disabled={hintLoading} className="px-3 py-2 rounded-lg bg-[#f59e0b]/15 text-[#fbbf24] text-xs font-medium flex items-center gap-1 hover:bg-[#f59e0b]/25 transition-all disabled:opacity-50 border border-[#f59e0b]/20">
                   {hintLoading && hintType === "explain" ? <Loader2 className="w-3 h-3 animate-spin" /> : <GraduationCap className="w-3 h-3" />} Түсіндірме
+                </button>
+                <button onClick={speakQuestion} disabled={speaking} className="px-3 py-2 rounded-lg bg-[#ec4899]/15 text-[#f472b6] text-xs font-medium flex items-center gap-1 hover:bg-[#ec4899]/25 transition-all disabled:opacity-50 border border-[#ec4899]/20">
+                  {speaking ? <Flame className="w-3 h-3 animate-pulse" /> : <Volume2 className="w-3 h-3" />} Дыбыстау
+                </button>
+                <button onClick={getCheatSheet} disabled={cheatLoading} className="px-3 py-2 rounded-lg bg-[#06b6d4]/15 text-[#22d3ee] text-xs font-medium flex items-center gap-1 hover:bg-[#06b6d4]/25 transition-all disabled:opacity-50 border border-[#06b6d4]/20">
+                  {cheatLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : <Zap className="w-3 h-3" />} 30с Cheat Sheet
                 </button>
               </div>
 
