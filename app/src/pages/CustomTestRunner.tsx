@@ -1,5 +1,5 @@
 // ============================================
-// ▶️ TEST RUNNER + AI КӨМЕКШІ ӘР СҰРАҚҚА
+// ▶️ TEST RUNNER + AI КӨМЕКШІ — Public & Custom тесттер
 // ============================================
 import { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate } from "react-router";
@@ -7,55 +7,92 @@ import { getCustomTest, saveTestResult } from "@/lib/customTestStorage";
 import {
   ArrowLeft, Clock, ChevronRight, ChevronLeft, Lightbulb,
   CheckCircle, XCircle, RotateCcw, Home, Loader2, Sparkles,
-  Wifi, WifiOff, AlertTriangle, BookOpen, BrainCircuit,
-  HelpCircle, GraduationCap, Zap, Volume2, VolumeX,
+  Wifi, WifiOff, AlertTriangle, BookOpen, GraduationCap,
+  Zap, Volume2, VolumeX,
 } from "lucide-react";
 
 const HINT_API = "/api/hints";
 const EXPLAIN_API = "/api/explain-question";
 
+interface Question {
+  id: string;
+  text: string;
+  options: string[];
+  correctAnswer: number;
+  explanation?: string;
+}
+
+interface TestData {
+  id: string;
+  title: string;
+  description?: string;
+  category?: string;
+  timeLimit: number;
+  questions: Question[];
+}
+
 // Локалды подсказкалар
 const LOCAL_HINTS: Record<string, string> = {
   жасуша: "Жасушаның негізгі бөліктері: ядро, митохондрия, рибосома. Прокариот vs Эукариот айырмашылығын есте сақта.",
-  фотосинтез: "Фотосинтез: 6CO₂ + 6H₂O → C₆H₁₂O₆ + 6O₂. Жарық фазасы (АТП+NADPH) + Кальвин циклі (глюкоза).",
-  днк: "ДНҚ: A-T, G-C жұптары. Репликация S-фазада. Транскрипция → Трансляция → Ақуыз.",
-  митоз: "Митоз: Профаза→Метафаза→Анафаза→Телофаза. 2n→2n. Соматикалық жасушалар.",
-  мейоз: "Мейоз: 2 бөліну. I-ге кроссинговер. 2n→n. Гаметалар түзілуі.",
-  эволюция: "Эволюция: Дарвин (өзгергіштік + сұрыпталу). Мутация → Арекеттесу → Изоляция.",
-  экология: "Экожүйе: өндірушілер→тұтынушылар→ыдыратқыштар. 10% энергия заңы.",
-  қан: "Қан: Эритроцит (O₂), лейкоцит (қорғаныс), тромбоцит (қанықтыру). Гемоглобин.",
+  фотосинтез: "Фотосинтез: 6CO₂ + 6H₂O → C₆H₁₂O₆ + 6O₂. Жарық фазасы + Кальвин циклі.",
+  днк: "ДНҚ: A-T, G-C жұптары. Репликация S-фазада.",
+  митоз: "Митоз: Профаза→Метафаза→Анафаза→Телофаза. 2n→2n.",
+  мейоз: "Мейоз: 2 бөліну. Кроссинговер. 2n→n.",
+  эволюция: "Эволюция: Дарвин (өзгергіштік + сұрыпталу).",
+  экология: "Экожүйе: өндірушілер→тұтынушылар→ыдыратқыштар. 10% заңы.",
+  қан: "Қан: Эритроцит (O₂), лейкоцит (қорғаныс), тромбоцит (қанықтыру).",
 };
 
-function getLocalHint(question: string): string {
-  const lower = question.toLowerCase();
+function getLocalHint(q: string): string {
+  const lower = q.toLowerCase();
   for (const [key, val] of Object.entries(LOCAL_HINTS)) {
     if (lower.includes(key)) return "💡 " + val + "\n\n⚠️ (Сервер offline — локалды жауап)";
   }
-  return "💡 Сұрақты мұқият оқыңыз. Белгісіз сөздерді AI Жаттықтырушыға сұраңыз.\n⚠️ (Сервер offline — локалды)";
+  return "💡 Сұрақты мұқият оқыңыз.\n⚠️ (Сервер offline)";
 }
 
-function getLocalExplanation(question: string, options: string[], correctIdx: number): string {
-  const lower = question.toLowerCase();
-  // Тақырып бойынша түсініктеме
+function getLocalExplanation(q: string, options: string[], correctIdx: number): string {
+  const lower = q.toLowerCase();
   let base = "";
-  if (lower.includes("фотосинтез")) base = "Фотосинтез — жарық энергиясын химиялық энергияға айналдыру. Хлоропластта жүреді. Негізгі өнімдер: глюкоза + оттегі.";
-  else if (lower.includes("митохондрия")) base = "Митохондрия — жасушаның 'энергетикалық станциясы'. Тыныс алу процесі жүреді, АТФ түзіледі. Қос мембраналы органелла.";
-  else if (lower.includes("днк") || lower.includes("дезокси")) base = "ДНҚ — дезоксирибонуклеин қышқылы. Нуклеотидтерден тұрады (А, Т, Г, Ц). Репликация, транскрипция, трансляция процестерінің негізі.";
-  else if (lower.includes("митоз")) base = "Митоз — соматикалық жасушалардың көбеюі. 4 фаза: профаза, метафаза, анафаза, телофаза. Хромосома саны өзгермейді (2n→2n).";
-  else if (lower.includes("мейоз")) base = "Мейоз — жыныстық жасушалар түзілуі. 2 бөліну. Кроссинговер болады. Хромосома саны жартылай азаяды (2n→n).";
-  else if (lower.includes("генетик") || lower.includes("мендель")) base = "Генетика — тұқым қуалайтын белгілер заңдылығын зерттейді. Мендель заңдары: біртекті гибридтер, еркін комбинациялану, тізбекті доминанталық.";
-  else if (lower.includes("эколог")) base = "Экология — ағзалар мен ортаның өзара қатынасы. Трофикалық деңгейлер, энергия ағыны (10% заңы), биогеоценоз.";
-  else if (lower.includes("қан") || lower.includes("гемогло")) base = "Қан: плазма + формал элементтер. Эритроцит (гемоглобин арқылы O₂ тасымалдайды), лейкоцит (қорғаныс), тромбоцит (қанықтыру).";
-  else if (lower.includes("жасуша") || lower.includes("клетка")) base = "Жасуша — тірі ағзалардың құрылымдық негізгі бірлігі. Прокариоттарда (бактериялар) ядро жоқ, эукариоттарда ядро, митохондрия, хлоропласт бар.";
-  else base = "Бұл сұрақ бойынша негізгі ұғымды есте сақтаңыз. Терминдерді AI Жаттықтырушыға сұрап, тереңірек түсініңіз.";
+  if (lower.includes("фотосинтез")) base = "Фотосинтез — жарык энергиясын химиялық энергияға айналдыру. Хлоропластта жүреді.";
+  else if (lower.includes("митохондрия")) base = "Митохондрия — 'энергетикалық станция'. Тыныс алу, АТФ түзіледі.";
+  else if (lower.includes("днк") || lower.includes("дезокси")) base = "ДНҚ — дезоксирибонуклеин қышқылы. Нуклеотидтерден тұрады.";
+  else if (lower.includes("митоз")) base = "Митоз — соматикалық жасушалар көбеюі. 4 фаза: профаза, метафаза, анафаза, телофаза.";
+  else if (lower.includes("мейоз")) base = "Мейоз — жыныстық жасушалар түзілуі. 2 бөліну. Хромосома жартылай азаяды.";
+  else if (lower.includes("генетик") || lower.includes("мендель")) base = "Генетика — тұқым қуалайтын белгілер заңдылығы. Мендель заңдары.";
+  else if (lower.includes("эколог")) base = "Экология — ағзалар мен ортаның өзара қатынасы. 10% энергия заңы.";
+  else if (lower.includes("қан") || lower.includes("гемогло")) base = "Қан: плазма + формал элементтер. Эритроцит, лейкоцит, тромбоцит.";
+  else if (lower.includes("жасуша") || lower.includes("клетка")) base = "Жасуша — тірі ағзалардың негізгі бірлігі. Прокариот vs Эукариот.";
+  else base = "Бұл сұрақ бойынша негізгі ұғымды есте сақтаңыз.";
 
-  return `📚 **Сұрақ түсініктемесі:**\n${base}\n\n✅ **Дұрыс жауап:** ${options[correctIdx] || "Жауап белгісіз"}\n\n🎯 **Неге дұрыс?**\nСұрақты мұқият оқыңыз, контексті анықтаңыз. ОЗП-да осындай сұрақтар жиі кездеседі.\n\n⚠️ (Сервер offline — локалды түсіндірме)`;
+  return `📚 **Сұрақ түсініктемесі:**\n${base}\n\n✅ **Дұрыс жауап:** ${options[correctIdx] || "Белгісіз"}\n\n🎯 **Неге дұрыс?**\nСұрақты мұқият оқыңыз, контексті анықтаңыз. ОЗП-да осындай сұрақтар жиі кездеседі.\n\n⚠️ (Сервер offline — локалды түсіндірме)`;
+}
+
+// Public тесттерді жүктеу (public/tests/)
+async function loadPublicTest(testId: string): Promise<TestData | null> {
+  try {
+    // Барлық тесттер тізімін жүктеу
+    const res = await fetch('/tests/all-tests.json');
+    if (!res.ok) throw new Error('all-tests.json not found');
+    const tests: TestData[] = await res.json();
+    const found = tests.find(t => t.id === testId || t.title?.toLowerCase().includes(testId.toLowerCase()));
+    if (found) return found;
+
+    // Немесе бөлек файл ретінде көрмек
+    const res2 = await fetch(`/tests/${testId}.json`);
+    if (res2.ok) return await res2.json();
+
+    return null;
+  } catch {
+    return null;
+  }
 }
 
 export default function CustomTestRunner() {
   const { testId } = useParams<{ testId: string }>();
   const navigate = useNavigate();
-  const test = getCustomTest(testId || "");
+  const [test, setTest] = useState<TestData | null>(null);
+  const [loadingTest, setLoadingTest] = useState(true);
 
   const [current, setCurrent] = useState(0);
   const [answers, setAnswers] = useState<Record<number, number>>({});
@@ -68,9 +105,38 @@ export default function CustomTestRunner() {
   const [online, setOnline] = useState(true);
   const [errorInfo, setErrorInfo] = useState("");
   const [soundEnabled, setSoundEnabled] = useState(true);
-  const [showSidePanel, setShowSidePanel] = useState(false);
 
-  useEffect(() => { if (test && timeLeft === 0) setTimeLeft(test.timeLimit * 60); }, [test]);
+  // Тестті жүктеу (localStorage немесе public/tests/)
+  useEffect(() => {
+    if (!testId) return;
+    setLoadingTest(true);
+
+    (async () => {
+      // 1. Алдымен localStorage-тен іздеу (custom tests)
+      const custom = getCustomTest(testId);
+      if (custom) {
+        setTest(custom as TestData);
+        setTimeLeft(custom.timeLimit * 60);
+        setLoadingTest(false);
+        return;
+      }
+
+      // 2. Public/tests/ ішінен іздеу (75 пробный тесттер)
+      const publicTest = await loadPublicTest(testId);
+      if (publicTest) {
+        setTest(publicTest);
+        setTimeLeft(publicTest.timeLimit * 60);
+        setLoadingTest(false);
+        return;
+      }
+
+      // 3. Табылмады
+      setTest(null);
+      setLoadingTest(false);
+    })();
+  }, [testId]);
+
+  // Таймер
   useEffect(() => {
     if (!finished && timeLeft > 0) {
       const timer = setInterval(() => {
@@ -88,7 +154,6 @@ export default function CustomTestRunner() {
     setHintLoading(true); setShowHint(true); setErrorInfo("");
 
     try {
-      // Алдымен backend API-ны қолдану
       const endpoint = useType === "explain" ? EXPLAIN_API : HINT_API;
       const res = await fetch(endpoint, {
         method: "POST",
@@ -102,20 +167,19 @@ export default function CustomTestRunner() {
       });
       if (!res.ok) throw new Error("HTTP " + res.status);
       const data = await res.json();
-      setHint(data.hint || data.explanation || getLocalExplanation(q.text, q.options, q.correctAnswer)); setOnline(true);
-    } catch (err: any) {
-      // Fallback — локалды түсіндірме
-      if (useType === "explain") {
-        setHint(getLocalExplanation(q.text, q.options, q.correctAnswer));
-      } else {
-        setHint(getLocalHint(q.text));
-      }
+      setHint(data.hint || data.explanation || getLocalExplanation(q.text, q.options, q.correctAnswer));
+      setOnline(true);
+    } catch {
+      setHint(useType === "explain"
+        ? getLocalExplanation(q.text, q.options, q.correctAnswer)
+        : getLocalHint(q.text)
+      );
       setOnline(false);
       setErrorInfo("AI offline — локалды түсіндірме");
     } finally { setHintLoading(false); }
   }, [test, current, hintLoading, hintType]);
 
-  const handleAnswer = (opt: number) => { if (!finished) setAnswers(prev => ({ ...prev, [current]: opt })); };
+  const handleAnswer = (opt: number) => { if (!finished && test) setAnswers(prev => ({ ...prev, [current]: opt })); };
   const handleFinish = () => { setFinished(true); setShowHint(false); };
 
   const handleSaveResult = () => {
@@ -126,7 +190,23 @@ export default function CustomTestRunner() {
     navigate("/progress");
   };
 
-  if (!test) return <div className="min-h-screen bg-[#0f172a] text-white flex items-center justify-center">Тест табылмады</div>;
+  // Жүктелуде
+  if (loadingTest) {
+    return <div className="min-h-screen bg-[#0f172a] text-white flex items-center justify-center"><Loader2 className="w-8 h-8 animate-spin text-[#10b981]" /></div>;
+  }
+
+  // Тест табылмады
+  if (!test) {
+    return (
+      <div className="min-h-screen bg-[#0f172a] text-white flex flex-col items-center justify-center gap-4">
+        <XCircle className="w-12 h-12 text-red-400" />
+        <h1 className="text-xl font-bold">Тест табылмады</h1>
+        <p className="text-sm text-[#94a3b8]">ID: {testId}</p>
+        <button onClick={() => navigate("/tests")} className="px-4 py-2 rounded-xl bg-[#10b981] text-white text-sm">Тесттерге оралу</button>
+      </div>
+    );
+  }
+
   const minutes = Math.floor(timeLeft / 60);
   const seconds = timeLeft % 60;
   const progress = ((current + 1) / test.questions.length) * 100;
@@ -135,8 +215,9 @@ export default function CustomTestRunner() {
   // Нәтиже экраны
   if (finished) {
     let correct = 0;
-    test.questions.forEach((q, i) => { if (answers[i] === q.correctAnswer) correct++; });
+    test.questions.forEach((quest, i) => { if (answers[i] === quest.correctAnswer) correct++; });
     const pct = Math.round((correct / test.questions.length) * 100);
+
     return (
       <div className="min-h-screen bg-[#0f172a] text-[#e2e8f0]">
         <div className="max-w-[900px] mx-auto px-4 py-12">
@@ -149,13 +230,10 @@ export default function CustomTestRunner() {
             <p className="text-xl text-[#94a3b8] mt-2">{pct}%</p>
           </div>
 
-          {/* Тақырыптық талдау */}
           <div className="bg-white/[0.04] border border-white/[0.08] rounded-2xl p-5 mb-6">
-            <h3 className="font-bold text-lg mb-3 flex items-center gap-2"><BrainCircuit className="w-5 h-5 text-[#10b981]" /> Тақырыптық талдау</h3>
-            <p className="text-sm text-[#94a3b8]">Дұрыс: {correct} • Қате: {test.questions.length - correct} • Пропущено: {test.questions.length - Object.keys(answers).length}</p>
-            <div className="mt-3 h-3 bg-white/[0.06] rounded-full overflow-hidden">
-              <div className="h-full bg-gradient-to-r from-[#10b981] to-[#3b82f6] rounded-full" style={{ width: `${pct}%` }} />
-            </div>
+            <h3 className="font-bold text-lg mb-3 flex items-center gap-2"><Sparkles className="w-5 h-5 text-[#10b981]" /> Тақырыптық талдау</h3>
+            <p className="text-sm text-[#94a3b8]">Дұрыс: {correct} • Қате: {test.questions.length - correct}</p>
+            <div className="mt-3 h-3 bg-white/[0.06] rounded-full overflow-hidden"><div className="h-full bg-gradient-to-r from-[#10b981] to-[#3b82f6] rounded-full" style={{ width: `${pct}%` }} /></div>
           </div>
 
           <div className="space-y-3 mb-8">
@@ -166,7 +244,7 @@ export default function CustomTestRunner() {
                   Сіздің жауабыңыз: <span className={answers[i] === quest.correctAnswer ? "text-[#10b981] font-bold" : "text-red-400 font-bold"}>{answers[i] !== undefined ? quest.options[answers[i]] : "Жоқ"}</span>
                   {" "}• Дұрыс: <span className="text-[#10b981] font-bold">{quest.options[quest.correctAnswer]}</span>
                 </div>
-                {quest.explanation && <p className="text-xs text-[#64748b] bg-white/[0.03] rounded-lg p-2 mt-1">💡 {quest.explanation}</p>}
+                {quest.explanation && <p className="text-xs text-[#64748b] bg-white/[0.03] rounded-lg p-2">💡 {quest.explanation}</p>}
               </div>
             ))}
           </div>
@@ -186,8 +264,11 @@ export default function CustomTestRunner() {
       {/* Header */}
       <div className="sticky top-0 z-50 bg-[#0f172a]/90 backdrop-blur-xl border-b border-white/[0.06]">
         <div className="max-w-[1100px] mx-auto px-4 py-3 flex items-center justify-between gap-3">
-          <button onClick={() => navigate("/my-tests")} className="p-2 rounded-lg bg-white/[0.06] text-[#94a3b8] hover:text-white shrink-0"><ArrowLeft className="w-4 h-4" /></button>
-          <div className="flex-1 mx-2"><div className="h-2 bg-white/[0.06] rounded-full overflow-hidden"><div className="h-full bg-gradient-to-r from-[#10b981] to-[#3b82f6] rounded-full transition-all" style={{ width: `${progress}%` }} /></div><p className="text-[10px] text-[#64748b] mt-1 text-center">{current + 1} / {test.questions.length}</p></div>
+          <button onClick={() => navigate("/tests")} className="p-2 rounded-lg bg-white/[0.06] text-[#94a3b8] hover:text-white shrink-0"><ArrowLeft className="w-4 h-4" /></button>
+          <div className="flex-1 mx-2">
+            <div className="h-2 bg-white/[0.06] rounded-full overflow-hidden"><div className="h-full bg-gradient-to-r from-[#10b981] to-[#3b82f6] rounded-full transition-all" style={{ width: `${progress}%` }} /></div>
+            <p className="text-[10px] text-[#64748b] mt-1 text-center">{current + 1} / {test.questions.length} • {test.title}</p>
+          </div>
           <div className={`flex items-center gap-1.5 text-sm font-mono shrink-0 ${timeLeft < 60 ? "text-red-400" : "text-[#e2e8f0]"}`}><Clock className="w-4 h-4" />{String(minutes).padStart(2, "0")}:{String(seconds).padStart(2, "0")}</div>
           <button onClick={() => setSoundEnabled(!soundEnabled)} className="p-2 rounded-lg bg-white/[0.06] text-[#94a3b8] hover:text-white shrink-0">{soundEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}</button>
         </div>
@@ -195,15 +276,15 @@ export default function CustomTestRunner() {
 
       <div className="max-w-[1100px] mx-auto px-4 py-6">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-          {/* Негізгі сұрақ аймағы */}
+          {/* Негізгі аймақ */}
           <div className="lg:col-span-2 space-y-5">
-            {/* Сұрақ карточкасы */}
+            {/* Сұрақ */}
             <div className="bg-white/[0.04] border border-white/[0.08] rounded-2xl p-5">
               <div className="flex items-center justify-between mb-4">
-                <span className="text-xs font-bold text-[#64748b] uppercase tracking-wider">Сұрақ №{current + 1}</span>
+                <span className="text-xs font-bold text-[#64748b] uppercase tracking-wider">Сұрақ №{current + 1} / {test.questions.length}</span>
                 <div className="flex items-center gap-2">
                   {online ? <Wifi className="w-3.5 h-3.5 text-[#10b981]" /> : <WifiOff className="w-3.5 h-3.5 text-red-400" />}
-                  <span className={`text-xs ${answers[current] !== undefined ? "text-[#10b981]" : "text-[#64748b]"}`}>{answers[current] !== undefined ? "Жауап берілді" : "Жауапсыз"}</span>
+                  <span className={`text-xs ${answers[current] !== undefined ? "text-[#10b981]" : "text-[#64748b]"}`}>{answers[current] !== undefined ? "✓ Жауап берілді" : "○ Жауапсыз"}</span>
                 </div>
               </div>
 
@@ -220,7 +301,7 @@ export default function CustomTestRunner() {
               </div>
             </div>
 
-            {/* AI Көмекші панелі (сұрақтың астында) */}
+            {/* 🤖 AI Көмекші — Сұрақтың астында */}
             <div className="bg-gradient-to-r from-[#10b981]/10 to-[#3b82f6]/10 border border-[#10b981]/20 rounded-2xl p-5">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
@@ -230,13 +311,11 @@ export default function CustomTestRunner() {
                     <p className="text-[10px] text-[#64748b]">{online ? "Groq AI online" : "Fallback mode"}</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <select value={hintType} onChange={(e) => setHintType(e.target.value as "mini" | "full" | "explain")} className="bg-[#0f172a]/80 border border-white/[0.12] rounded-lg px-2 py-1.5 text-xs text-[#e2e8f0]">
-                    <option value="mini">🔍 Жеңіл</option>
-                    <option value="full">📖 Толық</option>
-                    <option value="explain">🎓 Түсіндірме</option>
-                  </select>
-                </div>
+                <select value={hintType} onChange={e => setHintType(e.target.value as "mini" | "full" | "explain")} className="bg-[#0f172a]/80 border border-white/[0.12] rounded-lg px-2 py-1.5 text-xs text-[#e2e8f0]">
+                  <option value="mini">🔍 Жеңіл</option>
+                  <option value="full">📖 Толық</option>
+                  <option value="explain">🎓 Түсіндірме</option>
+                </select>
               </div>
 
               <div className="flex gap-2 flex-wrap">
@@ -284,26 +363,26 @@ export default function CustomTestRunner() {
             </div>
           </div>
 
-          {/* Боковая панель — нұсқаулық + сұрақтар тізімі */}
+          {/* Боковая панель */}
           <div className="space-y-4">
             <div className="bg-white/[0.04] border border-white/[0.08] rounded-2xl p-4">
-              <h3 className="text-sm font-bold text-[#e2e8f0] mb-3 flex items-center gap-2"><Zap className="w-4 h-4 text-[#f59e0b]" /> Быстрый доступ</h3>
+              <h3 className="text-sm font-bold text-[#e2e8f0] mb-3 flex items-center gap-2"><Zap className="w-4 h-4 text-[#f59e0b]" /> Сұрақтар тізімі</h3>
               <div className="space-y-2 max-h-[400px] overflow-y-auto pr-1" style={{ scrollbarWidth: "thin" }}>
                 {test.questions.map((quest, idx) => (
                   <button key={idx} onClick={() => setCurrent(idx)} className={`w-full flex items-center gap-2 p-2.5 rounded-xl text-left text-xs transition-all ${idx === current ? "bg-[#10b981]/15 border border-[#10b981]/25" : answers[idx] !== undefined ? "bg-[#3b82f6]/10 border border-[#3b82f6]/20" : "bg-white/[0.03] border border-transparent hover:bg-white/[0.06]"}`}>
                     <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0 ${idx === current ? "bg-[#10b981] text-white" : answers[idx] !== undefined ? "bg-[#3b82f6] text-white" : "bg-white/[0.08] text-[#64748b]"}`}>{idx + 1}</span>
-                    <span className="truncate text-[#94a3b8]">{quest.text.slice(0, 40)}...</span>
+                    <span className="truncate text-[#94a3b8]">{quest.text.slice(0, 35)}...</span>
                   </button>
                 ))}
               </div>
             </div>
 
             <div className="bg-gradient-to-br from-[#f59e0b]/10 to-[#d97706]/5 border border-[#f59e0b]/20 rounded-2xl p-4">
-              <h3 className="text-sm font-bold text-[#fbbf24] mb-2 flex items-center gap-2"><HelpCircle className="w-4 h-4" /> Көмек</h3>
+              <h3 className="text-sm font-bold text-[#fbbf24] mb-2">💡 Көмек</h3>
               <p className="text-xs text-[#94a3b8] leading-relaxed">
-                🔍 <b>Жеңіл жардам</b> — сұраққа нұсқа бермейді<br/>
-                📖 <b>Толық шешу</b> — қадамдап түсіндіреді<br/>
-                🎓 <b>Түсіндірме</b> — неге дұрыс екенін айтады
+                🔍 <b>Жеңіл</b> — нұсқа бермейді<br/>
+                📖 <b>Толық</b> — қадамдап шешу<br/>
+                🎓 <b>Түсіндірме</b> — неге дұрыс
               </p>
             </div>
           </div>
