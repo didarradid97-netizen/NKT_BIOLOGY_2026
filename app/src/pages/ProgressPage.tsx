@@ -36,7 +36,7 @@ interface PeriodProgress {
 
 export default function ProgressPage() {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<"personal" | "compare" | "trends">("personal");
+  const [activeTab, setActiveTab] = useState<"personal" | "compare" | "trends" | "predict">("personal");
   const [expandedTopic, setExpandedTopic] = useState<string | null>(null);
 
   if (!isAuthenticated()) {
@@ -130,6 +130,7 @@ export default function ProgressPage() {
             { id: "personal", label: "Жеке прогресс", icon: TrendingUp },
             { id: "compare", label: "Салыстыру", icon: Users },
             { id: "trends", label: "Тенденциялар", icon: BrainCircuit },
+            { id: "predict", label: "Predict Score", icon: Target },
           ].map((tab) => (
             <button
               key={tab.id}
@@ -266,6 +267,65 @@ export default function ProgressPage() {
             <p className="text-white/40 max-w-md mx-auto">
               Терең талдау және тенденцияларды анықтау үшін деректер жинау жалғасуда. Тесттерді тапсыруды жалғастырыңыз!
             </p>
+          </div>
+        )}
+
+        {activeTab === "predict" && (
+          <div className="space-y-6">
+            {/* Predict My Score */}
+            <div className="bg-gradient-to-r from-[#a855f7]/10 to-[#3b82f6]/10 border border-[#a855f7]/20 rounded-2xl p-6">
+              <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                <Target className="w-5 h-5 text-[#a855f7]" />
+                🎯 Predict My Score
+              </h2>
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <p className="text-sm text-white/60">AI болжамы:</p>
+                  <p className="text-3xl font-bold text-[#a855f7]">{Math.min(100, avgScore + 5)} балл</p>
+                </div>
+                <div className="w-20 h-20 rounded-full bg-[#a855f7]/20 flex items-center justify-center">
+                  <span className="text-2xl font-bold text-[#d8b4fe]">{avgScore}%</span>
+                </div>
+              </div>
+              <p className="text-xs text-white/50">
+                💡 Болжам негізі: {totalTests} тест, орташа {avgScore}%. 
+                {avgScore >= 80 ? " НКТ-ны жақсы тапсырасың!" : avgScore >= 60 ? " Жақсы, бірақ тағы үйрену керек." : " Көбірек үйрену керек."}
+              </p>
+            </div>
+
+            {/* AI Progress Graph */}
+            <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
+              <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                <BarChart3 className="w-5 h-5 text-[#10b981]" />
+                📈 AI Progress Graph
+              </h2>
+              <div className="space-y-4">
+                {periodProgress.map((p, i) => {
+                  const prev = i > 0 ? periodProgress[i - 1].score : p.score;
+                  const trend = p.score - prev;
+                  return (
+                    <div key={p.period} className="flex items-center gap-4">
+                      <span className="text-xs text-white/40 w-12">{p.period}</span>
+                      <div className="flex-1 h-8 bg-white/5 rounded-lg overflow-hidden relative">
+                        <div
+                          className={`absolute top-0 left-0 h-full rounded-lg transition-all ${p.score >= 80 ? "bg-[#10b981]" : p.score >= 60 ? "bg-[#3b82f6]" : "bg-[#f59e0b]"}`}
+                          style={{ width: `${p.score}%` }}
+                        />
+                      </div>
+                      <div className="flex items-center gap-1 w-20">
+                        <span className={`text-sm font-bold ${getScoreColor(p.score)}`}>{p.score}%</span>
+                        {trend > 0 && <TrendingUp className="w-3 h-3 text-[#10b981]" />}
+                        {trend < 0 && <TrendingDown className="w-3 h-3 text-red-400" />}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+              <div className="mt-4 pt-4 border-t border-white/10 flex items-center justify-between text-xs text-white/40">
+                <span>📅 Күнделікті прогресс</span>
+                <span>🧠 AI талдайды</span>
+              </div>
+            </div>
           </div>
         )}
       </div>
