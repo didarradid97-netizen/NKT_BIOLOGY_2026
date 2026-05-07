@@ -38,7 +38,7 @@ function App() {
       <Route path="/" element={<HomePage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/tests" element={<TestsPage />} />
-      <Route path="/test/:testId" element={<TestRunner />} />
+      <Route path="/test/:testId" element={<CustomTestRunner />} />
       <Route path="/profile" element={<ProfilePage />} />
       <Route path="/resources" element={<ResourcesPage />} />
 
