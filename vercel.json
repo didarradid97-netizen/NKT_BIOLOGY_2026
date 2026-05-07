@@ -1,6 +1,9 @@
 {
   "rewrites": [
-    { "source": "/api/(.*)", "destination": "/api/$1" },
-    { "source": "/(.*)", "destination": "/app/index.html" }
+    { "source": "/api/chat", "destination": "/api/chat" },
+    { "source": "/api/generate-tests", "destination": "/api/generate-tests" },
+    { "source": "/api/hints", "destination": "/api/hints" },
+    { "source": "/api/explain-question", "destination": "/api/explain-question" },
+    { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
