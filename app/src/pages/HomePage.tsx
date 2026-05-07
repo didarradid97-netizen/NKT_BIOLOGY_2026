@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router";
 import Navbar from "@/components/Navbar";
 import { isAuthenticated } from "@/lib/storage";
-import { BookOpen, Award, Clock, Users, Zap, ChevronRight, Star, Phone, GraduationCap, BarChart3, Trophy, Radio, Bell, Bot, PenLine, Sparkles, Brain, Mic, ScanLine, Swords, Globe, FlaskConical, Briefcase, Heart } from "lucide-react";
+import { BookOpen, Award, Clock, Users, Zap, ChevronRight, Star, Phone, GraduationCap, BarChart3, Trophy, Radio, Bell, Bot, PenLine, Sparkles, Brain, Mic, ScanLine, Swords, Globe, FlaskConical, Briefcase } from "lucide-react";
 
 export default function HomePage() {
   const navigate = useNavigate();
@@ -68,6 +68,7 @@ export default function HomePage() {
               { icon: Zap, title: "Daily Hub", desc: "1 Minute Biology • Миссиялар", color: "from-yellow-500 to-amber-500", path: "/daily" },
               { icon: FlaskConical, title: "Virtual Lab", desc: "Drag & Drop • ДНҚ жинау", color: "from-cyan-500 to-blue-500", path: "/virtual-lab" },
               { icon: Briefcase, title: "Teacher Hub", desc: "Мұғалімдер базары • Бот", color: "from-green-500 to-emerald-500", path: "/teacher-hub" },
+            ].map((item) => (
               <div
                 key={item.path}
                 onClick={() => navigate(item.path)}
