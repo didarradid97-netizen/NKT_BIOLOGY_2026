@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router";
 import Navbar from "@/components/Navbar";
 import { isAuthenticated } from "@/lib/storage";
-import { BookOpen, Award, Clock, Users, Zap, ChevronRight, Star, Phone, GraduationCap, BarChart3, Trophy, Radio, Bell, Bot, PenLine, Sparkles } from "lucide-react";
+import { BookOpen, Award, Clock, Users, Zap, ChevronRight, Star, Phone, GraduationCap, BarChart3, Trophy, Radio, Bell, Bot, PenLine, Sparkles, Brain, Mic, ScanLine, Swords, Globe, FlaskConical, Briefcase, Heart } from "lucide-react";
 
 export default function HomePage() {
   const navigate = useNavigate();
@@ -60,7 +60,14 @@ export default function HomePage() {
               { icon: PenLine, title: "Тест құру", desc: "Өз тестіңді жаса", color: "from-blue-500 to-indigo-500", path: "/test-creator" },
               { icon: Sparkles, title: "AI Генератор", desc: "Мәтіннен тест жасау", color: "from-purple-500 to-violet-500", path: "/ai-test-generator" },
               { icon: Trophy, title: "Жетістіктер", desc: "XP • Деңгей • Ачивкалар", color: "from-orange-500 to-amber-500", path: "/achievements" },
-            ].map((item) => (
+              { icon: Brain, title: "AI Диагноз", desc: "20 сұрақ шеш → AI талдайды", color: "from-pink-500 to-rose-500", path: "/ai-diagnosis" },
+              { icon: Mic, title: "Voice Teacher", desc: "Автобуста тыңда, үйрен", color: "from-red-500 to-orange-500", path: "/voice-teacher" },
+              { icon: ScanLine, title: "Smart Scan", desc: "Фото түсір → AI жауап", color: "from-teal-500 to-emerald-500", path: "/smart-scan" },
+              { icon: Swords, title: "Duel Mode", desc: "AI қарсыласпен жарыс", color: "from-red-600 to-red-400", path: "/duel" },
+              { icon: Globe, title: "Global Rating", desc: "Қазақстан рейтингі • Топ 100", color: "from-blue-600 to-cyan-500", path: "/global-rating" },
+              { icon: Zap, title: "Daily Hub", desc: "1 Minute Biology • Миссиялар", color: "from-yellow-500 to-amber-500", path: "/daily" },
+              { icon: FlaskConical, title: "Virtual Lab", desc: "Drag & Drop • ДНҚ жинау", color: "from-cyan-500 to-blue-500", path: "/virtual-lab" },
+              { icon: Briefcase, title: "Teacher Hub", desc: "Мұғалімдер базары • Бот", color: "from-green-500 to-emerald-500", path: "/teacher-hub" },
               <div
                 key={item.path}
                 onClick={() => navigate(item.path)}
