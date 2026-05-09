@@ -4,7 +4,6 @@ import TestsPage from "@/pages/TestsPage";
 import ProfilePage from "@/pages/ProfilePage";
 import ResourcesPage from "@/pages/ResourcesPage";
 import LoginPage from "@/pages/LoginPage";
-import AICoach from "@/pages/AICoach";
 
 // Негізгі беттер
 import AITrainer from "@/pages/AITrainer";
@@ -20,7 +19,6 @@ import GamificationPage from "@/pages/GamificationPage";
 import LiveClass from "@/pages/LiveClass";
 import UpdatesPage from "@/pages/UpdatesPage";
 import SyllabusPage from "@/pages/SyllabusPage";
-import AICoach from "@/pages/AICoach";
 
 // 🔥 ЖАҢА 20 ФИЧА
 import AIDiagnosis from "@/pages/AIDiagnosis";
@@ -32,7 +30,6 @@ import MentorHub from "@/pages/MentorHub";
 import DailyHub from "@/pages/DailyHub";
 import VirtualLab from "@/pages/VirtualLab";
 import TeacherHub from "@/pages/TeacherHub";
-import AICoach from "@/pages/AICoach";
 
 function NotFound() {
   return (
@@ -68,7 +65,6 @@ function App() {
       <Route path="/live/:roomId?" element={<LiveClass />} />
       <Route path="/updates" element={<UpdatesPage />} />
       <Route path="/syllabus" element={<SyllabusPage />} />
-      <Route path="/ai-coach" element={<AICoach />} />
 
       {/* 🔥 ЖАҢА 20 ФИЧА ROUTE-тары */}
       <Route path="/ai-diagnosis" element={<AIDiagnosis />} />
@@ -80,7 +76,6 @@ function App() {
       <Route path="/daily" element={<DailyHub />} />
       <Route path="/virtual-lab" element={<VirtualLab />} />
       <Route path="/teacher-hub" element={<TeacherHub />} />
-      <Route path="/ai-coach" element={<AICoach />} />
 
       <Route path="*" element={<NotFound />} />
     </Routes>
