@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate } from "react-router-dom";
 import { Microscope, Lock, ArrowRight, ShieldCheck } from "lucide-react";
 
 const ACCESS_CODE = "NKT2026"; // 🔐 Сіздің кіріс кодыңыз

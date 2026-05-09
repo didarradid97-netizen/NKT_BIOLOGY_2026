@@ -2,7 +2,7 @@
 // 🧪 VIRTUAL LAB — Drag & Drop (simplified interactive)
 // ============================================
 import { useState } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import {
   FlaskConical, ArrowLeft, RotateCcw, CheckCircle, XCircle,

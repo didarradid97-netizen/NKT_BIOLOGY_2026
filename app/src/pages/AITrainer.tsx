@@ -2,7 +2,7 @@
 // 🤖 AI ЖАТТЫҚТЫРУШЫ — Backend API арқылы (қауіпсіз)
 // ============================================
 import { useState, useRef, useEffect } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate } from "react-router-dom";
 import { use3DCard } from "@/hooks/use3DEffects";
 import {
   Bot, Send, User, Trash2, Sparkles, ArrowLeft, Loader2,

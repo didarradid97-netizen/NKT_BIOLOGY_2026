@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef } from "react";
-import { useNavigate, useLocation } from "react-router";
+import { useNavigate, useLocation } from "react-router-dom";
 import { isAuthenticated } from "@/lib/storage";
 import { getCustomTests, saveCustomTest, deleteCustomTest, CustomTest, CustomQuestion } from "@/lib/customTestStorage";
 import { useTilt } from "@/hooks/use3DEffects";

@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router";
+import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import { isAuthenticated } from "@/lib/storage";
 import { BookOpen, Award, Clock, Users, Zap, ChevronRight, Star, Phone, GraduationCap, BarChart3, Trophy, Radio, Bell, Bot, PenLine, Sparkles, Brain, Mic, ScanLine, Swords, Globe, FlaskConical, Briefcase } from "lucide-react";

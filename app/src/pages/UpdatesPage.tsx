@@ -1,7 +1,7 @@
 // ============================================
 // 📢 ЖАҢАРТУЛАР / ЖАҢАЛЫҚТАР — ПОСТ БЕТІ
 // ============================================
-import { useNavigate } from "react-router";
+import { useNavigate } from "react-router-dom";
 import { use3DCard } from "@/hooks/use3DEffects";
 import Navbar from "@/components/Navbar";
 import {

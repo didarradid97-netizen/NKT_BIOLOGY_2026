@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import {
   Camera, Upload, Loader2, Zap, ArrowLeft, CheckCircle,

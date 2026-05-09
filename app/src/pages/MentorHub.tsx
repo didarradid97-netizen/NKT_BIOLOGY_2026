@@ -2,7 +2,7 @@
 // 🤖 MENTOR HUB — AI Mentor Avatar + Explain Like + Motivation
 // ============================================
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import {
   getMentorSettings, saveMentorSettings, MENTOR_PROMPTS, EXPLAIN_PROMPTS,

@@ -2,7 +2,7 @@
 // ⚔️ DUEL MODE — Екі ойыншы онлайн жарыс
 // ============================================
 import { useState, useEffect, useRef, useCallback } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import {
   Swords, ArrowLeft, Loader2, Zap, Trophy, Clock, Crown,

@@ -2,7 +2,7 @@
 // 🏆 GLOBAL RATING — Қазақстан рейтингі
 // ============================================
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import { getGlobalRating, getMyRank, updateMyRating } from "@/lib/ratingStorage";
 import { getTestResults } from "@/lib/customTestStorage";

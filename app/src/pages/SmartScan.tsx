@@ -2,7 +2,7 @@
 // 📷 SMART SCAN — Фото түсіріп AI жауап алады
 // ============================================
 import { useState, useRef, useCallback } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import {
   Camera, ArrowLeft, Loader2, Sparkles, Upload, XCircle,

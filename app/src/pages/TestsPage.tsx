@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import { isAuthenticated } from "@/lib/storage";
 import { FileText, Clock, ArrowRight, Loader2, Search } from "lucide-react";

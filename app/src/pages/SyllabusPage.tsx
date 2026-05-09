@@ -2,7 +2,7 @@
 // 📋 СИЛЛАБУС БЕТІ (Smart ENU стилінде)
 // ============================================
 import { useState, useMemo } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import {
   getSyllabus,

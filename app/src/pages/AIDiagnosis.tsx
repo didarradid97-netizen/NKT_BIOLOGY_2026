@@ -2,7 +2,7 @@
 // 🧠 AI ДИАГНОЗ — 20 сұрақ шешкеннен кейін талдау
 // ============================================
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import { getTestResults, getCustomTestById } from "@/lib/customTestStorage";
 import { getMemoryAI, getStrengthAnalysis, recordWrongAnswer } from "@/lib/memoryStorage";

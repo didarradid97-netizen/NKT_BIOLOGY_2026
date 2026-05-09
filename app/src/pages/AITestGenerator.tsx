@@ -2,7 +2,7 @@
 // 🤖📄 AI ТЕСТ ГЕНЕРАТОРЫ — Backend API
 // ============================================
 import { useState, useRef } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate } from "react-router-dom";
 import { saveCustomTest } from "@/lib/customTestStorage";
 import { useTilt } from "@/hooks/use3DEffects";
 import {

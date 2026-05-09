@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate } from "react-router-dom";
 import { isAuthenticated } from "@/lib/storage";
 import { getCustomTests, deleteCustomTest, saveCustomTest, CustomTest } from "@/lib/customTestStorage";
 import { JsonImportExport } from "@/components/JsonParser";

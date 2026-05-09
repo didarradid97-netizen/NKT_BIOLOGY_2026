@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router";
+import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import { isAuthenticated, getResults, clearAuth } from "@/lib/storage";
 import { User, Trophy, Clock, ArrowLeft, LogOut, BarChart3 } from "lucide-react";

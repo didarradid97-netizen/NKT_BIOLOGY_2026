@@ -2,7 +2,7 @@
 // 🎙 VOICE TEACHER — Сұрақты дыбыспен түсіндіру
 // ============================================
 import { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import {
   Mic, Play, Pause, Volume2, ArrowLeft, Loader2, BookOpen,

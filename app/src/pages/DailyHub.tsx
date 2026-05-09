@@ -2,7 +2,7 @@
 // 🎁 DAILY HUB — 1 Minute Biology + Daily Missions + Cheat Sheet
 // ============================================
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import { getDailyState, completeMission, markFactRead } from "@/lib/dailyMissions";
 import { getMentorSettings } from "@/lib/mentorStorage";
