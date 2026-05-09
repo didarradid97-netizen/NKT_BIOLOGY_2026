@@ -29,10 +29,14 @@ import MentorHub from "@/pages/MentorHub";
 import DailyHub from "@/pages/DailyHub";
 
 // 2-кезең: Voice + Photo
+import VoiceQuizPage from "@/pages/VoiceQuizPage";
+import PhotoQuizPage from "@/pages/PhotoQuizPage";
 import VoiceTeacher from "@/pages/VoiceTeacher";
 import SmartScan from "@/pages/SmartScan";
 
 // 3-кезең: Multiplayer + Leaderboard
+import BattlePage from "@/pages/BattlePage";
+import LeaderboardPage from "@/pages/LeaderboardPage";
 import DuelMode from "@/pages/DuelMode";
 import GlobalRating from "@/pages/GlobalRating";
 
@@ -83,10 +87,14 @@ function App() {
       <Route path="/daily" element={<DailyHub />} />
 
       {/* 2-кезең: Voice + Photo */}
+      <Route path="/voice-quiz" element={<VoiceQuizPage />} />
+      <Route path="/photo-quiz" element={<PhotoQuizPage />} />
       <Route path="/voice-teacher" element={<VoiceTeacher />} />
       <Route path="/smart-scan" element={<SmartScan />} />
 
       {/* 3-кезең: Multiplayer */}
+      <Route path="/battle" element={<BattlePage />} />
+      <Route path="/leaderboard" element={<LeaderboardPage />} />
       <Route path="/duel" element={<DuelMode />} />
       <Route path="/global-rating" element={<GlobalRating />} />
 
