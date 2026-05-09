@@ -1,4 +1,8 @@
-// api/hints.js — AI Test Hints API
+// ============================================
+// 💡 AI HINTS API — КӘСІПТІ ПОДСКАЗКАЛАР
+// ============================================
+// Vercel Function: POST /api/hints
+
 const GROQ_API_KEY = process.env.GROQ_API_KEY;
 const GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
 
@@ -20,9 +24,19 @@ module.exports = async (req, res) => {
       return res.status(400).json({ error: "question and options required" });
     }
 
+    const systemPrompt = `Сен — NKT BIOLOGY платформасының кәсіпқой AI көмекшісің. Тест сұрақтары бойынша подсказкалар бересің.
+
+Ережелер:
+1. Қазақша жаз
+2. Бірден жауапты айтпа — жардам бер
+3. Қадамдап түсіндір
+4. Тақырыпқа байланысты негізгі ұғымдарды еске түсір
+5. Ұқсас мысал келтір
+6. ОЗП стилінде`;
+
     const prompt = hintType === "mini"
-      ? `ЖАЛПЫ ПОДСКАЗҚА бер (бірден жауап көрсетпе). Сұрақ: "${question}". Нұсқалар: ${options.join(", ")}. 1-2 сөйлеммен көмектес.`
-      : `ТОЛЫҚ ТҮСІНДІРМЕ бер. Сұрақ: "${question}". Нұсқалар: ${options.join(", ")}. Дұрыс жауапты неге сол екенін түсіндір.`;
+      ? `ЖЕҢІЛ ПОДСКАЗҚА бер (бірден жауап көрсетпе). Сұрақ: "${question}". Нұсқалар: ${options.join(", ")}. 2-3 сөйлеммен көмектес.`
+      : `ТОЛЫҚ ЖАРДАМ БЕР. Сұрақ: "${question}". Нұсқалар: ${options.join(", ")}. Дұрыс жауапты неге сол екенін түсіндір. Негізгі ұғымдарды түсіндір.`;
 
     const response = await fetch(GROQ_URL, {
       method: "POST",
@@ -33,7 +47,7 @@ module.exports = async (req, res) => {
       body: JSON.stringify({
         model: "llama-3.3-70b-versatile",
         messages: [
-          { role: "system", content: "Сен — биология тесттері бойынша AI көмекшісің. Қазақша жаз." },
+          { role: "system", content: systemPrompt },
           { role: "user", content: prompt },
         ],
         temperature: 0.7,
