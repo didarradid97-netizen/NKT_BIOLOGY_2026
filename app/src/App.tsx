@@ -1,11 +1,13 @@
 import { Routes, Route } from "react-router";
+
+// Негізгі беттер
 import HomePage from "@/pages/HomePage";
 import TestsPage from "@/pages/TestsPage";
 import ProfilePage from "@/pages/ProfilePage";
 import ResourcesPage from "@/pages/ResourcesPage";
 import LoginPage from "@/pages/LoginPage";
 
-// Негізгі беттер
+// AI жүйелер
 import AITrainer from "@/pages/AITrainer";
 import TestCreator from "@/pages/TestCreator";
 import AITestGenerator from "@/pages/AITestGenerator";
@@ -20,14 +22,25 @@ import LiveClass from "@/pages/LiveClass";
 import UpdatesPage from "@/pages/UpdatesPage";
 import SyllabusPage from "@/pages/SyllabusPage";
 
-// 🔥 ЖАҢА 20 ФИЧА
+// 1-кезең: AI Core
+import AICoach from "@/pages/AICoach";
 import AIDiagnosis from "@/pages/AIDiagnosis";
-import VoiceTeacher from "@/pages/VoiceTeacher";
-import SmartScan from "@/pages/SmartScan";
-import DuelMode from "@/pages/DuelMode";
-import GlobalRating from "@/pages/GlobalRating";
 import MentorHub from "@/pages/MentorHub";
 import DailyHub from "@/pages/DailyHub";
+
+// 2-кезең: Voice + Photo
+import VoiceQuiz from "@/pages/VoiceQuiz";
+import PhotoQuiz from "@/pages/PhotoQuiz";
+import VoiceTeacher from "@/pages/VoiceTeacher";
+import SmartScan from "@/pages/SmartScan";
+
+// 3-кезең: Multiplayer + Leaderboard
+import Battle from "@/pages/Battle";
+import Leaderboard from "@/pages/Leaderboard";
+import DuelMode from "@/pages/DuelMode";
+import GlobalRating from "@/pages/GlobalRating";
+
+// Қосымша
 import VirtualLab from "@/pages/VirtualLab";
 import TeacherHub from "@/pages/TeacherHub";
 
@@ -44,19 +57,20 @@ function NotFound() {
 function App() {
   return (
     <Routes>
+      {/* Негізгі */}
       <Route path="/" element={<HomePage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/tests" element={<TestsPage />} />
       <Route path="/test/:testId" element={<CustomTestRunner />} />
+      <Route path="/custom-test/:testId" element={<CustomTestRunner />} />
       <Route path="/profile" element={<ProfilePage />} />
       <Route path="/resources" element={<ResourcesPage />} />
 
-      {/* Негізгі жүйелер */}
+      {/* AI жүйелер */}
       <Route path="/ai-trainer" element={<AITrainer />} />
-      <Route path="/test-creator" element={<TestCreator />} />
       <Route path="/ai-test-generator" element={<AITestGenerator />} />
+      <Route path="/test-creator" element={<TestCreator />} />
       <Route path="/my-tests" element={<MyTests />} />
-      <Route path="/custom-test/:testId" element={<CustomTestRunner />} />
       <Route path="/search" element={<SearchQuestions />} />
       <Route path="/progress" element={<ProgressPage />} />
       <Route path="/group-test" element={<GroupTest />} />
@@ -66,14 +80,25 @@ function App() {
       <Route path="/updates" element={<UpdatesPage />} />
       <Route path="/syllabus" element={<SyllabusPage />} />
 
-      {/* 🔥 ЖАҢА 20 ФИЧА ROUTE-тары */}
+      {/* 1-кезең: AI Coach */}
+      <Route path="/ai-coach" element={<AICoach />} />
       <Route path="/ai-diagnosis" element={<AIDiagnosis />} />
-      <Route path="/voice-teacher" element={<VoiceTeacher />} />
-      <Route path="/smart-scan" element={<SmartScan />} />
-      <Route path="/duel" element={<DuelMode />} />
-      <Route path="/global-rating" element={<GlobalRating />} />
       <Route path="/mentor" element={<MentorHub />} />
       <Route path="/daily" element={<DailyHub />} />
+
+      {/* 2-кезең: Voice + Photo */}
+      <Route path="/voice-quiz" element={<VoiceQuiz />} />
+      <Route path="/photo-quiz" element={<PhotoQuiz />} />
+      <Route path="/voice-teacher" element={<VoiceTeacher />} />
+      <Route path="/smart-scan" element={<SmartScan />} />
+
+      {/* 3-кезең: Multiplayer */}
+      <Route path="/battle" element={<Battle />} />
+      <Route path="/leaderboard" element={<Leaderboard />} />
+      <Route path="/duel" element={<DuelMode />} />
+      <Route path="/global-rating" element={<GlobalRating />} />
+
+      {/* Қосымша */}
       <Route path="/virtual-lab" element={<VirtualLab />} />
       <Route path="/teacher-hub" element={<TeacherHub />} />
 
