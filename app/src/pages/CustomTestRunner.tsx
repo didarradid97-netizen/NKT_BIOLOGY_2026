@@ -2,7 +2,7 @@
 // ▶️ TEST RUNNER + AI КӨМЕКШІ — Public & Custom тесттер
 // ============================================
 import { useState, useEffect, useCallback } from "react";
-import { useParams, useNavigate } from "react-router";
+import { useParams, useNavigate } from "react-router-dom";
 import { getCustomTest, saveTestResult } from "@/lib/customTestStorage";
 import { recordWrongAnswer } from "@/lib/memoryStorage";
 import { getMotivationMessage } from "@/lib/mentorStorage";
@@ -22,6 +22,7 @@ interface Question {
   options: string[];
   correctAnswer: number;
   explanation?: string;
+  image?: string;
 }
 
 interface TestData {
@@ -77,11 +78,9 @@ async function loadPublicTest(testId: string): Promise<TestData | null> {
     if (!res.ok) return null;
     const data = await res.json();
 
-    // all-tests.json құрылымы: { "probny1": { title, description, questions, time, data: [...] }, ... }
     const raw = data[testId];
     if (!raw) return null;
 
-    // Сыртқы форматты ішкі TestData форматына түрлендіру
     const mapped: TestData = {
       id: testId,
       title: raw.title || testId,
@@ -118,8 +117,6 @@ export default function CustomTestRunner() {
   const [online, setOnline] = useState(true);
   const [errorInfo, setErrorInfo] = useState("");
   const [soundEnabled, setSoundEnabled] = useState(true);
-
-  // 🔥 ЖАҢА ФИЧАЛАР: Survival + Stress + Voice + Motivation
   const [survivalMode, setSurvivalMode] = useState(false);
   const [stressMode, setStressMode] = useState(false);
   const [gameOver, setGameOver] = useState(false);
@@ -127,258 +124,229 @@ export default function CustomTestRunner() {
   const [speaking, setSpeaking] = useState(false);
   const [cheatLoading, setCheatLoading] = useState(false);
 
-  // Тестті жүктеу (localStorage немесе public/tests/)
+  // Test жүктеу
   useEffect(() => {
-    if (!testId) return;
-    setLoadingTest(true);
+    const loadTest = async () => {
+      try {
+        if (!testId) {
+          navigate("/tests");
+          return;
+        }
 
-    (async () => {
-      // 1. Алдымен localStorage-тен іздеу (custom tests)
-      const custom = getCustomTest(testId);
-      if (custom) {
-        setTest(custom as TestData);
-        setTimeLeft(custom.timeLimit * 60);
+        let testData = getCustomTest(testId);
+        if (!testData) {
+          testData = await loadPublicTest(testId);
+        }
+
+        if (!testData) {
+          navigate("/tests");
+          return;
+        }
+
+        setTest(testData);
+        setTimeLeft(testData.timeLimit * 60);
+      } finally {
         setLoadingTest(false);
-        return;
       }
+    };
 
-      // 2. Public/tests/ ішінен іздеу (75 пробный тесттер)
-      const publicTest = await loadPublicTest(testId);
-      if (publicTest) {
-        setTest(publicTest);
-        setTimeLeft(publicTest.timeLimit * 60);
-        setLoadingTest(false);
-        return;
-      }
+    loadTest();
+  }, [testId, navigate]);
 
-      // 3. Табылмады
-      setTest(null);
-      setLoadingTest(false);
-    })();
-  }, [testId]);
-
-  // Таймер
+  // Online/offline detection
   useEffect(() => {
-    if (!finished && timeLeft > 0) {
-      const timer = setInterval(() => {
-        setTimeLeft(prev => { if (prev <= 1) { setFinished(true); return 0; } return prev - 1; });
-      }, 1000);
-      return () => clearInterval(timer);
-    }
-  }, [finished, timeLeft]);
+    const handleOnline = () => setOnline(true);
+    const handleOffline = () => setOnline(false);
 
-  const getHint = useCallback(async (type?: "mini" | "full" | "explain") => {
-    if (!test || hintLoading) return;
-    const q = test.questions[current];
-    if (!q) return;
-    const useType = type || hintType;
-    setHintLoading(true); setShowHint(true); setErrorInfo("");
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOffline);
 
-    try {
-      const endpoint = useType === "explain" ? EXPLAIN_API : HINT_API;
-      const res = await fetch(endpoint, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          question: q.text,
-          options: q.options,
-          correctAnswer: q.correctAnswer,
-          hintType: useType === "explain" ? "full" : useType,
-        }),
+    return () => {
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
+    };
+  }, []);
+
+  // Уақыт ескертуі
+  useEffect(() => {
+    if (!test || finished) return;
+
+    const timer = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev <= 1) {
+          handleFinish();
+          return 0;
+        }
+        return prev - 1;
       });
-      if (!res.ok) throw new Error("HTTP " + res.status);
-      const data = await res.json();
-      setHint(data.hint || data.explanation || getLocalExplanation(q.text, q.options, q.correctAnswer));
-      setOnline(true);
-    } catch {
-      setHint(useType === "explain"
-        ? getLocalExplanation(q.text, q.options, q.correctAnswer)
-        : getLocalHint(q.text)
-      );
-      setOnline(false);
-      setErrorInfo("AI offline — локалды түсіндірме");
-    } finally { setHintLoading(false); }
-  }, [test, current, hintLoading, hintType]);
+    }, 1000);
 
-  const speakQuestion = useCallback(() => {
-    if (!test || speaking) return;
-    const q = test.questions[current];
-    const text = `Сұрақ: ${q.text}. Нұсқалар: ${q.options.map((o, i) => String.fromCharCode(65 + i) + ") " + o).join(", ")}`;
-    const u = new SpeechSynthesisUtterance(text);
-    u.lang = "ru-RU"; u.rate = 0.9;
-    u.onend = () => setSpeaking(false);
-    speechSynthesis.cancel(); speechSynthesis.speak(u); setSpeaking(true);
-  }, [test, current, speaking]);
+    return () => clearInterval(timer);
+  }, [test, finished]);
 
-  const getCheatSheet = useCallback(async () => {
-    if (!test || cheatLoading) return;
-    const q = test.questions[current];
-    setCheatLoading(true); setShowHint(true); setErrorInfo("");
-    try {
-      const res = await fetch("/api/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          messages: [
-            { role: "system", content: "Сен — кәсіпқой биология оқытушысы. 30 секундтық қысқа түсіндірме бер. Тек маңыздысы." },
-            { role: "user", content: `"${q.text}" сұрағын 30 секундта түсіндір. Нұсқалар: ${q.options.join(", ")}. Дұрыс: ${q.options[q.correctAnswer]}` },
-          ],
-          temperature: 0.6,
-        }),
-      });
-      const data = await res.json();
-      setHint(data.response || "❌ AI жауабы алынбады");
-      setOnline(true);
-    } catch {
-      setHint(getLocalExplanation(q.text, q.options, q.correctAnswer));
-      setOnline(false);
-      setErrorInfo("AI offline — локалды түсіндірме");
-    } finally { setCheatLoading(false); }
-  }, [test, current, cheatLoading]);
-    if (!finished && test && !gameOver) {
-      setAnswers(prev => ({ ...prev, [current]: opt }));
-      const q = test.questions[current];
-      // Survival Mode: қате = game over
-      if (survivalMode && opt !== q.correctAnswer) {
-        setGameOver(true);
-        setFinished(true);
-      }
-      // Memory AI: қате тақырыпты есте сақтау
-      if (opt !== q.correctAnswer) {
-        const topic = q.text.split(" ").slice(0, 3).join(" ");
-        recordWrongAnswer(topic);
-      }
-      // Motivation
-      const correctCount = Object.entries({ ...answers, [current]: opt }).filter(([i, a]) => test.questions[Number(i)]?.correctAnswer === a).length;
-      const totalAnswered = Object.keys({ ...answers, [current]: opt }).length;
-      setMotivationMsg(getMotivationMessage(correctCount, totalAnswered, 0));
+  const handleAnswer = (idx: number) => {
+    setAnswers((prev) => ({ ...prev, [current]: idx }));
+    if (survivalMode && idx !== test!.questions[current].correctAnswer) {
+      setGameOver(true);
     }
   };
 
-  const handleFinish = () => {
+  const getHint = async (type: "mini" | "full" | "explain") => {
+    if (!online) {
+      const localHint = type === "explain"
+        ? getLocalExplanation(test!.questions[current].text, test!.questions[current].options, test!.questions[current].correctAnswer)
+        : getLocalHint(test!.questions[current].text);
+      setHint(localHint);
+      setShowHint(true);
+      return;
+    }
+
+    setHintLoading(true);
+    setShowHint(true);
+    setHintType(type);
+
+    try {
+      const api = type === "explain" ? EXPLAIN_API : HINT_API;
+      const res = await fetch(api, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          question: test!.questions[current].text,
+          options: test!.questions[current].options,
+          correctIdx: test!.questions[current].correctAnswer,
+        }),
+      });
+
+      if (!res.ok) throw new Error("API error");
+      const data = await res.json();
+      setHint(data.hint || data.explanation || "Жауап болмады");
+    } catch (err) {
+      const fallback = type === "explain"
+        ? getLocalExplanation(test!.questions[current].text, test!.questions[current].options, test!.questions[current].correctAnswer)
+        : getLocalHint(test!.questions[current].text);
+      setHint(fallback);
+      setErrorInfo("API қосылмады. Локалды мәлімет көрсетілді.");
+    } finally {
+      setHintLoading(false);
+    }
+  };
+
+  const speakQuestion = async () => {
+    if (!("speechSynthesis" in window)) {
+      setErrorInfo("Дыбыстау құрылғысында ұстамайды");
+      return;
+    }
+
+    setSpeaking(true);
+    const utterance = new SpeechSynthesisUtterance(test!.questions[current].text);
+    utterance.lang = "kk-KZ";
+    speechSynthesis.speak(utterance);
+
+    utterance.onend = () => setSpeaking(false);
+  };
+
+  const getCheatSheet = async () => {
+    setCheatLoading(true);
+    try {
+      setHint("⚡ 30 сек CHEAT SHEET:\n1. Сұрақты 2 рет оқыңыз\n2. Ең дұрыс жауапты таңдаңыз\n3. Ынамыңызды санаңыз!");
+      setShowHint(true);
+    } finally {
+      setCheatLoading(false);
+    }
+  };
+
+  const handleFinish = useCallback(() => {
     setFinished(true);
-    setShowHint(false);
-    const correct = test?.questions.filter((q, i) => answers[i] === q.correctAnswer).length || 0;
-    const total = test?.questions.length || 1;
-    setMotivationMsg(getMotivationMessage(correct, total, 0));
-  };
+    const correct = test!.questions.filter((q, idx) => answers[idx] === q.correctAnswer).length;
+    saveTestResult({
+      testId: testId!,
+      totalQuestions: test!.questions.length,
+      correctAnswers: correct,
+      timeSpent: (test!.timeLimit * 60) - timeLeft,
+      mode: survivalMode ? "survival" : "normal",
+    });
+  }, [test, answers, testId, survivalMode, timeLeft]);
 
-  const handleSaveResult = () => {
-    if (!test) return;
-    let correct = 0;
-    test.questions.forEach((q, i) => { if (answers[i] === q.correctAnswer) correct++; });
-    saveTestResult({ testId: test.id, testTitle: test.title, score: correct, total: test.questions.length, answers, completedAt: new Date().toISOString() });
-    navigate("/progress");
-  };
-
-  // Жүктелуде
   if (loadingTest) {
-    return <div className="min-h-screen bg-[#0f172a] text-white flex items-center justify-center"><Loader2 className="w-8 h-8 animate-spin text-[#10b981]" /></div>;
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-[#0f172a] to-[#1a202c] flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="w-12 h-12 text-[#10b981] animate-spin mx-auto mb-4" />
+          <p className="text-[#e2e8f0]">Тест жүктелүде...</p>
+        </div>
+      </div>
+    );
   }
 
-  // Тест табылмады
   if (!test) {
     return (
-      <div className="min-h-screen bg-[#0f172a] text-white flex flex-col items-center justify-center gap-4">
-        <XCircle className="w-12 h-12 text-red-400" />
-        <h1 className="text-xl font-bold">Тест табылмады</h1>
-        <p className="text-sm text-[#94a3b8]">ID: {testId}</p>
-        <button onClick={() => navigate("/tests")} className="px-4 py-2 rounded-xl bg-[#10b981] text-white text-sm">Тесттерге оралу</button>
+      <div className="min-h-screen bg-gradient-to-br from-[#0f172a] to-[#1a202c] flex items-center justify-center">
+        <div className="text-center">
+          <AlertTriangle className="w-12 h-12 text-red-400 mx-auto mb-4" />
+          <p className="text-[#e2e8f0] mb-4">Тест табылмады</p>
+          <button onClick={() => navigate("/tests")} className="px-4 py-2 bg-[#10b981] text-white rounded-lg">
+            Артқа қайту
+          </button>
+        </div>
       </div>
     );
   }
 
-  const minutes = Math.floor(timeLeft / 60);
-  const seconds = timeLeft % 60;
-  const progress = ((current + 1) / test.questions.length) * 100;
-  const q = test.questions[current];
-
-  // Нәтиже экраны
   if (finished) {
-    let correct = 0;
-    test.questions.forEach((quest, i) => { if (answers[i] === quest.correctAnswer) correct++; });
-    const pct = Math.round((correct / test.questions.length) * 100);
+    const correct = Object.entries(answers).filter(([idx, ans]) => ans === test.questions[parseInt(idx)].correctAnswer).length;
+    const percentage = Math.round((correct / test.questions.length) * 100);
 
     return (
-      <div className="min-h-screen bg-[#0f172a] text-[#e2e8f0]">
-        <div className="max-w-[900px] mx-auto px-4 py-12">
-          <div className="text-center mb-8">
-            <div className={`w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-4 ${pct >= 70 ? "bg-[#10b981]/20" : pct >= 50 ? "bg-[#f59e0b]/20" : "bg-red-500/20"}`}>
-              {pct >= 70 ? <CheckCircle className="w-12 h-12 text-[#10b981]" /> : <XCircle className="w-12 h-12 text-red-400" />}
+      <div className="min-h-screen bg-gradient-to-br from-[#0f172a] to-[#1a202c] p-6 flex items-center justify-center">
+        <div className="max-w-2xl w-full bg-white/[0.04] border border-white/[0.08] rounded-3xl p-8 text-center">
+          <CheckCircle className="w-16 h-16 text-[#10b981] mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-[#e2e8f0] mb-2">Тест аяқталды!</h2>
+          <p className="text-4xl font-bold text-[#10b981] mb-4">{percentage}%</p>
+          <p className="text-[#94a3b8] mb-6">{correct} / {test.questions.length} дұрыс</p>
+          
+          {motivationMsg && (
+            <div className="bg-[#10b981]/10 border border-[#10b981]/20 rounded-xl p-4 mb-6 text-left">
+              <p className="text-[#6ee7b7]">💪 {motivationMsg}</p>
             </div>
-            <h1 className="text-3xl font-bold mb-2">{pct >= 70 ? "Өте жақсы! 🎉" : pct >= 50 ? "Жақсы 👍" : "Қайта тырысыңыз 💪"}</h1>
-            <p className="text-5xl font-extrabold bg-gradient-to-r from-[#34d399] to-[#3b82f6] bg-clip-text text-transparent">{correct}/{test.questions.length}</p>
-            <p className="text-xl text-[#94a3b8] mt-2">{pct}%</p>
-          </div>
+          )}
 
-          <div className="bg-white/[0.04] border border-white/[0.08] rounded-2xl p-5 mb-6">
-            <h3 className="font-bold text-lg mb-3 flex items-center gap-2"><Sparkles className="w-5 h-5 text-[#10b981]" /> Тақырыптық талдау</h3>
-            <p className="text-sm text-[#94a3b8]">Дұрыс: {correct} • Қате: {test.questions.length - correct}</p>
-            <div className="mt-3 h-3 bg-white/[0.06] rounded-full overflow-hidden"><div className="h-full bg-gradient-to-r from-[#10b981] to-[#3b82f6] rounded-full" style={{ width: `${pct}%` }} /></div>
-          </div>
-
-          <div className="space-y-3 mb-8">
-            {test.questions.map((quest, i) => (
-              <div key={quest.id} className={`rounded-2xl border p-4 ${answers[i] === quest.correctAnswer ? "bg-[#10b981]/5 border-[#10b981]/20" : "bg-red-500/5 border-red-500/20"}`}>
-                <p className="text-sm font-medium mb-2">{i + 1}. {quest.text}</p>
-                <div className="text-xs mb-2">
-                  Сіздің жауабыңыз: <span className={answers[i] === quest.correctAnswer ? "text-[#10b981] font-bold" : "text-red-400 font-bold"}>{answers[i] !== undefined ? quest.options[answers[i]] : "Жоқ"}</span>
-                  {" "}• Дұрыс: <span className="text-[#10b981] font-bold">{quest.options[quest.correctAnswer]}</span>
-                </div>
-                {quest.explanation && <p className="text-xs text-[#64748b] bg-white/[0.03] rounded-lg p-2">💡 {quest.explanation}</p>}
-              </div>
-            ))}
-          </div>
-
-          <div className="flex gap-3 justify-center flex-wrap">
-            <button onClick={() => { setCurrent(0); setAnswers({}); setFinished(false); setTimeLeft(test.timeLimit * 60); }} className="px-5 py-3 rounded-xl bg-white/[0.06] text-[#e2e8f0] font-medium flex items-center gap-2 hover:bg-white/[0.10]"><RotateCcw className="w-4 h-4" /> Қайта</button>
-            <button onClick={handleSaveResult} className="px-5 py-3 rounded-xl bg-gradient-to-r from-[#10b981] to-[#059669] text-white font-semibold flex items-center gap-2 shadow-lg shadow-[#10b981]/20"><CheckCircle className="w-4 h-4" /> Нәтиже сақтау</button>
-            <button onClick={() => navigate("/")} className="px-5 py-3 rounded-xl bg-white/[0.06] text-[#e2e8f0] font-medium flex items-center gap-2 hover:bg-white/[0.10]"><Home className="w-4 h-4" /> Басты</button>
+          <div className="flex gap-3 justify-center">
+            <button onClick={() => navigate("/tests")} className="px-6 py-2.5 bg-[#10b981] text-white rounded-lg font-medium">
+              <Home className="w-4 h-4 inline mr-2" /> Тесттерге қайту
+            </button>
+            <button onClick={() => window.location.reload()} className="px-6 py-2.5 bg-[#3b82f6] text-white rounded-lg font-medium">
+              <RotateCcw className="w-4 h-4 inline mr-2" /> Қайта істеу
+            </button>
           </div>
         </div>
       </div>
     );
   }
 
+  const q = test.questions[current];
+  const minutes = Math.floor(timeLeft / 60);
+  const seconds = timeLeft % 60;
+
   return (
-    <div className="min-h-screen bg-[#0f172a] text-[#e2e8f0]">
-      {/* Header */}
-      <div className="sticky top-0 z-50 bg-[#0f172a]/90 backdrop-blur-xl border-b border-white/[0.06]">
-        <div className="max-w-[1100px] mx-auto px-4 py-3 flex items-center justify-between gap-3">
-          <button onClick={() => navigate("/tests")} className="p-2 rounded-lg bg-white/[0.06] text-[#94a3b8] hover:text-white shrink-0"><ArrowLeft className="w-4 h-4" /></button>
-          <div className="flex-1 mx-2">
-            <div className="h-2 bg-white/[0.06] rounded-full overflow-hidden"><div className="h-full bg-gradient-to-r from-[#10b981] to-[#3b82f6] rounded-full transition-all" style={{ width: `${progress}%` }} /></div>
-            <p className="text-[10px] text-[#64748b] mt-1 text-center">{current + 1} / {test.questions.length} • {test.title}</p>
+    <div className="min-h-screen bg-gradient-to-br from-[#0f172a] to-[#1a202c] p-6">
+      <div className="max-w-7xl mx-auto">
+        <div className="flex items-center justify-between mb-6">
+          <button onClick={() => navigate("/tests")} className="flex items-center gap-2 text-[#94a3b8] hover:text-[#e2e8f0] transition-colors">
+            <ArrowLeft className="w-4 h-4" /> Артқа
+          </button>
+          <h1 className="text-xl font-bold text-[#e2e8f0]">{test.title}</h1>
+          <div className="flex items-center gap-4">
+            <div className={`flex items-center gap-2 px-4 py-2 rounded-xl ${timeLeft < 60 ? "bg-red-500/20 text-red-400" : "bg-[#10b981]/20 text-[#10b981]"}`}>
+              <Timer className="w-4 h-4" />
+              <span className="font-mono font-bold">{minutes}:{seconds.toString().padStart(2, "0")}</span>
+            </div>
           </div>
-          <div className={`flex items-center gap-1.5 text-sm font-mono shrink-0 ${timeLeft < 60 ? "text-red-400" : "text-[#e2e8f0]"}`}><Clock className="w-4 h-4" />{String(minutes).padStart(2, "0")}:{String(seconds).padStart(2, "0")}</div>
-          <button onClick={() => setSoundEnabled(!soundEnabled)} className="p-2 rounded-lg bg-white/[0.06] text-[#94a3b8] hover:text-white shrink-0">{soundEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}</button>
-          <button onClick={() => setSurvivalMode(!survivalMode)} title="Survival Mode" className={`p-2 rounded-lg shrink-0 transition-all ${survivalMode ? "bg-red-500/20 text-red-400 border border-red-500/30" : "bg-white/[0.06] text-[#94a3b8] hover:text-white"}`}><Skull className="w-4 h-4" /></button>
-          <button onClick={() => setStressMode(!stressMode)} title="Stress Mode" className={`p-2 rounded-lg shrink-0 transition-all ${stressMode ? "bg-[#f59e0b]/20 text-[#fbbf24] border border-[#f59e0b]/30 animate-pulse" : "bg-white/[0.06] text-[#94a3b8] hover:text-white"}`}><Timer className="w-4 h-4" /></button>
         </div>
-      </div>
 
-      {/* Stress heartbeat overlay */}
-      {stressMode && !finished && (
-        <div className="fixed inset-0 pointer-events-none z-40">
-          <div className="absolute inset-0 bg-red-500/[0.02] animate-pulse" />
-        </div>
-      )}
-
-      <div className="max-w-[1100px] mx-auto px-4 py-6">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-          {/* Негізгі аймақ */}
-          <div className="lg:col-span-2 space-y-5">
-            {/* Motivation Banner */}
-            {motivationMsg && (
-              <div className="bg-gradient-to-r from-[#10b981]/10 to-[#3b82f6]/10 border border-[#10b981]/20 rounded-xl p-3 flex items-center gap-2 animate-pulse">
-                <Heart className="w-4 h-4 text-[#ec4899] flex-shrink-0" />
-                <p className="text-xs text-[#e2e8f0] font-medium">{motivationMsg}</p>
-              </div>
-            )}
-
-            {/* Game Over Banner */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2 space-y-4">
             {gameOver && (
-              <div className="bg-red-500/15 border border-red-500/30 rounded-2xl p-6 text-center">
+              <div className="bg-red-500/10 border border-red-500/20 rounded-2xl p-6 text-center">
                 <Skull className="w-12 h-12 text-red-400 mx-auto mb-3" />
                 <h2 className="text-xl font-bold text-red-400 mb-2">❌ Survival Mode: Game Over</h2>
                 <p className="text-sm text-[#94a3b8] mb-4">Қате жауап бердіңіз. Қайта тырысыңыз!</p>
@@ -388,7 +356,6 @@ export default function CustomTestRunner() {
               </div>
             )}
 
-            {/* Сұрақ */}
             <div className="bg-white/[0.04] border border-white/[0.08] rounded-2xl p-5">
               <div className="flex items-center justify-between mb-4">
                 <span className="text-xs font-bold text-[#64748b] uppercase tracking-wider">Сұрақ №{current + 1} / {test.questions.length}</span>
@@ -411,7 +378,6 @@ export default function CustomTestRunner() {
               </div>
             </div>
 
-            {/* 🤖 AI Көмекші — Сұрақтың астында */}
             <div className="bg-gradient-to-r from-[#10b981]/10 to-[#3b82f6]/10 border border-[#10b981]/20 rounded-2xl p-5">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
@@ -463,7 +429,6 @@ export default function CustomTestRunner() {
               )}
             </div>
 
-            {/* Навигация */}
             <div className="flex items-center justify-between">
               <button onClick={() => setCurrent(Math.max(0, current - 1))} disabled={current === 0} className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/[0.06] text-[#e2e8f0] text-sm disabled:opacity-30 transition-all hover:bg-white/[0.10]"><ChevronLeft className="w-4 h-4" /> Алдыңғы</button>
               <div className="flex gap-1">
@@ -479,7 +444,6 @@ export default function CustomTestRunner() {
             </div>
           </div>
 
-          {/* Боковая панель */}
           <div className="space-y-4">
             <div className="bg-white/[0.04] border border-white/[0.08] rounded-2xl p-4">
               <h3 className="text-sm font-bold text-[#e2e8f0] mb-3 flex items-center gap-2"><Zap className="w-4 h-4 text-[#f59e0b]" /> Сұрақтар тізімі</h3>
