@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { Link, useLocation } from "react-router";
+import { Link, useLocation } from "react-router-dom";
 import { isAuthenticated, clearAuth } from "@/lib/storage";
 import {
   Microscope, Home, FileText, User, BookOpen, Bot, PenLine,
   Sparkles, FolderOpen, LogOut, Menu, X, ChevronDown, Search,
   BarChart3, Users, Trophy, Video, Bell, GraduationCap, Brain,
   Mic, ScanLine, Swords, Globe, FlaskConical, Briefcase, Zap,
+  Target, Flame, Award, Crown,
 } from "lucide-react";
 
 const mainLinks = [
@@ -23,7 +24,8 @@ const testLinks = [
 
 const aiHubLinks = [
   { path: "/ai-trainer", label: "AI Жаттықтырушы", icon: Bot },
-  { path: "/ai-diagnosis", label: "AI Диагноз", icon: Brain },
+  { path: "/ai-coach", label: "🤖 AI NKT Coach", icon: Brain },
+  { path: "/ai-diagnosis", label: "AI Диагноз", icon: Target },
   { path: "/voice-teacher", label: "Voice Teacher", icon: Mic },
   { path: "/smart-scan", label: "Smart Scan", icon: ScanLine },
   { path: "/mentor", label: "AI Mentor", icon: Zap },
@@ -62,9 +64,7 @@ export default function Navbar() {
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#10b981] to-[#3b82f6] flex items-center justify-center shadow-lg shadow-[#10b981]/20">
               <Microscope className="w-4.5 h-4.5 text-white" />
             </div>
-            <span className="bg-gradient-to-r from-[#34d399] to-[#3b82f6] bg-clip-text text-transparent">
-              NKT BIOLOGY
-            </span>
+            <span className="bg-gradient-to-r from-[#34d399] to-[#3b82f6] bg-clip-text text-transparent">NKT BIOLOGY</span>
           </Link>
 
           {/* Desktop links */}
@@ -169,14 +169,14 @@ export default function Navbar() {
             </Link>
           ))}
 
-          <div className="px-4 py-2 text-xs font-bold text-[#475569] uppercase tracking-wider">AI Hub</div>
+          <div className="px-4 py-2 text-xs font-bold text-[#475569] uppercase tracking-wider">🤖 AI Hub</div>
           {aiHubLinks.map((l) => (
             <Link key={l.path} to={l.path} onClick={() => setMobOpen(false)} className="flex items-center gap-3 p-4 rounded-2xl text-base font-medium text-[#cbd5e1] bg-white/[0.02] ml-2">
               <l.icon className="w-4 h-4" />{l.label}
             </Link>
           ))}
 
-          <div className="px-4 py-2 text-xs font-bold text-[#475569] uppercase tracking-wider">Ойын</div>
+          <div className="px-4 py-2 text-xs font-bold text-[#475569] uppercase tracking-wider">⚔️ Ойын</div>
           {gameLinks.map((l) => (
             <Link key={l.path} to={l.path} onClick={() => setMobOpen(false)} className="flex items-center gap-3 p-4 rounded-2xl text-base font-medium text-[#cbd5e1] bg-white/[0.02] ml-2">
               <l.icon className="w-4 h-4" />{l.label}
