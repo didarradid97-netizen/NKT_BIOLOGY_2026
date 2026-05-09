@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router";
+import { Routes, Route } from "react-router-dom";
 
 // Негізгі беттер
 import HomePage from "@/pages/HomePage";
@@ -29,14 +29,10 @@ import MentorHub from "@/pages/MentorHub";
 import DailyHub from "@/pages/DailyHub";
 
 // 2-кезең: Voice + Photo
-import VoiceQuiz from "@/pages/VoiceQuiz";
-import PhotoQuiz from "@/pages/PhotoQuiz";
 import VoiceTeacher from "@/pages/VoiceTeacher";
 import SmartScan from "@/pages/SmartScan";
 
 // 3-кезең: Multiplayer + Leaderboard
-import Battle from "@/pages/Battle";
-import Leaderboard from "@/pages/Leaderboard";
 import DuelMode from "@/pages/DuelMode";
 import GlobalRating from "@/pages/GlobalRating";
 
@@ -87,14 +83,10 @@ function App() {
       <Route path="/daily" element={<DailyHub />} />
 
       {/* 2-кезең: Voice + Photo */}
-      <Route path="/voice-quiz" element={<VoiceQuiz />} />
-      <Route path="/photo-quiz" element={<PhotoQuiz />} />
       <Route path="/voice-teacher" element={<VoiceTeacher />} />
       <Route path="/smart-scan" element={<SmartScan />} />
 
       {/* 3-кезең: Multiplayer */}
-      <Route path="/battle" element={<Battle />} />
-      <Route path="/leaderboard" element={<Leaderboard />} />
       <Route path="/duel" element={<DuelMode />} />
       <Route path="/global-rating" element={<GlobalRating />} />
 
