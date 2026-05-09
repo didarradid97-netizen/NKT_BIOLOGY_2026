@@ -27,12 +27,16 @@ const aiHubLinks = [
   { path: "/ai-coach", label: "🤖 AI NKT Coach", icon: Brain },
   { path: "/ai-diagnosis", label: "AI Диагноз", icon: Target },
   { path: "/voice-teacher", label: "Voice Teacher", icon: Mic },
+  { path: "/voice-quiz", label: "🎙 Voice Quiz", icon: Mic },
   { path: "/smart-scan", label: "Smart Scan", icon: ScanLine },
+  { path: "/photo-quiz", label: "📷 Photo Quiz", icon: ScanLine },
   { path: "/mentor", label: "AI Mentor", icon: Zap },
 ];
 
 const gameLinks = [
+  { path: "/battle", label: "⚔️ Битва", icon: Swords },
   { path: "/duel", label: "Duel Mode", icon: Swords },
+  { path: "/leaderboard", label: "🏆 Leaderboard", icon: Crown },
   { path: "/global-rating", label: "Global Rating", icon: Globe },
   { path: "/daily", label: "Daily Hub", icon: Zap },
   { path: "/virtual-lab", label: "Virtual Lab", icon: FlaskConical },
