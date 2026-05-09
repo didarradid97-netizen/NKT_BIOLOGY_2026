@@ -8,6 +8,9 @@ import {
   // bigint,
 } from "drizzle-orm/mysql-core";
 
+export const schema = {
+  // Database schema будет позже
+};
 export const users = mysqlTable("users", {
   id: serial("id").primaryKey(),
   unionId: varchar("unionId", { length: 255 }).notNull().unique(),
