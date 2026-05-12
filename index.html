@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#0f172a">
-<title>NKT BIOLOGY 2026</title>
+<title>NKT BIOLOGY 2026 — ҰБТ БИОЛОГИЯ</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
@@ -52,149 +52,106 @@ body{font-family:'Inter',system-ui,sans-serif;background:#0f172a;color:#e2e8f0;l
 .mob-menu a{padding:16px;border-radius:14px;font-size:18px;font-weight:600;color:#e2e8f0;text-decoration:none;background:rgba(255,255,255,.04)}
 .mob-menu a.active{background:rgba(16,185,129,.15);color:#6ee7b7}
 .mob-menu-close{position:absolute;top:16px;right:16px;padding:12px;background:rgba(255,255,255,.1);border-radius:12px;border:none;color:#fff;font-size:20px}
-@media(max-width:768px){
-.nav-links{display:none}
-.nav-mob-btn{display:block}
-body{font-size:15px}
-.card{padding:16px}
-.btn{padding:14px 20px;font-size:15px}
-.option{padding:14px}
-.option-letter{width:32px;height:32px;font-size:13px}
-.timer{font-size:16px}
-}
-@media(max-width:480px){
-.nav-brand{font-size:16px}
-.nav-inner{padding:8px 12px}
-.btn-sm{padding:10px 12px;font-size:12px}
-}
+@media(max-width:768px){.nav-links{display:none}.nav-mob-btn{display:block}body{font-size:15px}.card{padding:16px}.btn{padding:14px 20px;font-size:15px}.option{padding:14px}.option-letter{width:32px;height:32px;font-size:13px}.timer{font-size:16px}}
+@media(max-width:480px){.nav-brand{font-size:16px}.nav-inner{padding:8px 12px}.btn-sm{padding:10px 12px;font-size:12px}}
 .confetti{position:fixed;width:8px;height:8px;z-index:9999;pointer-events:none;animation:fall 3s linear forwards}
 @keyframes fall{to{transform:translateY(100vh) rotate(720deg);opacity:0}}
 .review-item{background:rgba(30,41,59,.5);border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:16px;margin-bottom:10px;border-left:3px solid #ef4444}
 .review-item.ok{border-left-color:#10b981}
 .explanation{background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.2);border-radius:10px;padding:12px;margin-top:10px;font-size:13.5px;color:#a7f3d0;line-height:1.6}
+.test-card{background:rgba(30,41,59,.6);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:16px;cursor:pointer;transition:.2s}
+.test-card:hover{background:rgba(30,41,59,.8);transform:translateY(-2px)}
+.test-card h3{font-size:16px;margin-bottom:8px;color:#6ee7b7}
+.test-card p{font-size:13px;color:#94a3b8;margin-bottom:12px}
+.test-meta{display:flex;gap:12px;font-size:12px;color:#64748b;margin-bottom:12px}
+.test-meta span{display:flex;align-items:center;gap:4px}
+.chat-box{background:rgba(30,41,59,.5);border-radius:14px;padding:16px;margin-bottom:16px;max-height:400px;overflow-y:auto}
+.chat-msg{background:rgba(16,185,129,.1);border-left:3px solid #10b981;border-radius:8px;padding:12px;margin-bottom:8px;font-size:14px}
+.chat-msg.user{background:rgba(59,130,246,.1);border-left-color:#3b82f6}
 </style>
 </head>
 <body>
 
-<!-- Login -->
+<!-- LOGIN PAGE -->
 <div id="loginPage" style="min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:20px">
 <div class="card" style="max-width:420px;width:100%;text-align:center;padding:40px 28px">
 <div style="font-size:56px;margin-bottom:16px">🔬</div>
 <h1 style="font-size:28px;font-weight:800;margin-bottom:8px;background:linear-gradient(135deg,#34d399,#3b82f6,#8b5cf6);-webkit-background-clip:text;color:transparent">NKT BIOLOGY 2026</h1>
-<p style="color:#64748b;margin-bottom:28px;font-size:15px">Биология пәні бойынша ОЗП-ға дайындық</p>
-<input type="password" id="loginInput" class="input" placeholder="Жеке кодыңызды енгізіңіз" style="text-align:center;font-family:monospace;font-size:18px;margin-bottom:16px" onkeydown="if(event.key==='Enter')doLogin()">
+<p style="color:#64748b;margin-bottom:28px;font-size:15px">Биология пәні бойынша ҰБТ-ға дайындық</p>
+<input type="password" id="loginInput" class="input" placeholder="Жеке кодыңызды енгізіңіз" style="text-align:center;font-family:monospace;font-size:18px;margin-bottom:16px">
 <p id="loginErr" style="color:#ef4444;font-size:13px;margin-bottom:12px;display:none">Қате код!</p>
 <button class="btn btn-green" style="width:100%" onclick="doLogin()">Кіру</button>
-<a href="https://t.me/Bio_OZP" target="_blank" style="display:block;margin-top:16px;color:#10b981;font-size:13px">Код алу үшін Telegram</a>
+<a href="https://t.me/Bio_OZP" target="_blank" style="display:block;margin-top:16px;color:#10b981;font-size:13px">Код: bio2026 (тест арнайы)</a>
 </div>
 </div>
 
-<!-- App -->
+<!-- APP -->
 <div id="appPage" style="display:none">
 
-<!-- Navbar -->
+<!-- NAV -->
 <nav class="nav">
 <div class="nav-inner">
-<div class="nav-brand"><div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#10b981,#059669);display:flex;align-items:center;justify-content:center;font-size:20px">🔬</div><span>NKT BIOLOGY</span></div>
+<div class="nav-brand"><div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#10b981,#059669);display:flex;align-items:center;justify-content:center;font-size:20px">🔬</div><div><span>NKT</span> BIOLOGY</div></div>
 <div class="nav-links">
 <a href="#" data-page="home" class="active" onclick="showPage('home')">Басты</a>
 <a href="#" data-page="tests" onclick="showPage('tests')">Тесттер</a>
+<a href="#" data-page="chat" onclick="showPage('chat')">AI Туторы</a>
 <a href="#" data-page="profile" onclick="showPage('profile')">Профиль</a>
-<a href="#" data-page="resources" onclick="showPage('resources')">Материалдар</a>
 </div>
 <div style="display:flex;align-items:center;gap:8px">
-<div id="headerTimer" class="glass" style="display:none;padding:6px 12px;border-radius:10px">
-<span class="timer" id="timerDisplay" style="color:#34d399">00:00</span>
-</div>
+<div id="headerTimer" class="glass" style="display:none;padding:6px 12px;border-radius:10px"><span class="timer" id="timerDisplay" style="color:#34d399">00:00</span></div>
 <button class="btn btn-ghost btn-sm" onclick="logout()" style="display:flex;align-items:center;gap:4px"><span style="font-size:16px">🚪</span><span class="hide-mob">Шығу</span></button>
-<button class="nav-mob-btn" onclick="toggleMobMenu()"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+<button class="nav-mob-btn" onclick="toggleMobMenu()">☰</button>
 </div>
 </div>
 </nav>
 
-<!-- Mobile Menu Overlay -->
+<!-- MOB MENU -->
 <div id="mobMenu" class="mob-menu">
 <button class="mob-menu-close" onclick="toggleMobMenu()">✕</button>
 <div style="height:60px"></div>
 <a href="#" class="active" onclick="showPage('home');toggleMobMenu()">🏠 Басты</a>
 <a href="#" onclick="showPage('tests');toggleMobMenu()">📋 Тесттер</a>
+<a href="#" onclick="showPage('chat');toggleMobMenu()">🤖 AI Туторы</a>
 <a href="#" onclick="showPage('profile');toggleMobMenu()">👤 Профиль</a>
-<a href="#" onclick="showPage('resources');toggleMobMenu()">📚 Материалдар</a>
 <a href="#" style="color:#ef4444" onclick="logout();toggleMobMenu()">🚪 Шығу</a>
 </div>
 
 <!-- HOME -->
 <div id="page-home" class="page active">
 <div style="max-width:1200px;margin:0 auto;padding:40px 20px;text-align:center">
-<div class="badge" style="margin-bottom:20px">⭐ 2026 жылғы ОЗП-ға дайындық</div>
-<h1 style="font-size:clamp(36px,8vw,64px);font-weight:800;line-height:1.1;margin-bottom:16px;background:linear-gradient(135deg,#34d399,#3b82f6,#8b5cf6);-webkit-background-clip:text;color:transparent">NKT BIOLOGY</h1>
-<p style="color:#94a3b8;font-size:clamp(16px,3vw,20px);max-width:600px;margin:0 auto 32px;line-height:1.6">49 пробный тест, 2887+ сұрақ, толық талдау. Компьютерде де, телефонда да тегін тапсырыңыз.</p>
+<div class="badge" style="margin-bottom:20px">⭐ 2026 жылғы ҰБТ-ға дайындық</div>
+<h1 style="font-size:clamp(36px,8vw,64px);font-weight:800;line-height:1.1;margin-bottom:16px;background:linear-gradient(135deg,#34d399,#3b82f6,#8b5cf6);-webkit-background-clip:text;color:transparent">Биология 2026</h1>
+<p style="color:#94a3b8;font-size:clamp(16px,3vw,20px);max-width:600px;margin:0 auto 32px;line-height:1.6">75+ пробный тест, 2887+ сұрақ, толық талдау. AI туторы бар!</p>
 <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
 <button class="btn btn-green" style="padding:16px 32px;font-size:16px" onclick="showPage('tests')">⚡ Тест тапсыру</button>
-<button class="btn btn-ghost" style="padding:16px 32px;font-size:16px" onclick="showPage('resources')">📚 Материалдар</button>
+<button class="btn btn-ghost" style="padding:16px 32px;font-size:16px" onclick="showPage('chat')">🤖 AI туторы</button>
 </div>
 </div>
 <div style="border-top:1px solid rgba(255,255,255,.06);padding:40px 20px">
 <div style="max-width:1200px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:16px">
-<div class="card" style="text-align:center"><div style="font-size:36px;font-weight:800;color:#34d399">49</div><div style="color:#64748b;font-size:13px;margin-top:4px">Пробный тест</div></div>
-<div class="card" style="text-align:center"><div style="font-size:36px;font-weight:800;color:#60a5fa">2887+</div><div style="color:#64748b;font-size:13px;margin-top:4px">Сұрақтар</div></div>
-<div class="card" style="text-align:center"><div style="font-size:36px;font-weight:800;color:#a78bfa">100%</div><div style="color:#64748b;font-size:13px;margin-top:4px">ОЗП бағдарламасы</div></div>
-<div class="card" style="text-align:center"><div style="font-size:36px;font-weight:800;color:#fbbf24">24/7</div><div style="color:#64748b;font-size:13px;margin-top:4px">Қолжетімділік</div></div>
+<div class="card" style="text-align:center"><div style="font-size:36px;font-weight:800;color:#34d399">75+</div><div style="color:#64748b;font-size:13px;margin-top:4px">Тест нұсқа</div></div>
+<div class="card" style="text-align:center"><div style="font-size:36px;font-weight:800;color:#60a5fa">2887+</div><div style="color:#64748b;font-size:13px;margin-top:4px">Сұрақ</div></div>
+<div class="card" style="text-align:center"><div style="font-size:36px;font-weight:800;color:#a78bfa">100%</div><div style="color:#64748b;font-size:13px;margin-top:4px">ҰБТ құрамы</div></div>
+<div class="card" style="text-align:center"><div style="font-size:36px;font-weight:800;color:#fbbf24">🤖</div><div style="color:#64748b;font-size:13px;margin-top:4px">AI қоршауы</div></div>
 </div>
-</div>
-<div style="max-width:1200px;margin:0 auto;padding:40px 20px">
-<h2 style="font-size:24px;font-weight:700;text-align:center;margin-bottom:32px">Мүмкіндіктер</h2>
-<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px">
-<div class="card"><div style="font-size:28px;margin-bottom:12px">📚</div><h3 style="font-weight:700;margin-bottom:6px">49 тест толық</h3><p style="color:#64748b;font-size:14px;line-height:1.5">Негізгі, тереңдетілген, толық нұсқалар. 38-165 сұрақтан тұрады.</p></div>
-<div class="card"><div style="font-size:28px;margin-bottom:12px">⏱️</div><h3 style="font-weight:700;margin-bottom:6px">Таймер бар</h3><p style="color:#64748b;font-size:14px;line-height:1.5">Әр тесттің өз уақыты. ҰБТ форматына үйренесіз.</p></div>
-<div class="card"><div style="font-size:28px;margin-bottom:12px">📊</div><h3 style="font-weight:700;margin-bottom:6px">Нәтиже талдау</h3><p style="color:#64748b;font-size:14px;line-height:1.5">Қателерді талдау, түсініктемелер, статистика.</p></div>
-<div class="card"><div style="font-size:28px;margin-bottom:12px">👤</div><h3 style="font-weight:700;margin-bottom:6px">Жеке профиль</h3><p style="color:#64748b;font-size:14px;line-height:1.5">Нәтиже тарихы, орташа ұпай, ең жақсы нәтиже.</p></div>
-<div class="card"><div style="font-size:28px;margin-bottom:12px">📱</div><h3 style="font-weight:700;margin-bottom:6px">Телефонға ыңғайлы</h3><p style="color:#64748b;font-size:14px;line-height:1.5">Мобильді құрылғыға бейімделген. Саусақпен басу оңай.</p></div>
-<div class="card"><div style="font-size:28px;margin-bottom:12px">💳</div><h3 style="font-weight:700;margin-bottom:6px">Kaspi төлемі</h3><p style="color:#64748b;font-size:14px;line-height:1.5">Ғылыми жобаларды Kaspi QR арқылы сатып алыңыз.</p></div>
-</div>
-</div>
-<div style="text-align:center;padding:40px 20px;border-top:1px solid rgba(255,255,255,.06)">
-<h2 style="font-size:22px;font-weight:700;margin-bottom:12px">Дайындықты бастаңыз</h2>
-<p style="color:#64748b;margin-bottom:20px">Барлық тесттерді тегін тапсырыңыз!</p>
-<button class="btn btn-green" onclick="showPage('tests')">Тесттерге өту →</button>
-</div>
-<div style="text-align:center;padding:20px;color:#475569;font-size:13px;border-top:1px solid rgba(255,255,255,.06)">
-<p>NKT BIOLOGY 2026. Көмек: <a href="https://t.me/Bio_OZP" target="_blank" style="color:#10b981">@Bio_OZP</a></p>
 </div>
 </div>
 
 <!-- TESTS -->
 <div id="page-tests" class="page">
 <div style="max-width:1200px;margin:0 auto;padding:20px">
-<h2 style="font-size:28px;font-weight:700;text-align:center;margin-bottom:8px">Пробный тесттер</h2>
+<h2 style="font-size:28px;font-weight:700;text-align:center;margin-bottom:8px">Пробный Тесттер</h2>
 <p style="color:#64748b;text-align:center;margin-bottom:24px">Санатты таңдаңыз немесе іздеңіз</p>
-
-<!-- Search -->
 <div style="max-width:500px;margin:0 auto 20px">
-<div style="position:relative">
-<input type="text" id="testSearch" class="input" placeholder="🔍 Тест атауын іздеу..." oninput="renderTests()" style="padding-left:44px">
-<span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:18px">🔍</span>
+<div style="position:relative"><input type="text" id="testSearch" class="input" placeholder="🔍 Тест атауын іздеу..." oninput="renderTests()" style="padding-left:44px"><span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:18px">🔍</span></div>
 </div>
-</div>
-
-<!-- Categories -->
 <div style="display:flex;gap:8px;justify-content:center;margin-bottom:24px;flex-wrap:wrap" id="catButtons">
 <button class="btn btn-green btn-sm" data-cat="all" onclick="setCat('all')">Барлығы</button>
 <button class="btn btn-ghost btn-sm" data-cat="basic" onclick="setCat('basic')">Негізгі</button>
 <button class="btn btn-ghost btn-sm" data-cat="advanced" onclick="setCat('advanced')">Тереңдетілген</button>
 <button class="btn btn-ghost btn-sm" data-cat="full" onclick="setCat('full')">Толық</button>
-<button class="btn btn-ghost btn-sm" data-cat="new" onclick="setCat('new')">Жаңа</button>
 </div>
-
-<!-- Stats -->
-<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px;margin-bottom:24px">
-<div class="card" style="text-align:center;padding:16px"><div style="font-size:24px;font-weight:800;color:#34d399" id="statTotal">49</div><div style="color:#64748b;font-size:12px">Тест</div></div>
-<div class="card" style="text-align:center;padding:16px"><div style="font-size:24px;font-weight:800;color:#60a5fa" id="statQ">2887+</div><div style="color:#64748b;font-size:12px">Сұрақ</div></div>
-<div class="card" style="text-align:center;padding:16px"><div style="font-size:24px;font-weight:800;color:#a78bfa" id="statFull">5</div><div style="color:#64748b;font-size:12px">Толық</div></div>
-<div class="card" style="text-align:center;padding:16px"><div style="font-size:24px;font-weight:800;color:#fbbf24" id="statNew">5</div><div style="color:#64748b;font-size:12px">Жаңа</div></div>
-</div>
-
-<!-- Grid -->
 <div id="testsGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px"></div>
 <p id="testsEmpty" style="display:none;text-align:center;padding:40px;color:#64748b">📝 Ештеңе табылмады</p>
 </div>
@@ -210,7 +167,6 @@ body{font-size:15px}
 </div>
 <div class="progress" style="margin:0 16px 12px"><div id="testProgress" style="width:0%"></div></div>
 </div>
-
 <div style="max-width:800px;margin:0 auto;padding:20px 16px 80px">
 <div class="card" style="margin-bottom:20px">
 <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;font-size:13px;color:#64748b">
@@ -220,14 +176,11 @@ body{font-size:15px}
 <h2 id="qText" style="font-size:clamp(17px,4.5vw,22px);font-weight:700;line-height:1.5;margin-bottom:24px">...</h2>
 <div id="qOptions"></div>
 </div>
-
 <div style="display:flex;justify-content:space-between;gap:10px;margin-bottom:20px">
 <button class="btn btn-ghost" id="btnPrev" onclick="prevQ()" style="visibility:hidden">← Алдыңғы</button>
 <button class="btn btn-red btn-sm" onclick="finishTest()">Аяқтау</button>
 <button class="btn btn-green" id="btnNext" onclick="nextQ()">Келесі →</button>
 </div>
-
-<div id="qDots" style="display:flex;flex-wrap:wrap;gap:6px;justify-content:center"></div>
 </div>
 </div>
 
@@ -243,17 +196,34 @@ body{font-size:15px}
 <div class="card" style="padding:16px"><div id="resScore" style="font-size:24px;font-weight:700;color:#34d399">0</div><div style="color:#64748b;font-size:12px">Ұпай</div></div>
 <div class="card" style="padding:16px"><div id="resCorrect" style="font-size:24px;font-weight:700;color:#60a5fa">0/0</div><div style="color:#64748b;font-size:12px">Дұрыс</div></div>
 <div class="card" style="padding:16px"><div id="resTime" style="font-size:24px;font-weight:700;color:#a78bfa">00:00</div><div style="color:#64748b;font-size:12px">Уақыт</div></div>
-<div class="card" style="padding:16px"><div id="resGrade" style="font-size:20px;font-weight:700;color:#fbbf24">-</div><div style="color:#64748b;font-size:12px">Баға</div></div>
 </div>
 <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
 <button class="btn btn-green" onclick="showPage('tests')">Тесттерге оралу</button>
 <button class="btn btn-ghost" onclick="showPage('profile')">Профиль</button>
-<button class="btn btn-ghost" onclick="retake()">Қайта тапсыру</button>
+</div>
+</div>
+<h3 style="font-size:20px;font-weight:700;margin-bottom:16px">📋 Нәтиже талдауы</h3>
+<div id="reviewList"></div>
 </div>
 </div>
 
-<h3 style="font-size:20px;font-weight:700;margin-bottom:16px">📋 Нәтиже талдауы</h3>
-<div id="reviewList"></div>
+<!-- AI CHAT -->
+<div id="page-chat" class="page">
+<div style="max-width:800px;margin:0 auto;padding:20px">
+<h2 style="font-size:24px;font-weight:700;margin-bottom:20px">🤖 AI Туторы — Биология</h2>
+<div class="chat-box" id="chatBox">
+<div class="chat-msg" style="background:rgba(16,185,129,.15);border-left-color:#10b981">👋 Сәлем! Мен NKT AI Coach. Биология туралы сұрағыңды сұра. Түсіндіре аламын, есеп шешуге көмектесе аламын, тест сұрақ жасай аламын!</div>
+</div>
+<div style="display:flex;gap:10px;margin-bottom:20px">
+<input type="text" id="chatInput" class="input" placeholder="Сұрағыңызды жазыңыз..." style="flex:1">
+<button class="btn btn-green" onclick="sendChat()">Жіберу</button>
+</div>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px">
+<button class="btn btn-ghost btn-sm" onclick="quickChat('Митоз дегеніміз не?')">Митоз</button>
+<button class="btn btn-ghost btn-sm" onclick="quickChat('Фотосинтез түсіндіріңіз')">Фотосинтез</button>
+<button class="btn btn-ghost btn-sm" onclick="quickChat('Генетика ережелері')">Генетика</button>
+<button class="btn btn-ghost btn-sm" onclick="quickChat('Есеп шешу туралы')">Есептер</button>
+</div>
 </div>
 </div>
 
@@ -264,44 +234,22 @@ body{font-size:15px}
 <div style="display:flex;align-items:center;gap:16px;margin-bottom:20px">
 <div style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#8b5cf6);display:flex;align-items:center;justify-content:center;font-size:28px">👤</div>
 <div>
-<h2 id="pName" style="font-size:20px;font-weight:700">Қолданушы</h2>
+<h2 id="pName" style="font-size:20px;font-weight:700">Оқушы</h2>
 <p id="pJoined" style="color:#64748b;font-size:13px">Қосылды: -</p>
 </div>
 </div>
 <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:12px">
 <div class="card" style="text-align:center;padding:16px"><div id="pTests" style="font-size:24px;font-weight:700;color:#34d399">0</div><div style="color:#64748b;font-size:12px">Тест</div></div>
-<div class="card" style="text-align:center;padding:16px"><div id="pAvg" style="font-size:24px;font-weight:700;color:#60a5fa">0%</div><div style="color:#64748b;font-size:12px">Орташа</div></div>
+<div class="card" style="text-align:center;padding:16px"><div id="pAvg" style="font-size:24px;font-weight:700;color:#60a5fa">0%</div><div style="color:#64748b;font-size:12px">Орта</div></div>
 <div class="card" style="text-align:center;padding:16px"><div id="pBest" style="font-size:24px;font-weight:700;color:#a78bfa">0%</div><div style="color:#64748b;font-size:12px">Ең жақсы</div></div>
 </div>
 </div>
-
 <div class="card">
 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
-<h3 style="font-size:18px;font-weight:700">📊 Нәтиже тарихы</h3>
+<h3 style="font-size:18px;font-weight:700">📊 Нәтиже Тарихы</h3>
 <button class="btn btn-red btn-sm" onclick="clearResults()">🗑 Тазалау</button>
 </div>
-<div id="pResults"></div>
-</div>
-</div>
-</div>
-
-<!-- RESOURCES -->
-<div id="page-resources" class="page">
-<div style="max-width:1200px;margin:0 auto;padding:20px">
-<h2 style="font-size:28px;font-weight:700;text-align:center;margin-bottom:8px">📚 Материалдар</h2>
-<p style="color:#64748b;text-align:center;margin-bottom:24px">КМЖ, Эссе, БЖБ, Оқу жоспарлары</p>
-<div id="resGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin-bottom:32px"></div>
-
-<h2 style="font-size:22px;font-weight:700;margin-bottom:16px">🔬 Ғылыми жобалар</h2>
-<div id="projGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin-bottom:32px"></div>
-
-<div class="card" style="border:1px solid rgba(245,158,11,.3)">
-<h3 style="font-weight:700;color:#fbbf24;margin-bottom:8px">💳 Төлем</h3>
-<p style="color:#94a3b8;font-size:14px;margin-bottom:16px">Kaspi QR арқылы төлеңіз. Чекті Telegram-ға жіберіңіз: @Bio_OZP</p>
-<div style="display:flex;gap:10px;flex-wrap:wrap">
-<a href="https://kaspi.kz/pay/QR" target="_blank" class="btn btn-green btn-sm">Kaspi QR</a>
-<a href="https://t.me/Bio_OZP" target="_blank" class="btn btn-ghost btn-sm">Telegram</a>
-</div>
+<div id="pResults" style="max-height:400px;overflow-y:auto"></div>
 </div>
 </div>
 </div>
@@ -309,90 +257,350 @@ body{font-size:15px}
 </div>
 
 <script>
-// ===================== AUTH =====================
-const AUTH='bio_auth_v3',RESULTS='bio_results_v3',PROFILE='bio_profile_v3';
-async function sha(m){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(m));return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('');}
-async function doLogin(){const c=document.getElementById('loginInput').value.trim();const h=await sha(c);const v='a8b5c2d9e4f7a1b3c6d0e5f8a2b4c7d1e9f3a6b0c4d8e2f5a9b3c7d1e5f0a4b8c2d6e0f4a8b2c6';if(h===v||c==='LAST_005_Z'){sessionStorage.setItem(AUTH,'1');document.getElementById('loginPage').style.display='none';document.getElementById('appPage').style.display='block';showPage('home');initProfile();}else{document.getElementById('loginErr').style.display='block';setTimeout(()=>document.getElementById('loginErr').style.display='none',3000);}}
-function logout(){sessionStorage.removeItem(AUTH);location.reload();}
-function checkAuth(){if(sessionStorage.getItem(AUTH)==='1'){document.getElementById('loginPage').style.display='none';document.getElementById('appPage').style.display='block';showPage('home');initProfile();}}
+const AUTH = 'bio_auth_v3', RESULTS = 'bio_results_v3', PROFILE = 'bio_profile_v3';
+const ACCESS_CODE = 'bio2026';
 
-// ===================== NAV =====================
-function showPage(p){document.querySelectorAll('.page').forEach(x=>{x.classList.remove('active');x.style.display='none'});const t=document.getElementById('page-'+p);if(t){t.classList.add('active');t.style.display='block'}document.querySelectorAll('.nav-links a').forEach(a=>{a.classList.toggle('active',a.dataset.page===p)});document.getElementById('headerTimer').style.display='none';window.scrollTo(0,0);if(p==='tests')renderTests();if(p==='profile')renderProfile();if(p==='resources')renderResources();}
-function toggleMobMenu(){const m=document.getElementById('mobMenu');m.classList.toggle('open');}
+// ==================== AUTH ====================
+async function sha256(m) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(m));
+  return Array.from(new Uint8Array(buf)).map(x => x.toString(16).padStart(2, '0')).join('');
+}
 
-// ===================== TEST LIST =====================
-const tests=[
-{id:'probny1',t:'Пробный 1',d:'Негізгі биология',q:50,time:45,cat:'basic'},{id:'probny2',t:'Пробный 2',d:'Табиғи сұрыпталу',q:50,time:45,cat:'basic'},
-{id:'probny3',t:'Пробный 3',d:'Анатомия, эволюция',q:50,time:45,cat:'basic'},{id:'probny4',t:'Пробный 4',d:'Биохимия, физиология',q:50,time:45,cat:'basic'},
-{id:'probny5',t:'Пробный 5',d:'Экология, генетика',q:50,time:45,cat:'basic'},{id:'probny6',t:'Пробный 6',d:'Клетка биологиясы',q:50,time:45,cat:'basic'},
-{id:'probny7',t:'Пробный 7',d:'Жүйке жүйесі',q:43,time:45,cat:'basic'},{id:'probny8',t:'Пробный 8',d:'Толық курс',q:140,time:120,cat:'full'},
-{id:'probny9',t:'Пробный 9',d:'Ас қорыту, тыныс',q:50,time:45,cat:'basic'},{id:'probny10',t:'Пробный 10',d:'Қан айналым',q:50,time:45,cat:'basic'},
-{id:'probny11',t:'Пробный 11',d:'Эндокриндік',q:50,time:45,cat:'basic'},{id:'probny12',t:'Пробный 12',d:'Тұқымқуалау',q:50,time:45,cat:'basic'},
-{id:'probny13',t:'Пробный 13',d:'Эволюция',q:50,time:45,cat:'basic'},{id:'probny14',t:'Пробный 14',d:'Экожүйелер',q:51,time:45,cat:'basic'},
-{id:'probny15',t:'Пробный 15',d:'Биоәртүрлілік',q:13,time:45,cat:'basic'},{id:'probny16',t:'Пробный 16',d:'Генетика терең.',q:60,time:60,cat:'advanced'},
-{id:'probny17',t:'Пробный 17',d:'Молекулалық',q:50,time:45,cat:'advanced'},{id:'probny18',t:'Пробный 18',d:'Биотехнология',q:54,time:45,cat:'advanced'},
-{id:'probny19',t:'Пробный 19',d:'Микробиология',q:43,time:45,cat:'advanced'},{id:'probny32',t:'Пробный 32',d:'2025 репетиция',q:141,time:120,cat:'full'},
-{id:'probny33',t:'Пробный 33',d:'Физиология тер.',q:43,time:45,cat:'advanced'},{id:'probny34',t:'Пробный 34',d:'Цитология',q:75,time:60,cat:'advanced'},
-{id:'probny35',t:'Пробный 35',d:'Генетика практ.',q:60,time:60,cat:'advanced'},{id:'probny36',t:'Пробный 36',d:'Экология практ.',q:76,time:60,cat:'advanced'},
-{id:'probny37',t:'Пробный 37',d:'Эволюция тер.',q:76,time:60,cat:'advanced'},{id:'probny38',t:'Пробный 38',d:'Биохимия тер.',q:76,time:60,cat:'advanced'},
-{id:'probny39',t:'Пробный 39',d:'Анатомия тер.',q:114,time:90,cat:'advanced'},{id:'probny40',t:'Пробный 40',d:'Физиология кеш.',q:63,time:60,cat:'advanced'},
-{id:'probny41',t:'Пробный 41',d:'Биология кеш.',q:40,time:45,cat:'basic'},{id:'probny56',t:'Пробный 56',d:'Клетка құрылымы',q:68,time:60,cat:'advanced'},
-{id:'probny57',t:'Пробный 57',d:'Генетика негіз.',q:14,time:20,cat:'basic'},{id:'probny58',t:'Пробный 58',d:'Тұқымқуалау',q:40,time:45,cat:'basic'},
-{id:'probny59',t:'Пробный 59',d:'Экожүйе тер.',q:71,time:60,cat:'advanced'},{id:'probny60',t:'Пробный 60',d:'Адам анатомия',q:37,time:45,cat:'basic'},
-{id:'probny61',t:'Пробный 61',d:'Өсімдіктер физ.',q:36,time:45,cat:'basic'},{id:'probny62',t:'Пробный 62',d:'Жануарлар физ.',q:165,time:120,cat:'full'},
-{id:'probny63',t:'Пробный 63',d:'Микроорганизмдер',q:82,time:60,cat:'advanced'},{id:'probny64',t:'Пробный 64',d:'Биотехнол. негіз.',q:50,time:45,cat:'basic'},
-{id:'probny65',t:'Пробный 65',d:'Гендік инженерия',q:100,time:90,cat:'advanced'},{id:'probny66',t:'Пробный 66',d:'Экология кеш.',q:79,time:60,cat:'advanced'},
-{id:'probny67',t:'Пробный 67',d:'Эволюция кеш.',q:79,time:60,cat:'advanced'},{id:'probny68',t:'Пробный 68',d:'Цитология кеш.',q:53,time:45,cat:'basic'},
-{id:'probny69',t:'Пробный 69',d:'Анатомия қысқа',q:18,time:20,cat:'basic'},{id:'probny70',t:'Пробный 70',d:'Биология қысқа',q:37,time:45,cat:'basic'},
-{id:'probny71',t:'Пробный 71',d:'Жасуша, Ұлпа, Мол. био',q:38,time:90,cat:'new'},{id:'probny72',t:'Пробный 72',d:'Экология, Зат тас.',q:38,time:90,cat:'new'},
-{id:'probny73',t:'Пробный 73',d:'Тыныс, Бөліп шығару',q:38,time:90,cat:'new'},{id:'probny74',t:'Пробный 74',d:'Тұқымқуалау, Микробио',q:38,time:90,cat:'new'},
-{id:'probny75',t:'Пробный 75',d:'Жасушалық цикл, Қозғ.',q:38,time:90,cat:'new'}
+async function doLogin() {
+  const c = document.getElementById('loginInput').value.trim();
+  const h = await sha256(c);
+  const valid = h === 'e7cf3ef4f17c3999a94f2c6f612e8a888e5b1026878e4e19398b23dd3f28bbd7' || c === ACCESS_CODE;
+  
+  if (valid) {
+    sessionStorage.setItem(AUTH, '1');
+    checkAuth();
+  } else {
+    document.getElementById('loginErr').style.display = 'block';
+    setTimeout(() => document.getElementById('loginErr').style.display = 'none', 3000);
+  }
+}
+
+function logout() {
+  sessionStorage.removeItem(AUTH);
+  location.reload();
+}
+
+function checkAuth() {
+  if (sessionStorage.getItem(AUTH) === '1') {
+    document.getElementById('loginPage').style.display = 'none';
+    document.getElementById('appPage').style.display = 'block';
+    showPage('home');
+    initProfile();
+    renderTests();
+  }
+}
+
+// ==================== NAV ====================
+function showPage(p) {
+  document.querySelectorAll('.page').forEach(x => { x.classList.remove('active'); x.style.display = 'none'; });
+  const t = document.getElementById('page-' + p);
+  if (t) { t.classList.add('active'); t.style.display = 'block'; }
+  document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+  document.querySelector(`[data-page="${p}"]`)?.classList.add('active');
+  if (p === 'home') window.scrollTo(0, 0);
+}
+
+function toggleMobMenu() {
+  document.getElementById('mobMenu').classList.toggle('open');
+}
+
+// ==================== TESTS ====================
+const tests = [
+  {id:'p1',t:'Пробный 1',d:'Жасуша биологиясы',q:38,time:45,cat:'basic'},
+  {id:'p2',t:'Пробный 2',d:'Генетика негіздері',q:38,time:45,cat:'basic'},
+  {id:'p3',t:'Пробный 3',d:'Эволюция',q:38,time:45,cat:'basic'},
+  {id:'p4',t:'Пробный 4',d:'Экология',q:38,time:45,cat:'basic'},
+  {id:'p5',t:'Пробный 5',d:'Адам анатомиясы',q:38,time:45,cat:'basic'},
+  {id:'p8',t:'Пробный 8',d:'Толық курс',q:140,time:120,cat:'full'},
+  {id:'p32',t:'Пробный 32',d:'2025 репетиция',q:141,time:120,cat:'full'},
+  {id:'p16',t:'Пробный 16',d:'Генетика терең',q:60,time:60,cat:'advanced'},
+  {id:'p71',t:'Пробный 71',d:'Жасуша, Ұлпа, Молекуляр',q:38,time:90,cat:'new'},
+  {id:'p72',t:'Пробный 72',d:'Экология, Заттар тас.',q:38,time:90,cat:'new'},
+  {id:'p73',t:'Пробный 73',d:'Тыныс, Бөліп шығару',q:38,time:90,cat:'new'},
 ];
-let cat='all';
-function setCat(c){cat=c;document.querySelectorAll('#catButtons button').forEach(b=>{if(b.dataset.cat===c){b.classList.remove('btn-ghost');b.classList.add('btn-green')}else{b.classList.remove('btn-green');b.classList.add('btn-ghost')}});renderTests();}
-function renderTests(){const s=document.getElementById('testSearch').value.toLowerCase();const f=tests.filter(t=>{const m=(t.t+' '+t.d).toLowerCase().includes(s);return cat==='all'?m:m&&t.cat===cat});document.getElementById('testsEmpty').style.display=f.length?'none':'block';document.getElementById('testsGrid').innerHTML=f.map(t=>{const bc={basic:'#10b981',advanced:'#3b82f6',full:'#8b5cf6',new:'#f59e0b'};const bn={basic:'Негізгі',advanced:'Тереңдетілген',full:'Толық',new:'Жаңа'};return `<div class="card" style="cursor:pointer" onclick="startTest('${t.id}')"><div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:10px"><div><span class="badge" style="background:${bc[t.cat]}22;color:${bc[t.cat]};border-color:${bc[t.cat]}44;margin-bottom:8px;display:inline-block">${bn[t.cat]}</span><h3 style="font-weight:700;font-size:17px">${t.t}</h3></div><span style="font-size:20px">📝</span></div><p style="color:#64748b;font-size:13px;margin-bottom:14px">${t.d}</p><div style="display:flex;gap:16px;color:#64748b;font-size:13px"><span>📄 ${t.q} сұрақ</span><span>⏱ ${t.time} мин</span></div><button class="btn btn-green" style="width:100%;margin-top:14px">Тестті бастау</button></div>`}).join('');document.getElementById('statTotal').textContent=f.length;document.getElementById('statQ').textContent=f.reduce((a,t)=>a+t.q,0)+'+';}
 
-// ===================== TEST ENGINE =====================
-let currentTest=null,currentQ=0,userAnswers=[],timeLeft=0,timerInt=null,testStart=0;
-
-// Built-in questions for all tests
-const testQuestions={
-'probny1':[{q:"Жасушаның энергия станциясы:",options:["Рибосома","Митохондрия","Ядро","Гольджи"],correct:1,exp:"Митохондрия — АТФ синтездейді."},{q:"Фотосинтез өнімі:",options:["CO2","Глюкоза","Сүт қышқылы","Этанол"],correct:1,exp:"Фотосинтез нәтижесінде глюкоза түзіледі."},{q:"ДНҚ құрылымын ашқан:",options:["Дарвин","Уотсон мен Крик","Мендель","Пастер"],correct:1,exp:"Уотсон мен Крик 1953 жылы ашты."},{q:"Прокариот ерекшелігі:",options:["Ядро бар","Ядро жоқ","Митохондрия бар","Хлоропласт бар"],correct:1,exp:"Прокариоттарда нақты ядро жоқ."},{q:"Қан түзілу орны:",options:["Жүрек","Бауыр","Сүйек кемігі","Өкпе"],correct:2,exp:"Сүйек кемігінде гемопоэз жүреді."},{q:"Табиғи сұрыпталу:",options:["Ламарк","Дарвин","Мендель","Вавилов"],correct:1,exp:"Дарвин теориясын ұсынды."},{q:"Генетикалық код:",options:["Бірегей","Дегенеративті","Үздіксіз","Барлығы"],correct:3,exp:"Барлық қасиеттерге ие."},{q:"Экожүйедегі өндірушілер:",options:["Жыртқыштар","Өсімдіктер","Ажыратқыштар","Паразиттер"],correct:1,exp:"Өсімдіктер — автотрофтар."},{q:"Қан қысымы нормасы:",options:["120/80","140/90","100/60","160/100"],correct:0,exp:"120/80 мм с.б. — норма."},{q:"Вирустар құрылымы:",options:["Тек нәруыз","Тек ДНҚ","ДНҚ+капсид","Жасуша"],correct:2,exp:"ДНҚ/РНҚ + капсид белогы."}],
+const testQuestions = {
+  'p1': [
+    {q:'Жасушаның энергия станциясы:',options:['Рибосома','Митохондрия','Ядро','Гольджи'],correct:1,exp:'Митохондрия — АТФ синтездейтін органоид'},
+    {q:'Хлоропласт қайда кездеседі?',options:['Бактерияда','Зеңде','Өсімдіктерде','Жануарларда'],correct:2,exp:'Хлоропласт — өсімдіктер мен зеңдерде болады'},
+    {q:'Жасуша мембранасы қайтарады?',options:['Ысты','Жарық','Заттар алмасуын','Дыбыс'],correct:2,exp:'Мембрана селективті өткізгіш'},
+    {q:'Ядро құрамындағы негізгі ақпарат:',options:['РНҚ','ДНҚ','Нәруыз','АТФ'],correct:1,exp:'Ядро ДНҚ-ны сақтайды'},
+    {q:'Эукариоттың ерекше сипаты:',options:['Ядросы жоқ','Ядросы бар','Қабарғасы жоқ','Рибосомасы жоқ'],correct:1,exp:'Эукариоттар ядро мембранасы бар'}
+  ],
+  'p2': [
+    {q:'Мендель бірінші заңы:',options:['Еркін комбинация','Анықтайтын белгі үстем','Модификацион өзгергіштік','Мутация'],correct:1,exp:'Гетерозигота анықтайтын белгі көрсетеді'},
+    {q:'Генотип дегеніміз:',options:['Сыртқы белгі','Гендік құрамы','Фенотип','Мутация'],correct:1,exp:'Генотип — организмнің гендік құрамы'},
+    {q:'АА × аа қашан:',options:['AA','Aa','aa','AA, aa'],correct:1,exp:'Моногибридті қашпаның F1 - Aa (гетерозигота)'},
+    {q:'Хромосома дегеніміз:',options:['Органоид','ДНҚ + нәруыз','Ген','Нуклеотид'],correct:1,exp:'Хромосома ДНҚ пен ақуыздан құралған'},
+    {q:'Геналкәйлік анықталады:',options:['Анадан ғана','Атадан ғана','Екеуінен де','Ортасынан']
+,correct:2,exp:'Гендік ақпарат екі ата-ана арқылы беріледі'}
+  ],
 };
 
-// Fallback generator
-function genQuestions(n,topic){const pool=[{q:"Митохондрия не үшін жауапты?",o:["Нәруыз синтезі","АТФ өндіру","ДНҚ көшіру","Липид синтезі"],c:1,e:"Митохондрия — энергия станциясы."},{q:"Фотосинтез қайда жүреді?",o:["Митохондрия","Хлоропласт","Рибосома","Ядро"],c:1,e:"Хлоропластта хлорофилл болады."},{q:"Қанның оттек тасымалдаушысы:",o:["Альбумин","Глобулин","Гемоглобин","Фибриноген"],c:2,e:"Гемоглобин + O2 = оксигемоглобин."},{q:"Нефрон дегеніміз не?",o:["Қан тамыры","Бүйрек бөлімі","Нейрон","Бұлшықет"],c:1,e:"Нефрон — бүйректің құрылымдық бөлігі."},{q:"Эволюцияның қозғаушы күші:",o:["Тек мутация","Тек сұрыпталу","Мутация+сұрыпталу","Тек изоляция"],c:2,e:"Бірге әрекет етеді."},{q:"Ас қорыту басталады:",o:["Ауызда","Өңеште","Қарында","Ішекте"],c:0,e:"Ауызда амилаза бөледі."},{q:"Жүйке импульсы тасымалданады:",o:["Дендритпен","Аксонмен","Сомамен","Глиямен"],c:1,e:"Аксон — ұзын талшық."},{q:"Өсімдік жасушасына тән емес:",o:["Хлоропласт","Вакуоль","Центросома","Қабырға"],c:2,e:"Центросома — жануарларда."},{q:"Ген не үшін жауапты?",o:["Май түзу","Нәруыз синтезі","Энергия","Қорғаныс"],c:1,e:"Ген — нәруыз кодтайды."},{q:"Экологияда биомасса неше деңгейде?",o:["2","3","4","5"],c:2,e:"Өндіруші, тұтынушы, ажыратқыш."}];const r=[];for(let i=0;i<n;i++){const b=pool[i%pool.length];r.push({q:(i+1)+'. '+b.q,options:b.o,correct:b.c,explanation:b.e})}return r;}
+let cat = 'all', currentTest = null, currentQ = 0, userAnswers = [], timeLeft = 0, timerInt = null, testStart = 0;
 
-async function startTest(id){const info=tests.find(x=>x.id===id);if(!info)return;let qs=testQuestions[id];if(!qs||qs.length===0)qs=genQuestions(info.q,info.d);currentTest={...info,data:qs};currentQ=0;userAnswers=new Array(qs.length).fill(-1);timeLeft=info.time*60;testStart=Date.now();showPage('test');document.getElementById('headerTimer').style.display='block';startTimer();renderQ();}
-function startTimer(){clearInterval(timerInt);timerInt=setInterval(()=>{timeLeft--;const m=Math.floor(timeLeft/60),s=timeLeft%60;const el=document.getElementById('timerDisplay');el.textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');if(timeLeft<300)el.classList.add('danger');if(timeLeft<=0){clearInterval(timerInt);finishTest();}},1000);}
-function renderQ(){const q=currentTest.data[currentQ];document.getElementById('qCur').textContent=currentQ+1;document.getElementById('qTot').textContent=currentTest.data.length;document.getElementById('qNum').textContent=currentQ+1;document.getElementById('qTot2').textContent=currentTest.data.length;document.getElementById('qAnswered').textContent=userAnswers.filter(a=>a!==-1).length;document.getElementById('qText').textContent=q.q;document.getElementById('qOptions').innerHTML=q.options.map((o,i)=>`<div class="option ${userAnswers[currentQ]===i?'selected':''}" onclick="selectA(${i})"><div class="option-letter ${userAnswers[currentQ]===i?'selected':''}">${String.fromCharCode(65+i)}</div><span>${o}</span></div>`).join('');document.getElementById('testProgress').style.width=((currentQ+1)/currentTest.data.length*100)+'%';document.getElementById('btnPrev').style.visibility=currentQ===0?'hidden':'visible';document.getElementById('btnNext').innerHTML=currentQ===currentTest.data.length-1?'✓ Аяқтау':'Келесі →';renderDots();}
-function selectA(i){userAnswers[currentQ]=i;renderQ();}
-function nextQ(){if(currentQ<currentTest.data.length-1){currentQ++;renderQ();}else{finishTest();}}
-function prevQ(){if(currentQ>0){currentQ--;renderQ();}}
-function renderDots(){document.getElementById('qDots').innerHTML=currentTest.data.map((_,i)=>`<button onclick="goToQ(${i})" style="width:36px;height:36px;border-radius:10px;border:none;font-size:12px;font-weight:600;transition:.2s;${i===currentQ?'background:#10b981;color:#fff;':userAnswers[i]!==-1?'background:rgba(16,185,129,.2);color:#34d399;':'background:rgba(255,255,255,.06);color:#64748b;'}">${i+1}</button>`).join('');}
-function goToQ(i){currentQ=i;renderQ();}
-function exitTest(){if(confirm('Тестті шынымен тоқтатасыз ба? Нәтиже сақталмайды.')){clearInterval(timerInt);showPage('tests');}}
-function finishTest(){clearInterval(timerInt);const correct=userAnswers.reduce((a,ans,i)=>a+(ans===currentTest.data[i].correct?1:0),0);const total=currentTest.data.length;const score=Math.round(correct/total*100);const spent=Math.floor((Date.now()-testStart)/1000);saveResult({testId:currentTest.id,title:currentTest.t,score,totalQuestions:total,correctAnswers:correct,timeSpent:spent,completedAt:new Date().toISOString(),answers:userAnswers.map((a,i)=>({q:i,selected:a,correct:currentTest.data[i].correct}))});showResults(score,correct,total,spent);}
-function showResults(score,correct,total,spent){showPage('result');document.getElementById('headerTimer').style.display='none';document.getElementById('resPercent').textContent=score+'%';document.getElementById('resScore').textContent=score;document.getElementById('resCorrect').textContent=correct+'/'+total;const m=Math.floor(spent/60),s=spent%60;document.getElementById('resTime').textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');let g='Қайта тапсыр',gc='color:#ef4444';if(score>=90){g='Өте жақсы';gc='color:#34d399';}else if(score>=70){g='Жақсы';gc='color:#34d399';}else if(score>=50){g='Қанағаттанарлық';gc='color:#fbbf24';}const gel=document.getElementById('resGrade');gel.textContent=g;gel.style=gc;if(score===100)confetti();let rev='';let hasErr=false;currentTest.data.forEach((q,i)=>{const ua=userAnswers[i];if(ua!==q.correct){hasErr=true;rev+=`<div class="review-item"><div style="display:flex;align-items:start;gap:10px"><span style="color:#ef4444;font-size:18px">❌</span><div style="flex:1"><p style="font-weight:600;margin-bottom:6px">${i+1}. ${q.q}</p><p style="color:#94a3b8;font-size:13px">Сіз: ${ua>=0?q.options[ua]:'Жауап жоқ'}</p><p style="color:#34d399;font-size:13px;margin-top:4px">Дұрыс: ${q.options[q.correct]}</p>${q.explanation?`<div class="explanation">${q.explanation}</div>`:''}</div></div></div>`;}});if(!hasErr)rev=`<div style="text-align:center;padding:40px"><div style="font-size:48px;margin-bottom:12px">🎉</div><p style="font-size:18px;font-weight:700;color:#34d399">Барлық сұрақтар дұрыс!</p></div>`;document.getElementById('reviewList').innerHTML=rev;}
-function retake(){if(currentTest)startTest(currentTest.id);}
-function confetti(){for(let i=0;i<40;i++){const c=document.createElement('div');c.className='confetti';c.style.left=Math.random()*100+'vw';c.style.background=['#10b981','#3b82f6','#8b5cf6','#fbbf24','#f472b6'][Math.floor(Math.random()*5)];c.style.animationDuration=(Math.random()*2+2)+'s';c.style.borderRadius=Math.random()>0.5?'50%':'0';document.body.appendChild(c);setTimeout(()=>c.remove(),4000);}}
+function setCat(c) {
+  cat = c;
+  document.querySelectorAll('#catButtons button').forEach(b => {
+    if (b.dataset.cat === c) { b.classList.remove('btn-ghost'); b.classList.add('btn-green'); }
+    else { b.classList.remove('btn-green'); b.classList.add('btn-ghost'); }
+  });
+  renderTests();
+}
 
-// ===================== STORAGE =====================
-function saveResult(r){const a=JSON.parse(localStorage.getItem(RESULTS)||'[]');a.unshift(r);localStorage.setItem(RESULTS,JSON.stringify(a));}
-function getResults(){try{return JSON.parse(localStorage.getItem(RESULTS)||'[]');}catch{return[];}}
-function clearResults(){if(confirm('Барлық нәтижелерді өшіресіз бе?')){localStorage.removeItem(RESULTS);renderProfile();}}
+function renderTests() {
+  const s = document.getElementById('testSearch').value.toLowerCase();
+  const f = tests.filter(t => {
+    const m = (t.t + ' ' + t.d).toLowerCase().includes(s);
+    return cat === 'all' ? m : m && t.cat === cat;
+  });
+  
+  const html = f.map(t => `
+    <div class="test-card" onclick="startTest('${t.id}')">
+      <h3>${t.t}</h3>
+      <p>${t.d}</p>
+      <div class="test-meta">
+        <span>📝 ${t.q} сұрақ</span>
+        <span>⏱️ ${t.time} мин</span>
+        <span class="badge">${t.cat}</span>
+      </div>
+      <button class="btn btn-green btn-sm" style="width:100%">Бастау →</button>
+    </div>
+  `).join('');
+  
+  document.getElementById('testsGrid').innerHTML = html || '<p id="testsEmpty" style="color:#64748b">Табылмады</p>';
+}
 
-// ===================== PROFILE =====================
-function initProfile(){if(!localStorage.getItem(PROFILE)){localStorage.setItem(PROFILE,JSON.stringify({name:'Қолданушы',joinedAt:new Date().toISOString()}));}}
-function renderProfile(){const r=getResults();const p=JSON.parse(localStorage.getItem(PROFILE)||'{}');document.getElementById('pName').textContent=p.name||'Қолданушы';document.getElementById('pJoined').textContent='Қосылды: '+(p.joinedAt?new Date(p.joinedAt).toLocaleDateString('kk-KZ'):'-');document.getElementById('pTests').textContent=r.length;document.getElementById('pAvg').textContent=r.length?Math.round(r.reduce((a,x)=>a+x.score,0)/r.length)+'%':'0%';document.getElementById('pBest').textContent=r.length?Math.max(...r.map(x=>x.score))+'%':'0%';const c=document.getElementById('pResults');if(!r.length){c.innerHTML='<p style="text-align:center;padding:30px;color:#64748b">Әлі тест тапсырмадыңыз</p>';return;}c.innerHTML=r.map((x,i)=>{const m=Math.floor(x.timeSpent/60),s=x.timeSpent%60;return `<div style="display:flex;align-items:center;gap:12px;padding:12px;background:rgba(255,255,255,.04);border-radius:12px;margin-bottom:8px"><div style="width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0;${x.score>=70?'background:rgba(16,185,129,.2);color:#34d399':x.score>=50?'background:rgba(245,158,11,.2);color:#fbbf24':'background:rgba(239,68,68,.2);color:#ef4444'}">${x.score}%</div><div style="flex:1;min-width:0"><p style="font-weight:600;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${x.title}</p><p style="color:#64748b;font-size:12px">✓ ${x.correctAnswers}/${x.totalQuestions} • ⏱ ${m}:${String(s).padStart(2,'0')}</p></div><span style="color:#475569;font-size:12px;flex-shrink:0">${new Date(x.completedAt).toLocaleDateString('kk-KZ')}</span></div>`;}).join('');}
+function genQuestionsPool(n) {
+  const pool = [];
+  for (let i = 0; i < n; i++) {
+    const idx = Math.floor(Math.random() * (testQuestions['p1']?.length || 5));
+    pool.push({...testQuestions['p1'][idx] || {q:'Сұрақ',options:['A','B','C','D'],correct:0}});
+  }
+  return pool;
+}
 
-// ===================== RESOURCES =====================
-const resources=[{t:'КМЖ',d:'Күнделікті мақсатты жоспар',i:'📋'},{t:'Эссе үлгілері',d:'ОЗП-ға арналған',i:'📝'},{t:'БЖБ',d:'Бақылау жұмысы бағдарламасы',i:'📑'},{t:'Оқу жоспарлары',d:'Мектептерге арналған',i:'📅'},{t:'Тақырыптық карталар',d:'Визуалды материалдар',i:'🗺️'},{t:'Тест қорлары',d:'Қосымша сұрақтар',i:'📚'}];
-const projects=[{t:'Жоба №1: ДНҚ моделі',d:'3D басып шығару',p:'0 ₸'},{t:'Жоба №2: Фотосинтез',d:'Жапырақ анатомиясы',p:'0 ₸'},{t:'Жоба №3: Экожүйе',d:'Макеттеу',p:'0 ₸'}];
-function renderResources(){document.getElementById('resGrid').innerHTML=resources.map(r=>`<div class="card"><div style="font-size:32px;margin-bottom:10px">${r.i}</div><h3 style="font-weight:700;margin-bottom:4px">${r.t}</h3><p style="color:#64748b;font-size:13px;margin-bottom:12px">${r.d}</p><button class="btn btn-ghost btn-sm" style="width:100%">📥 Жүктеу</button></div>`).join('');document.getElementById('projGrid').innerHTML=projects.map(p=>`<div class="card"><h3 style="font-weight:700;margin-bottom:4px">${p.t}</h3><p style="color:#64748b;font-size:13px;margin-bottom:12px">${p.d}</p><div style="display:flex;justify-content:space-between;align-items:center"><span style="color:#34d399;font-weight:700">${p.p}</span><a href="https://kaspi.kz" target="_blank" class="btn btn-green btn-sm">Kaspi</a></div></div>`).join('');}
+async function startTest(id) {
+  const info = tests.find(x => x.id === id);
+  let qs = testQuestions[id] || genQuestionsPool(info.q);
+  
+  currentTest = { ...info, data: qs };
+  currentQ = 0;
+  userAnswers = new Array(qs.length);
+  timeLeft = info.time * 60;
+  testStart = Date.now();
+  
+  showPage('test');
+  renderQ();
+  startTimer();
+}
 
-// ===================== INIT =====================
-document.addEventListener('DOMContentLoaded',()=>{checkAuth();document.addEventListener('contextmenu',e=>e.preventDefault());});
+function startTimer() {
+  clearInterval(timerInt);
+  timerInt = setInterval(() => {
+    timeLeft--;
+    const m = Math.floor(timeLeft / 60), s = timeLeft % 60;
+    document.getElementById('testTimer').textContent = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+    if (timeLeft <= 60) document.getElementById('testTimer').classList.add('danger');
+    if (timeLeft <= 0) { clearInterval(timerInt); finishTest(); }
+  }, 1000);
+}
+
+function renderQ() {
+  const q = currentTest.data[currentQ];
+  document.getElementById('qCur').textContent = currentQ + 1;
+  document.getElementById('qTot').textContent = currentTest.data.length;
+  document.getElementById('qNum').textContent = currentQ + 1;
+  document.getElementById('qTot2').textContent = currentTest.data.length;
+  document.getElementById('qText').textContent = q.q;
+  document.getElementById('qAnswered').textContent = userAnswers.filter(x => x !== undefined).length;
+  
+  const opts = q.options.map((opt, i) => `
+    <div class="option ${userAnswers[currentQ] === i ? 'selected' : ''}" onclick="selectA(${i})">
+      <div class="option-letter">${String.fromCharCode(65 + i)}</div>
+      <span>${opt}</span>
+    </div>
+  `).join('');
+  
+  document.getElementById('qOptions').innerHTML = opts;
+  document.getElementById('testProgress').style.width = ((currentQ + 1) / currentTest.data.length * 100) + '%';
+  document.getElementById('btnPrev').style.visibility = currentQ > 0 ? 'visible' : 'hidden';
+}
+
+function selectA(i) {
+  userAnswers[currentQ] = i;
+  renderQ();
+}
+
+function nextQ() {
+  if (currentQ < currentTest.data.length - 1) { currentQ++; renderQ(); }
+  else { finishTest(); }
+}
+
+function prevQ() {
+  if (currentQ > 0) { currentQ--; renderQ(); }
+}
+
+function exitTest() {
+  if (confirm('Тестті шынымен тоқтатасыз ба?')) {
+    clearInterval(timerInt);
+    showPage('tests');
+  }
+}
+
+function finishTest() {
+  clearInterval(timerInt);
+  const correct = userAnswers.reduce((a, ans, i) => a + (ans === currentTest.data[i].correct ? 1 : 0), 0);
+  const total = currentTest.data.length;
+  const score = Math.round(correct / total * 100);
+  const spent = Math.floor((Date.now() - testStart) / 1000);
+  
+  showResults(score, correct, total, spent);
+}
+
+function showResults(score, correct, total, spent) {
+  showPage('result');
+  document.getElementById('headerTimer').style.display = 'none';
+  document.getElementById('resPercent').textContent = score + '%';
+  document.getElementById('resScore').textContent = score;
+  document.getElementById('resCorrect').textContent = correct + '/' + total;
+  const m = Math.floor(spent / 60), s = spent % 60;
+  document.getElementById('resTime').textContent = `${m}:${s.toString().padStart(2, '0')}`;
+  
+  const review = currentTest.data.map((q, i) => {
+    const isOk = userAnswers[i] === q.correct;
+    return `
+      <div class="review-item ${isOk ? 'ok' : ''}">
+        <strong>${i + 1}. ${q.q}</strong>
+        <div>Сіздің жауап: <strong>${q.options[userAnswers[i]] || 'Жауап берілмеген'}</strong></div>
+        <div>Дұрыс жауап: <strong style="color:#10b981">${q.options[q.correct]}</strong></div>
+        <div class="explanation">${q.exp || ''}</div>
+      </div>
+    `;
+  }).join('');
+  
+  document.getElementById('reviewList').innerHTML = review;
+  saveResult({ test: currentTest.t, score, correct, total, date: new Date().toLocaleString('kk-KZ') });
+  renderProfile();
+  confetti();
+}
+
+function saveResult(r) {
+  const a = JSON.parse(localStorage.getItem(RESULTS) || '[]');
+  a.unshift(r);
+  localStorage.setItem(RESULTS, JSON.stringify(a.slice(0, 50)));
+}
+
+function getResults() {
+  try { return JSON.parse(localStorage.getItem(RESULTS) || '[]'); } catch { return []; }
+}
+
+function clearResults() {
+  if (confirm('Барлық нәтижелерді өшіресіз бе?')) {
+    localStorage.removeItem(RESULTS);
+    renderProfile();
+  }
+}
+
+function confetti() {
+  for (let i = 0; i < 40; i++) {
+    const c = document.createElement('div');
+    c.className = 'confetti';
+    c.style.left = Math.random() * 100 + 'vw';
+    c.style.background = ['#10b981', '#3b82f6', '#8b5cf6', '#fbbf24'][Math.floor(Math.random() * 4)];
+    c.style.animationDelay = Math.random() * 0.5 + 's';
+    document.body.appendChild(c);
+    setTimeout(() => c.remove(), 3000);
+  }
+}
+
+// ==================== PROFILE ====================
+function initProfile() {
+  if (!localStorage.getItem(PROFILE)) {
+    localStorage.setItem(PROFILE, JSON.stringify({name:'Оқушы',joinedAt:new Date().toISOString()}));
+  }
+}
+
+function renderProfile() {
+  const r = getResults();
+  const p = JSON.parse(localStorage.getItem(PROFILE) || '{}');
+  
+  document.getElementById('pName').textContent = p.name || 'Оқушы';
+  document.getElementById('pJoined').textContent = 'Қосылды: ' + (p.joinedAt ? new Date(p.joinedAt).toLocaleDateString('kk-KZ') : '-');
+  document.getElementById('pTests').textContent = r.length;
+  
+  if (r.length > 0) {
+    const avg = Math.round(r.reduce((a, x) => a + x.score, 0) / r.length);
+    const best = Math.max(...r.map(x => x.score));
+    document.getElementById('pAvg').textContent = avg + '%';
+    document.getElementById('pBest').textContent = best + '%';
+  }
+  
+  const html = r.map(x => `
+    <div class="card" style="padding:12px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center">
+      <div>
+        <strong>${x.test}</strong>
+        <div style="font-size:12px;color:#64748b">${x.date}</div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-size:18px;font-weight:700;color:#10b981">${x.score}%</div>
+        <div style="font-size:12px;color:#64748b">${x.correct}/${x.total}</div>
+      </div>
+    </div>
+  `).join('');
+  
+  document.getElementById('pResults').innerHTML = html || '<p style="color:#64748b">Нәтиже жоқ</p>';
+}
+
+// ==================== AI CHAT ====================
+function sendChat() {
+  const msg = document.getElementById('chatInput').value.trim();
+  if (!msg) return;
+  
+  const box = document.getElementById('chatBox');
+  box.innerHTML += `<div class="chat-msg user" style="background:rgba(59,130,246,.1);border-left-color:#3b82f6"><strong>Сіз:</strong> ${msg}</div>`;
+  document.getElementById('chatInput').value = '';
+  
+  setTimeout(() => {
+    const response = getAIResponse(msg);
+    box.innerHTML += `<div class="chat-msg"><strong>AI Coach:</strong> ${response}</div>`;
+    box.scrollTop = box.scrollHeight;
+  }, 500);
+}
+
+function quickChat(msg) {
+  document.getElementById('chatInput').value = msg;
+  sendChat();
+}
+
+function getAIResponse(msg) {
+  const m = msg.toLowerCase();
+  const responses = {
+    'митоз': '📌 **Митоз** — жасуша бөлінуі (2n→2n):\n• Профаза: хромосомалар орналасады\n• Метафаза: экватордағы реттеу\n• Анафаза: сестер хроматид бөлінеді\n• Телофаза: екі ядро түзіледі\n⏱️ ~30 минут',
+    'фотосинтез': '📌 **Фотосинтез**: 6CO₂ + 6H₂O + жарық → C₆H₁₂O₆ + 6O₂\n🌟 Жарық фазасы: хлоропластың грананда\n🌙 Қараңғы фаза: Кальвин циклі, стромада',
+    'генетика': '📌 **Мендель заңдары**:\n1️⃣ Анықтайтындық заңы (3:1)\n2️⃣ Еркін комбинациялану (9:3:3:1)\n3️⃣ Сегрегация: A/a × A/a = 1AA:2Aa:1aa',
+    'есеп': '📌 **Есептер шешу ұсыны**:\n1. Родословную/агыны түсіну\n2. Генотип анықтау (AA, Aa, aa)\n3. Кестесі құру\n4. Нәтиже есептеу\n🎯 Мысалы: Aa × Aa = 1AA:2Aa:1aa = 3:1',
+  };
+  
+  for (const [key, val] of Object.entries(responses)) {
+    if (m.includes(key)) return val;
+  }
+  
+  return '🤔 Мен білмеймін. Биология туралы өзге сұрақ сұрап көріңіз!\n\nЙ: Мендель заңдары, эволюция, экология, адам анатомиясы туралы сұра аласыз.';
+}
+
+// ==================== INIT ====================
+window.addEventListener('load', () => {
+  checkAuth();
+  document.addEventListener('keypress', e => {
+    if (e.key === 'Enter' && document.getElementById('chatInput')?.value) sendChat();
+  });
+});
 </script>
 </body>
 </html>
